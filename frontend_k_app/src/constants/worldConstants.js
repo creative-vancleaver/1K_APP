@@ -1,0 +1,3 @@
+export const WORLD_REQUEST = 'WORLD_REQUEST';
+export const WORLD_SUCCESS = 'WORLD_SUCCESS';
+export const WORLD_FAIL = 'WORLD_FAIL';

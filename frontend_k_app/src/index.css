@@ -1,0 +1,298 @@
+main {
+  min-height: 80vh;
+}
+
+.container {
+  /* margin-top: 30vh; */
+  /* align-items: center; */
+  /* d-flex justify-content-center */
+  /* padding-left: 0 !important; */
+}
+
+.card-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30vh;
+}
+
+/* @media(max-width: 768px) {
+  main {
+    display: flex;
+    align-items: center;
+  }
+} */
+
+.backLink {
+  text-decoration: none;
+  color: black;
+  text-transform: capitalize;
+  cursor: pointer;
+  border: 1px solid black;
+  padding: .5rem;
+  border-radius: .5rem;
+}
+
+.backLink:hover {
+  color: white;
+  background-color: black;
+}
+
+
+
+/* WORD CARD */
+.card-container {
+  display: flex;
+  /* border: 1px solid black;
+  width: 20rem;
+  height: 20rem; */
+  justify-content: center;
+  /* align-content: center; */
+  border: none;
+  /* margin-bottom: 3rem; */
+}
+
+.card_flipper {
+  position: relative;
+}
+
+/* WORD W/ ANSWER BUTTONS */
+.card_flipper .answer {
+  transform: rotateY(90deg);
+  position: absolute;
+}
+
+.flipped .answer {
+  transform: rotateY(0deg);
+}
+
+/* HAD TO UPDATE THIS TO ONLY EFFECT WORD CARDS */
+.card.cards {
+  height: 0;
+  border: none !important;
+  box-shadow: none !important;
+  margin-bottom: 1rem;
+  margin-right: 1rem;
+}
+
+.cards {
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  width: 20rem;
+  /* height: 3rem; */
+  transform: perspective(1000px) rotateY(var(--rotate-y, 0)) translateY(var(--translate-y, 0));
+  transform-style: preserve-3d;
+  transition: 500ms;
+  /* border: none !important; */
+
+}
+
+.cards .front:hover,
+.cards .back:hover {
+  --tranlate-y: -2px;
+  box-shadow: 0 0 5px 1px rgba(0,0,0,0.25);
+  opacity: 1;
+}
+
+.cards .front,
+.cards .back {
+  display: flex;
+  flex-direction: column;
+  backface-visibility: hidden;
+  position: absolute;
+  width: 20rem;
+  /* width: 25vw; */
+  /* height: 5rem; */
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(0,0,0,0.5);
+  border-radius: 1rem;
+
+  /* border: 1px solid black; */
+}
+
+.card-page .cards .front,
+.card-page .cards .back {
+  height: 5rem;
+}
+
+@media (min-width: 770px) {
+  .cards .front,
+  .cards .back {
+    /* height: 10rem;
+    width: 40rem; */
+  }
+  
+}
+
+.cards .back {
+  transform: rotateY(180deg);
+}
+
+.cards.flip {
+  --rotate-y: 180deg;
+  backface-visibility: hidden;
+}
+
+/* WORD PAGE */
+
+
+
+/* SCORE */
+.score span {
+  margin: 0.1rem;
+  transition: transform 0.8s;
+  /* transform-style: preserve-3d; */
+}
+
+h3 {
+  padding: 1rem 0;
+}
+
+/* LANGUAGE LIST CAROUSEL */
+/* .container {
+  width: 80%;
+  margin: auto;
+} */
+
+.language-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* position: absolute; */
+  /* width: 63rem;
+  height: 22rem; */
+  margin: auto;
+}
+
+.language-card-container {
+  position: relative;
+  width: 63rem;
+  height: 12rem;
+  /* margin-right: 7rem; */
+}
+
+.language {
+  position: absolute !important;
+  width: 15rem !important;
+  height: 10rem !important;
+  margin: 1rem;
+  border-radius: 1rem;
+  text-align: center;
+  text-transform: capitalize;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-img.flag {
+  opacity: 40%;
+}
+
+.card-title {
+  font-weight: bolder !important;
+  padding-top: 3rem;
+  opacity: 100%;
+}
+
+.flag.card-img {
+  height: 100% !important;
+}
+
+.card-link.btn {
+  padding: .3rem;
+  box-shadow: none;
+}
+
+.card-link.btn:hover {
+  border: .5px solid black;
+  /* background-color: rgba(116, 116, 116, 0.5); */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+}
+
+.prevCard {
+  left: 6%;
+  /* left: -200%; */
+  /* opacity: 50%; */
+  /* z-index: 2;
+  background: linear-gradient(to top, #222, #222); */
+  opacity: 0;
+}
+
+/* .prevCard + .prevCard {
+  opacity: 100; 
+
+}
+ */
+
+
+.activeCard {
+  left: 50%;
+  transform: translateX(-50%);
+  /* THE CARD IS CENTERED TO ITSELF RATHER THAN THE LEFT EDGE RESTING ON CENTER LINE */
+  z-index: 1;
+}
+
+/* .activeCard .flag {
+  opacity: 100%;
+} */
+
+.nextCard {
+  /* right: 0; */
+  right: 3%;
+  /* right: 200%; */
+  /* opacity: 50%; */
+  opacity: 0%;
+}
+
+.activeCard + .nextCard {
+  z-index: 1;
+  /* opacity: 0; */
+}
+
+.leftBtn,
+.rightBtn {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* .rightBtn {
+  display: flex;
+  align-items: center;
+} */
+
+/* MAP */
+.rsm-geography {
+  /* position: absolute;
+  width: 100%;
+  height: 100%; */
+  /* transition: 0.5s all ease-in-out; */
+  transition: all .2s ease-in-out;
+  transform-origin: center;
+  /* transform-origin: 50% 50%; */
+  /* width: 100%; */
+  /* transition: width .5s; */
+  /* transform-origin: top left;
+  transition: .5s ease-in-out; */
+  /* translate: none; */
+  /* transform: scale(2, 2) .5s ease-in-out; */
+}
+
+.rsm-geography:hover {
+  transform: scale(1.01);
+}
+
+.country-hover {
+  display: inline-grid;
+  justify-items: center;
+  position: absolute;
+  z-index: 5;
+  top: 50vh;
+  left: 45vw;
+}
