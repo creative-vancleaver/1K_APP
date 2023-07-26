@@ -7,6 +7,8 @@ import { activeLanguage as getActiveLanguage } from '../../action/languageAction
 
 import { getLanguageByName } from '../../selectors/languageSelectors';
 
+import LanguageList from '../LanguageList';
+
 const Map = () => {
 
   // const geoPath =   "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
@@ -115,7 +117,7 @@ const Map = () => {
   return (
 
     <div>
-    <div style={{ position: 'relative', left: 0, top: -50,  height: '100%', width: '100%'}}>
+    <div style={{ position: 'relative', left: 0, top: -50 }}>
       <ComposableMap
         projection="geoEqualEarth"
         projectionConfig={{
@@ -206,6 +208,7 @@ const Map = () => {
           <img src={ languageObject.image } style={{ maxWidth: '200px' }}></img>
         </div>
       )}
+
     </div>
 
   )

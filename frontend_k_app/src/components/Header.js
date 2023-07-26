@@ -26,7 +26,7 @@ function Header() {
       <Container fluid>
         {/* <LinkContainer to='/'> */}
         {/* <Link to='/'> */}
-          <Navbar.Brand as={ Link } to='/'>1K Words</Navbar.Brand>
+          <Navbar.Brand as={ Link } to='/' className='ms-3 ps-3'>1K Words</Navbar.Brand>
         {/* </Link> */}
         {/* </LinkContainer> */}
         <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-expand`} />
@@ -43,7 +43,7 @@ function Header() {
           </Offcanvas.Header>
 
           <Offcanvas.Body>
-            <Nav className='justify-content-center flex-grow-1 pe-3'>
+            <Nav className='justify-content-end flex-grow-1 pe-3 me-3'>
               <Nav.Link href='#' className='d-flex'>
                 <i className='fa-sharp fa-solid fa-house me-1'></i>
                 Home
@@ -64,7 +64,7 @@ function Header() {
             
             </Nav>
 
-            <Form className='d-flex'>
+            {/* <Form className='d-flex'>
               <Form.Control
                 type='search'
                 placeholder='search'
@@ -73,7 +73,7 @@ function Header() {
               />
 
               <Button variant='outline-success'>Search</Button>
-            </Form>
+            </Form> */}
 
           </Offcanvas.Body>
 

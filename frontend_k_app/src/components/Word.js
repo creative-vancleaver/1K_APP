@@ -72,6 +72,7 @@ function Word({ word, onStateChange }) {
           onClick={ handleClick }
         >
           { word.translation }
+          {/* { word.score } */}
         </div>
       
       </Card>

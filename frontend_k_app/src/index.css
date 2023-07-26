@@ -296,3 +296,10 @@ h3 {
   top: 50vh;
   left: 45vw;
 }
+
+.carousel-container {
+  position: absolute;
+  justify-items: center;
+  justify-content: center;
+  bottom: 10%;
+}

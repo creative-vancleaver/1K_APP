@@ -10,6 +10,7 @@ import { randomWordByLanguage, updateScore, randomWord} from '../action/wordActi
 
 import Word from '../components/Word'
 import Answers from '../components/Answers'
+import RecallScore from '../components/score/RecallScore'
 // import { WORD_LIST_RESET, WORD_RANDOM_RESET } from '../constants/wordConstants'
 
 // import words from '../words'
@@ -20,6 +21,7 @@ function WordScreen() {
   const dispatch = useDispatch()
 
   const { language } = useParams()
+  console.log('lanuage from params === ', useParams(), language);
 
   const navigate = useNavigate()
 
@@ -125,11 +127,8 @@ function WordScreen() {
     <div>
 
     <Link to={`/${ language }`} className='backLink'>Go Back</Link>
-
       
     <div className='card-page d-flex'>
-
-
 
       <Row className='card-row'>
         <Col className='card-col'>
@@ -140,10 +139,9 @@ function WordScreen() {
 
       { flip && (
         <div className={`d-flex justify-content-center me-3`}>
-          <Answers word={ word } />
+          <Answers word={ word } language={ language } />
         </div>
        )}
-
 
       {/* { flip && (
         <div className='d-flex justify-content-center me-3'>
@@ -182,6 +180,14 @@ function WordScreen() {
       </div> */}
 
     </div>
+
+    { !flip && 
+    <div className='d-flex justify-content-center' style={{ marginTop: '5rem' }}>
+      <span className='me-2'><b>Score: </b>{ word.score }/10</span>
+      <RecallScore value={ word.score } color={ '#f8e825' } />
+    </div>
+    }
+
     </div>
   )
 }

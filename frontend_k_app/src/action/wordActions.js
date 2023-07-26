@@ -49,7 +49,8 @@ export const listWordsLanguage = (language) => async(dispatch) => {
   try{
 
     dispatch({ type: WORD_LANGUAGE_REQUEST });
-    const { data } = await axios.get(`/words/${ language }`);
+    // const { data } = await axios.get(`/words/${ language }`);
+    const { data } = await axios.get(`/languages/${ language }/words/`)
     dispatch({ type: WORD_LANGUAGE_SUCCESS, payload: data })
 
   } catch (error) {
@@ -91,7 +92,8 @@ export const randomWordByLanguage = (language) => async(dispatch) => {
 
     dispatch({ type: WORD_RANDOM_LANGUAGE_REQUEST })
 
-    const { data } = await axios.get(`/words/random/${ language }/`)
+    // const { data } = await axios.get(`/words/random/${ language }/`)
+    const { data } = await axios.get(`/languages/${ language }/words/random/`)
 
     dispatch({ type: WORD_RANDOM_LANGUAGE_SUCCESS, payload: data })
 
@@ -106,7 +108,7 @@ export const randomWordByLanguage = (language) => async(dispatch) => {
   }
 }
 
-export const updateScore = (word, value) => async(dispatch) => {
+export const updateScore = (language, word, value) => async(dispatch) => {
   console.log('updateWordScore ', word, value)
 
   try {
@@ -126,9 +128,13 @@ export const updateScore = (word, value) => async(dispatch) => {
 
     formData.append('value', value)
 
-    const { data } = await axios.post(
-      `/words/score/${ word.id }/`,
+    const { data } = await axios.put(
+    //   `/words/score/${ word.id }/`,
+      // `/words/${ word.id }/score/`,
+      `/languages/${ language }/words/${ word.id }/score/`,
+
       {
+        language,
         word, 
         value
       },
@@ -145,7 +151,7 @@ export const updateScore = (word, value) => async(dispatch) => {
     dispatch({
       type: UPDATE_WORD_SCORE_FAIL,
       payload: error.response && error.response.data.detail
-      ? error.resposne.data.detail
+      ? error.response.data.detail
         : error.message
     })
 

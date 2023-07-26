@@ -4,11 +4,11 @@ import json
 
 from django.conf import settings
 # import pyvips
-import geopandas as gpd
-import matplotlib
-matplotlib.use('Agg')
+# import geopandas as gpd
+# import matplotlib
+# matplotlib.use('Agg')
 from PIL import Image
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 from ast import literal_eval
 
@@ -24,7 +24,10 @@ from .serializers import WordSerializer, LanguageSerializer
 
 from .models import Language, Translation, Word, Spanish
 
-from .words import words
+# from .words import words
+
+from bs4 import BeautifulSoup
+import requests
 
 # Create your views here.
 
@@ -49,6 +52,9 @@ def getRoutes(request):
       
       'words/delete/<pk>/',
       'words/update/<pk>/',
+
+      'words/<pk>/score/',
+      'words/<pk>/update_score',
     ]
 
     return Response(routes)
@@ -134,6 +140,81 @@ def getRoutes(request):
 #     # return JsonResponse(geojson_data)
 #     return geojson_data
 
+@api_view(['GET', 'POST'])
+def get1000WordsFromHTMLTable(request):
+#    url = 'https://strommeninc.com/1000-most-common-spanish-words-frequency-vocabulary/'
+#    url = 'https://strommeninc.com/1000-most-common-french-words-frequency-vocabulary/'
+#    requests.get(url)
+   print(requests.get(url)) # RESPONSE === 200
+   pages = requests.get(url)
+#    parser-lxml = Change html into Python friendly format
+   soup = BeautifulSoup(pages.text, 'lxml')
+#    print(soup)
+#    print(soup.table)
+#    print(soup.table.find('tr'))
+#    language = soup.table.find('tr').text
+   row1 = soup.table.find('tr')
+   row1_data = row1.find_all('td')
+   print(row1_data)
+   language_from_page = row1_data[1].text.lower() #spanish
+   language_exists = Language.objects.filter(language=language_from_page).exists()
+
+   if not language_exists:
+      print('new language! ', language_from_page)
+   else:
+      print(language_from_page, ' already exists')
+      language = Language.objects.get(language=language_from_page)
+      Word.objects.filter(language=language).delete()
+    #   Word.objects.all().delete()
+      print('you have successfully deleted the last 1000 words...')
+
+#    if language not in Language.objects.all():
+#         new_language = Language.objects.create(language=language)
+#         print(language, new_language)
+#    else:
+#         print('language already exists')
+#    language = row1[2].text
+#    print(row1)
+   tabel_rows = soup.table.find_all('tr')
+#    print(tabel_rows)
+   for tr in tabel_rows[1:]:
+      print(tr)
+      tabel_data = tr.find_all('td')
+      no = tabel_data[0].text
+      word = tabel_data[1].text
+      translation = tabel_data[2].text
+      print(no, word, translation)
+      new_word = Word.objects.create(language=language, word=word, translation=translation)
+      new_word.save()
+    #   print(tr)
+    #   table_data = tr.find_all('td')
+    #   for td in table_data:
+    #     # print(td)
+    #     no = table_data[0].text
+    #     word = table_data[1].text
+    #     translation = table_data[2].text
+    #     print(no, word, translation)
+    #     for i in td:
+    #        print(td[1].text)
+        # new_word = Word.objects.create(word=word, translation=translation, language=language)
+        # print(new_word)
+        # for i in td:
+        #    print (i)
+        #  print(td)
+        #  no = table_data[0].text
+        #  word = table_data[1].text
+        #  translation = table_data[2].text
+        #  print(no, word, translation)
+        #  print('no ', table_data[0].text)
+        #  print('word ', table_data[1].text)
+        #  print('trans ', table_data[2].text)
+    #   print(tr.td.text)
+    #   for td in tr:
+    #     # number = tr.td.text
+    #     # word = tr
+    #     print(tr.td.text)
+   return Response({'message': 'success'})
+
 @api_view(['GET'])
 def getLanguages(request):
     languages = Language.objects.all()
@@ -192,6 +273,17 @@ def getWordsByLanguage(request, language):
     
 
 @api_view(['GET'])
+def getWordByLanguage(request, language, pk):
+#    word = Word.objects.get(pk=pk, language=language)
+#    serializer = WordSerializer(word, many=False)
+    print(language)
+    print(pk)
+    word = Word.objects.get(pk=pk)
+    serializer = WordSerializer(word, many=False)
+
+    return Response(serializer.data)
+
+@api_view(['GET'])
 def getWord(request, pk):
     word = Word.objects.get(id=pk)
     serializer = WordSerializer(word, many=False)
@@ -205,6 +297,56 @@ def getWord(request, pk):
     #         break
     
     # return Response(word)
+
+
+@api_view(['GET', 'PUT'])
+def wordScore(request, pk, language):
+    word = Word.objects.get(pk=pk)
+    seriazlizer = WordSerializer(word, many=False)
+    oldScore = seriazlizer.data['score']
+    data = request.data
+    answer = data['value']
+    print(word, 'answer ', answer)
+    context = None
+
+    if request.method == 'GET':
+       context = {'message': 'you are making a get request', 'word': seriazlizer.data, 'oldScore': oldScore}
+    #    return Response(context)
+    elif request.method == 'PUT':
+       if answer == 'correct':
+            print('old score ', word.score)
+            word.score += 1
+            word.save()
+            print('new score ', word.score)
+            seriazlizer = WordSerializer(word, many=False)
+            context = {'message': 'you are making a put request', 'new_score': seriazlizer.data['score'], 'word': seriazlizer.data}
+            # return Response(context)
+                        
+    return Response(context)
+
+
+# @api_view(['GET'])
+# def getWordScore(request, pk):
+#     word = Word.objects.get(pk=pk)
+#     #  score = word.score
+#     serializer = WordSerializer(word, many=False)
+#     score = serializer.data['score']
+
+#     context = {'word': serializer.data, 'score': score}
+
+#   #  return Response(serializer.data['score'])
+#     return Response(context)
+
+# @api_view(['PUT'])
+# def updateWordScore(request, pk, score):
+#   word = Word.objects.get(pk=pk)
+#   serializer = WordSerializer(word, many=False)
+
+#   #  score = serializer.data['score']
+
+#   context = {'word': serializer.data, 'score': score }
+#   return Response(context)
+
 
 @api_view(['GET'])
 def getRandomWord(request):

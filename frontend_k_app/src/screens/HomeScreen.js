@@ -45,8 +45,8 @@ function HomeScreen() {
   useEffect(() => {
 
     // const language = 'none'
-    dispatch(listWords())
-    dispatch(listWordsLanguage(language))
+    // dispatch(listWords())
+    // dispatch(listWordsLanguage(language))
     // dispatch(listLanguages)
 
 
@@ -78,8 +78,9 @@ function HomeScreen() {
       <Map />
       <LanguageList />
 
+{/* REMOVED THE WORD LIST FROM THE HOME PAGE!! UPDATING THE URLS TO BE LANGUAGE BASED AND WILL LIKELY NOT USE ALL WORDS FROM DB FOR ANYTIHNG... */}
       {/* <div>{ words.map(word => word.word) }</div> */}
-      <h1 className='mb-5 mt-5'>Top 10 Words</h1>
+      {/* <h1 className='mb-5 mt-5'>Top 10 Words</h1>
       <Container>
       <Row className='mt-5 d-flex justify-items-center'>
         {words.map(word => (
@@ -88,12 +89,12 @@ function HomeScreen() {
             <Word word={word} />
             
           </Col>
-        ))}
+        ))} */}
         {/* NOTE: adding a semicolon to the end of this function will add it to the screen! */}
-      </Row>
+      {/* </Row>
       </Container>
 
-      <SubHero word={ random_word } />
+      <SubHero word={ random_word } /> */}
 
     </div>
   )

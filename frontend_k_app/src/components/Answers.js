@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Button } from 'react-bootstrap'
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
 
 import { randomWord, RandomWord, updateScore } from '../action/wordActions'
 
 
-function Answers({ word }) {
+function Answers({ word, language }) {
 
   const dispatch = useDispatch()
+
+  // const { language } = useParams();
+  console.log('Answer props language = ', language);
 
   // useEffect(() => {
 
@@ -19,6 +23,7 @@ function Answers({ word }) {
   function answerSubmitHandler(e, value) {
     e.preventDefault();
     dispatch(updateScore(
+      language,
       word,
       value,
     ));
