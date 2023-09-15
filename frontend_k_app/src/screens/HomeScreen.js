@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom'
 
 // import axios from 'axios'
 
-import { listWords, listWordsLanguage, randomWord } from '../action/wordActions'
-import { listLanguages } from '../action/languageActions'
+import { listWords, listWordsLanguage, randomWord } from '../actions/wordActions'
+import { listLanguages } from '../actions/languageActions'
 
 // COMPONENTS
 import LanguageList from '../components/LanguageList'
@@ -47,7 +47,7 @@ function HomeScreen() {
     // const language = 'none'
     // dispatch(listWords())
     // dispatch(listWordsLanguage(language))
-    // dispatch(listLanguages)
+    // dispatch(listLanguages())
 
 
     // dispatch(randomWord())

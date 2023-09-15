@@ -9,9 +9,17 @@ import { Container } from 'react-bootstrap';
 import HomeScreen from './screens/HomeScreen';
 import WordScreen from './screens/WordScreen';
 import LanguageScreen from './screens/LanguageScreen';
+import UserListScreen from './screens/UserListScreen';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
+import LanguageForm from './components/forms/LanguageForm';
+
+import UserLoginScreen from './screens/UserLoginScreen';
+import UserRegisterScreen from './screens/UserRegisterScreen';
+import UserProfileScreen from './screens/UserProfileScreen';
+import AdminScreen from './screens/AdminScreen';
+import UserUpdate from './components/admin/UserUpdate';
 
 // const history = createBrowswerHistory();
 
@@ -30,8 +38,18 @@ function App() {
           <Routes>
             <Route path='/' element={ <HomeScreen /> } exact />
             {/* <Route path='/word/wordlist/:id' element={ <WordScreen /> } /> */}
-            <Route path='/:language/' element={ <LanguageScreen /> } />
-            <Route path='/:language/random/' element={ <WordScreen /> } />
+            <Route path='/languages/:language/' element={ <LanguageScreen /> } />
+            <Route path='/languages/:language/random/' element={ <WordScreen /> } />
+
+            <Route path='/login/' element={ <UserLoginScreen /> } />
+            <Route path='/register/' element={ <UserRegisterScreen /> } />
+            <Route path='/profile/' element={ <UserProfileScreen /> } />
+
+            <Route path='/admin/' element={ <AdminScreen /> } />
+            <Route path='/admin/user/:id/edit' element={ <UserUpdate /> } />
+
+            <Route path='/languageform/' element={ <LanguageForm /> } />
+            {/* <Route path='/users/' element={ <UserListScreen /> } /> */}
 
             {/* <Route path=':language/:id/' element={ <WordScreen /> } /> */}
             {/* <Route path='/random' element={ <WordScreen /> } /> */}

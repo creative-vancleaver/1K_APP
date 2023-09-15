@@ -1,0 +1,14 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+{% endblock %}
+
+{% block conent %}
+<div class="related-widget-wrapper">
+    <h2>User Words:</h2>
+    <p>{{ user_words_display }}</p>
+</div>
+
+{{ block.super }}
+{% endblock %}

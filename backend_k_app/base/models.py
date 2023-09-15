@@ -1,11 +1,24 @@
 from django.db import models
 from django.conf import settings
 
+# from users.models import User
+
 # Create your models here.
+class Country(models.Model):
+    name = models.CharField(max_length=500, unique=True)
+    flag = models.ImageField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name_plural = 'Countries'
+
+    def __str__(self):
+        return self.name
 
 class Language(models.Model):
     language = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(null=True, blank=True)
+    countries = models.ManyToManyField(Country, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -33,6 +46,10 @@ class Word(models.Model):
 
     def __str__(self):
         return self.word
+    
+# class UserWord(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     word = models.ForeignKey(Word, on_delete=models.CASCADE)
     
 # I DON'T THINK THIS MODEL IS NEEDED ANYMORE. I UPDATED THE VIEW TO FETCH WORDS BASED ON THE FK TO LANGUAGE MODEL...
 class Spanish(Word):

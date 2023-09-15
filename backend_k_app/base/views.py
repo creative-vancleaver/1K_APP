@@ -17,12 +17,13 @@ from django.http import QueryDict, JsonResponse, HttpResponse
 
 # DJANGO REST FRAMEWORK
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
 
 from .serializers import WordSerializer, LanguageSerializer
 
-from .models import Language, Translation, Word, Spanish
+from .models import Language, Translation, Word, Spanish, Country
 
 # from .words import words
 
@@ -141,11 +142,49 @@ def getRoutes(request):
 #     return geojson_data
 
 @api_view(['GET', 'POST'])
+def uploadCountryNames(request):
+   url = 'https://www.britannica.com/topic/list-of-countries-1993160'
+
+   print(requests.get(url))
+   pages = requests.get(url)
+
+   if pages.status_code == 200:
+
+      soup = BeautifulSoup(pages.text, 'html.parser')
+
+      ul_elements = soup.find_all('ul', class_='topic-list')
+
+      for ul in ul_elements:
+         li_elements = ul.find_all('li')
+
+         for li in li_elements:
+            country_name = li.get_text(strip=True)
+            existing_country = Country.objects.filter(name=country_name).first()
+            if not existing_country:
+               Country.objects.create(name=country_name)
+            else:
+               pass
+
+   else:
+      print(f'Failed to fetch the URL. Status COde: { response.status_code }')
+
+   return Response({ 'message': 'success' })
+
+@api_view(['GET', 'POST'])
 def get1000WordsFromHTMLTable(request):
 #    url = 'https://strommeninc.com/1000-most-common-spanish-words-frequency-vocabulary/'
 #    url = 'https://strommeninc.com/1000-most-common-french-words-frequency-vocabulary/'
 #    requests.get(url)
-   print(requests.get(url)) # RESPONSE === 200
+#    print(requests.get(url)) # RESPONSE === 200
+
+   data = request.data
+   print(data)
+#    print(data['language']['language'])
+#    url = data['url']
+   url = data['language']['url']
+   print(requests.get(url))
+
+#    pages = requests.get(url)
    pages = requests.get(url)
 #    parser-lxml = Change html into Python friendly format
    soup = BeautifulSoup(pages.text, 'lxml')
@@ -156,63 +195,43 @@ def get1000WordsFromHTMLTable(request):
    row1 = soup.table.find('tr')
    row1_data = row1.find_all('td')
    print(row1_data)
-   language_from_page = row1_data[1].text.lower() #spanish
-   language_exists = Language.objects.filter(language=language_from_page).exists()
+#    language_from_page = row1_data[1].text.lower() #spanish
+   language_from_form = data['language']['language'].lower()
+   print('language from form, ', language_from_form)
+#    language_exists = Language.objects.filter(language=language_from_page).exists()
+   language_exists = Language.objects.filter(language=language_from_form).exists()
 
    if not language_exists:
-      print('new language! ', language_from_page)
-   else:
-      print(language_from_page, ' already exists')
-      language = Language.objects.get(language=language_from_page)
-      Word.objects.filter(language=language).delete()
-    #   Word.objects.all().delete()
-      print('you have successfully deleted the last 1000 words...')
+      new_language = Language.objects.create(language=language_from_form)
+      new_language.save()
+      print('created new language')
 
-#    if language not in Language.objects.all():
-#         new_language = Language.objects.create(language=language)
-#         print(language, new_language)
-#    else:
-#         print('language already exists')
-#    language = row1[2].text
-#    print(row1)
-   tabel_rows = soup.table.find_all('tr')
-#    print(tabel_rows)
-   for tr in tabel_rows[1:]:
-      print(tr)
-      tabel_data = tr.find_all('td')
-      no = tabel_data[0].text
-      word = tabel_data[1].text
-      translation = tabel_data[2].text
-      print(no, word, translation)
-      new_word = Word.objects.create(language=language, word=word, translation=translation)
-      new_word.save()
-    #   print(tr)
-    #   table_data = tr.find_all('td')
-    #   for td in table_data:
-    #     # print(td)
-    #     no = table_data[0].text
-    #     word = table_data[1].text
-    #     translation = table_data[2].text
-    #     print(no, word, translation)
-    #     for i in td:
-    #        print(td[1].text)
-        # new_word = Word.objects.create(word=word, translation=translation, language=language)
-        # print(new_word)
-        # for i in td:
-        #    print (i)
-        #  print(td)
-        #  no = table_data[0].text
-        #  word = table_data[1].text
-        #  translation = table_data[2].text
-        #  print(no, word, translation)
-        #  print('no ', table_data[0].text)
-        #  print('word ', table_data[1].text)
-        #  print('trans ', table_data[2].text)
-    #   print(tr.td.text)
-    #   for td in tr:
-    #     # number = tr.td.text
-    #     # word = tr
-    #     print(tr.td.text)
+      print('adding new words to ', new_language)
+
+      tabel_rows = soup.table.find_all('tr')
+   #    print(tabel_rows)
+      for tr in tabel_rows[1:]:
+         print(tr)
+         tabel_data = tr.find_all('td')
+         no = tabel_data[0].text
+         word = tabel_data[1].text
+         translation = tabel_data[2].text
+         print(no, word, translation)
+         new_word = Word.objects.create(language=new_language, word=word, translation=translation)
+         new_word.save()
+
+   else:
+      print('language already exists ---- checking for words')
+      exists_language = Language.objects.get(language=language_from_form)
+      exists_words = Word.objects.filter(language=exists_language).count()
+      new_language = exists_language
+      print(new_language, ' word count ', exists_words)
+
+#    if exists_words == 0:
+
+
+
+
    return Response({'message': 'success'})
 
 @api_view(['GET'])
@@ -361,15 +380,25 @@ def getRandomWord(request):
 
 @api_view(['GET'])
 def getRandomWordLanguage(request, language):
-  print(language)
+   language = Language.objects.get(language=language)
+   words = Word.objects.filter(language=language)
+   word = random.choice(words)
+   serializer = WordSerializer(word, many=False)
 
-  if language == 'spanish':
-    words = Spanish.objects.all()
-    word = random.choice(words)
-    serializer = WordSerializer(word, many=False)
-    return Response(serializer.data)
-  else:
-    return Response('Thou shall not pass!')
+   return Response(serializer.data)
+#   print(language)
+#   lang = Language.objects.get(language=language)
+
+#   if language == 'spanish':
+#     # words = Spanish.objects.all()
+#     # DOH - I DELETED ALL THE WORDS IN THE SPANISH MODEL...
+#     words = Word.objects.filter(language=lang)
+#     # print(words)
+#     word = random.choice(words)
+#     serializer = WordSerializer(word, many=False)
+#     return Response(serializer.data)
+#   else:
+#     return Response('Thou shall not pass!')
 
 @api_view(['POST'])
 def updateWordScore(request, pk):

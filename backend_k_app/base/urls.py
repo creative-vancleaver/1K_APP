@@ -4,7 +4,9 @@ from . import views
 urlpatterns = [
     path('', views.getRoutes, name='routes'),
 
-    # path('get1000words/', views.get1000WordsFromHTMLTable, name='get_1000_words'),
+    path('get1000words/', views.get1000WordsFromHTMLTable, name='get_1000_words'),
+
+    # path('add_countries/', views.uploadCountryNames, name='add_countries'),
 
     path('languages/', views.getLanguages, name='languages'),
 

@@ -3,7 +3,7 @@ import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 
 import { useSelector, useDispatch } from 'react-redux';
 
-import { activeLanguage as getActiveLanguage } from '../../action/languageActions';
+import { activeLanguage as getActiveLanguage } from '../../actions/languageActions';
 
 import { getLanguageByName } from '../../selectors/languageSelectors';
 
@@ -57,11 +57,19 @@ const Map = () => {
   }
   
   const findLanguageByCountry = (targetCountry) => {
-    for (const language in supportedLanguages) {
-      if (supportedLanguages[language].country.includes(targetCountry)) {
-        return language
+    for (const l in languages) {
+      const countries = languages[l].countries;
+      for (const c in countries) {
+        if (countries[c].name.includes(targetCountry)) {
+          return languages[l].language
+        }
       }
     }
+    // for (const language in supportedLanguages) {
+    //   if (supportedLanguages[language].country.includes(targetCountry)) {
+    //     return language
+    //   }
+    // }
   }
 
   const languageObject = useSelector(state => getLanguageByName(state, activeLanguage.language));
@@ -90,13 +98,37 @@ const Map = () => {
   }
 
   const isCountrySupported = (country) => {
-    for (const language in supportedLanguages) {
-      if (supportedLanguages[language].country.includes(country)) {
-        return true
+    console.log(languages)
+    for (const l in languages) {
+      console.log(languages[l].countries)
+      const countries = languages[l].countries
+      for (const c in countries) {
+        if (countries[c].name.includes(country)) {
+          console.log('true')
+          return true
+        }
       }
+
     }
+    console.log('false');
     return false;
+    // for (const language in languages) {
+    //   console.log('isCountrySuppored lang ', language.id)
+    //   if (language.countries.name.includes(country)) {
+    //     return true;
+    //   }
+    // }
+    // return false;
   }
+
+  // const isCountrySupported = (country) => {
+  //   for (const language in supportedLanguages) {
+  //     if (supportedLanguages[language].country.includes(country)) {
+  //       return true
+  //     }
+  //   }
+  //   return false;
+  // }
 
   const getFlag = () => {
     // console.log('HOVER');
@@ -105,7 +137,7 @@ const Map = () => {
   const handleMouseOver = (geo) => {
     setIsHovering(true);
     const country = geo.properties.NAME;
-    const language = findLanguageByCountry(country);
+    const language = findLanguageByCountry(country).charAt(0).toUpperCase() + findLanguageByCountry(country).slice(1);
     dispatch(getActiveLanguage(language));
 
   };
@@ -117,6 +149,9 @@ const Map = () => {
   return (
 
     <div>
+
+    {/* <h1>{ languages.countries }</h1> */}
+
     <div style={{ position: 'relative', left: 0, top: -50 }}>
       <ComposableMap
         projection="geoEqualEarth"
@@ -205,7 +240,9 @@ const Map = () => {
           <h2>{activeLanguage.language}</h2>
           {/* <h4>{ languageObject.image }</h4> */}
           {/* <h4>{ languages[activeLanguage.language] }</h4> */}
-          <img src={ languageObject.image } style={{ maxWidth: '200px' }}></img>
+          {/* { languageObject.image && (
+            <img src={ languageObject.image } style={{ maxWidth: '200px' }}></img>
+          )} */}
         </div>
       )}
 

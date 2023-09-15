@@ -14,11 +14,24 @@ import {
 import { 
   languageListReducer,
   activeLanguageReducer,
+  addLanguageReducer,
 } from './reducers/languageReducers'
 
 import {
   getWorldReducer,
 } from './reducers/worldReducers';
+
+import {
+  userLoginReducer,
+  userRegisterReducer,
+  userListReducer,
+  userDetailsReducer,
+  userUpdateProfileReducer,
+  userStatsReducer,
+  userUpdateReducer,
+  userDeleteReducer,
+  addLanguageToUserReducer,
+} from './reducers/userReducers';
 
 const reducer = combineReducers({
   wordList: wordListReducer,
@@ -29,12 +42,28 @@ const reducer = combineReducers({
 
   languageList: languageListReducer,
   activeLanguage: activeLanguageReducer,
+  addLanguage: addLanguageReducer,
 
   world: getWorldReducer,
 
+  userLogin: userLoginReducer,
+  userRegister: userRegisterReducer,
+  userDetails: userDetailsReducer,
+  userUpdateProfile: userUpdateProfileReducer,
+  userStats: userStatsReducer,
+  userList: userListReducer,
+  userUpdate: userUpdateReducer,
+  userDelete: userDeleteReducer,
+  addLanguageToUser: addLanguageToUserReducer,
+
 })
 
-export const initialState = {}
+const userInfoFromStorage = localStorage.getItem('userInfo') ?
+  JSON.parse(localStorage.getItem('userInfo')) : null
+
+export const initialState = {
+  userLogin: { userInfo: userInfoFromStorage }
+}
 
 const middleware = [thunk]
 

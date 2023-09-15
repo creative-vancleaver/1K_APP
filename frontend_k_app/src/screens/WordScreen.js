@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 
 import axios from 'axios'
 
-import { randomWordByLanguage, updateScore, randomWord} from '../action/wordActions'
+import { randomWordByLanguage, updateScore, randomWord} from '../actions/wordActions'
 
 import Word from '../components/Word'
 import Answers from '../components/Answers'
@@ -124,9 +124,14 @@ function WordScreen() {
 
   return (
 
-    <div>
+    <div className=''>
 
-    <Link to={`/${ language }`} className='backLink'>Go Back</Link>
+    <Link to={`/languages/${ language }`} className='backLink'>Go Back</Link>
+
+    {/* { flip && ()} */}
+    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10rem' }}> 
+      <RecallScore value={ word.score } color={ '#f8e825' } />
+    </div>
       
     <div className='card-page d-flex'>
 
@@ -138,7 +143,7 @@ function WordScreen() {
       </Row>
 
       { flip && (
-        <div className={`d-flex justify-content-center me-3`}>
+        <div className={`d-flex justify-content-center me-3`} style={{ display: 'block' }}>
           <Answers word={ word } language={ language } />
         </div>
        )}
@@ -179,14 +184,18 @@ function WordScreen() {
         >Incorrect</Button>
       </div> */}
 
+
+
     </div>
 
-    { !flip && 
+    {/* { !flip && 
     <div className='d-flex justify-content-center' style={{ marginTop: '5rem' }}>
       <span className='me-2'><b>Score: </b>{ word.score }/10</span>
       <RecallScore value={ word.score } color={ '#f8e825' } />
     </div>
-    }
+    } */}
+
+
 
     </div>
   )

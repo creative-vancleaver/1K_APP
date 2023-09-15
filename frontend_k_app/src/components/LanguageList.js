@@ -5,7 +5,7 @@ import { Row, Col, Card, Carousel, Container, Button } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import { Link } from 'react-router-dom'
 
-import { listLanguages } from '../action/languageActions'
+import { listLanguages } from '../actions/languageActions'
 
 function LanguageList() {
 
@@ -78,7 +78,7 @@ function LanguageList() {
                 <Card.Title>{ language.language }</Card.Title>
                 <Card.Link 
                   as={Button} 
-                  href={`/${languageLink}`}
+                  href={`/languages/${languageLink}`}
                   className='mt-3'
                   variant='info-outline'  
                 >

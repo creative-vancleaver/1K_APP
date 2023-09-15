@@ -4,15 +4,26 @@ import { LinkContainer } from 'react-router-bootstrap'
 import { Link } from 'react-router-dom'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { listLanguages } from '../action/languageActions'
+import { listLanguages } from '../actions/languageActions'
+import { logout } from '../actions/userActions'
 
 function Header() {
 
-  const dispatch = useDispatch() 
+  const dispatch = useDispatch();
 
   const languageList = useSelector(state => state.languageList)
   const { error, loading, success, languages } = languageList
   // console.log(languages)
+
+  const userLogin = useSelector(state => state.userLogin);
+  const { userInfo } = userLogin;
+  // const { languages: userLanguages } = userInfo;
+  // console.log(userInfo);
+
+  const logoutHandler = () => {
+    console.log('LOGOUT');
+    dispatch(logout())
+  }
 
   useEffect(() => {
     // dispatch(listLanguages())
@@ -22,7 +33,7 @@ function Header() {
 
     <header>
     
-    <Navbar expand='lg' className='mb-3'>
+    <Navbar expand='lg' className='mb-3 ps-5 pe-5'>
       <Container fluid>
         {/* <LinkContainer to='/'> */}
         {/* <Link to='/'> */}
@@ -50,16 +61,50 @@ function Header() {
               </Nav.Link>
               {/* <Nav.Link href='#'>Link 1</Nav.Link> */}
 
+              { userInfo ? (
+                <NavDropdown
+                  // title={ userInfo.name.charAt(0).toUpperCase() + userInfo.name.slice(1) } id='first_name'
+                  title={ userInfo.first_name.charAt(0).toUpperCase() + userInfo.first_name.slice(1)}
+                  id='first_name'
+                >
+                  {/* <LinkContainer to='/profile'> */}
+                  {/* <Nav.Link as={ Link } to='/profile'>
+                    <NavDropdown.Item>Profile</NavDropdown.Item>
+                  </Nav.Link> */}
+                  {/* </LinkContainer> */}
+                  <NavDropdown.Item href='/profile'>Profile</NavDropdown.Item>
+
+                  { userInfo.isAdmin && (
+                    <NavDropdown.Item href='/admin'>Admin</NavDropdown.Item>
+                  )}
+
+                  <NavDropdown.Item onClick={ logoutHandler }>Logout</NavDropdown.Item>
+                </NavDropdown>
+
+              ) : (
+                // <LinkContainer to='/login'>
+                  <Nav.Link as={ Link } to='/login'>
+                    <i className='fa fa-user me-1'></i>Login
+                  </Nav.Link>
+                // </LinkContainer>
+              )}
+
+
               <NavDropdown
-                title='Language'
+                title='Languages'
                 id='offcanvasNavbarDropdown-expand-expand'
               >
+                { languages.map(language => (
+                  <NavDropdown.Item href={ `/languages/${ language.language }` }>
+                    { language.language.charAt(0).toUpperCase() + language.language.slice(1) }
+                  </NavDropdown.Item>
+                ))}
                 {/* {languages.map(language => (
                   <NavDropdown.Item key={ language.id } href={`/${ language.language }`}>{ language.language }</NavDropdown.Item>
                 ))} */}
-                <NavDropdown.Item href='/spanish'>Spanish</NavDropdown.Item>
-                <NavDropdown.Item href='/french'>French</NavDropdown.Item>
-                <NavDropdown.Item href='/italian'>Italian</NavDropdown.Item>
+                {/* <NavDropdown.Item href='/languages/spanish'>Spanish</NavDropdown.Item>
+                <NavDropdown.Item href='/languages/french'>French</NavDropdown.Item>
+                <NavDropdown.Item href='/languages/italian'>Italian</NavDropdown.Item> */}
               </NavDropdown>
             
             </Nav>
