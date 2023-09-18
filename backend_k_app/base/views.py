@@ -21,7 +21,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
 
-from .serializers import WordSerializer, LanguageSerializer
+from .serializers import WordSerializer, LanguageSerializer, CountrySerializer
 
 from .models import Language, Translation, Word, Spanish, Country
 
@@ -247,7 +247,14 @@ def getLanguage(request, lang):
    serializer = LanguageSerializer(language, many=False)
 
    return Response(serializer.data)
-   
+
+@api_view(['GET']) 
+@permission_classes([IsAdminUser])
+def getCountries(request):
+   countries = Country.objects.all()
+   serializezr = CountrySerializer(countries, many=True)
+
+   return Response(serializezr.data)
 
 @api_view(['GET'])
 def getWords(request):

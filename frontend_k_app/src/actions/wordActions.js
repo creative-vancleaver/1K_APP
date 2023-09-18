@@ -37,7 +37,7 @@ export const listWords = () => async(dispatch) => {
 
     dispatch({
       type: WORD_LIST_FAIL,
-      payload: error.response && error.response.data.detail ?
+      payload: error.message && error.response.data.detail ?
         error.response.data.detail
         : error.message
     })
@@ -57,7 +57,7 @@ export const listWordsLanguage = (language) => async(dispatch) => {
 
     dispatch({
       type: WORD_LANGUAGE_FAIL,
-      payload: error.response && error.response.data.detail ?
+      payload: error.message && error.response.data.detail ?
         error.response.data.detail
         : error.message
     })
@@ -101,7 +101,7 @@ export const randomWordByLanguage = (language) => async(dispatch) => {
 
     dispatch({
       type: WORD_RANDOM_LANGUAGE_FAIL,
-      payload: error.response && error.response.data.detail ?
+      payload: error.message && error.response.data.detail ?
         error.response.data.detail
           : error.message
     })
@@ -150,7 +150,7 @@ export const updateScore = (language, word, value) => async(dispatch) => {
 
     dispatch({
       type: UPDATE_WORD_SCORE_FAIL,
-      payload: error.response && error.response.data.detail
+      payload: error.message && error.response.data.detail
       ? error.response.data.detail
         : error.message
     })

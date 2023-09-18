@@ -131,7 +131,7 @@ export const register = (first_name, last_name, email, password) => async (dispa
         
         dispatch({
             type: USER_REGISTER_FAIL,
-            payload: error.response && error.response.data.detail
+            payload: error.message && error.response.data.detail
             ? error.response.data.detail
                 : error.message
         })
@@ -348,7 +348,7 @@ export const listUsers = () => async (dispatch, getState) => {
 
         dispatch({
             type: USER_LIST_FAIL,
-            payload: error.response && error.response.data.detail ?
+            payload: error.message && error.response.data.detail ?
                 error.response.data.detail
                 : error.message
         })
@@ -391,7 +391,7 @@ export const deleteUser = (id) => async (dispatch, getState) => {
         
         dispatch({
             type: USER_DELETE_FAIL,
-            paylaod: error.response && error.response.data.detail ?
+            paylaod: error.message && error.response.data.detail ?
                 error.response.data.detail 
                 : error.message
         })

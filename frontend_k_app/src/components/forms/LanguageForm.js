@@ -45,6 +45,9 @@ const LanguageForm = ({ show, handleClose }) => {
                 'language': languageSelection
             }));
             // dispatch(getUserDetails(user.id));
+            handleClose();
+            console.log('user from form ', user);
+            dispatch(getUserDetails(user.id))
         } else {
             console.log('You are already learning this language');
         }
@@ -53,9 +56,10 @@ const LanguageForm = ({ show, handleClose }) => {
     useEffect(() => {
         dispatch(listLanguages());
 
-        // if (languageAddSuccess) {
-        //     dispatch(getUserDetails(user.id))
-        // }
+        if (languageAddSuccess) {
+            dispatch(getUserDetails(user.id))
+            dispatch(listLanguages())
+        }
 
     }, [dispatch, languageAddSuccess]);
 

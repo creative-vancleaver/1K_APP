@@ -10,6 +10,8 @@ urlpatterns = [
 
     path('languages/', views.getLanguages, name='languages'),
 
+    path('countries/', views.getCountries, name='countries'),
+
     # NOT IN USE - considering creating a language home/about page...
     path('languages/<str:lang>/', views.getLanguage, name='language'),
 

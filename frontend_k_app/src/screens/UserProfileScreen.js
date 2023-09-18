@@ -301,7 +301,7 @@ const UserProfileScreen = () => {
                     <h4>Languages Learning</h4>
                     { languagesLearning.map(language => {
                         return (
-                            <p key={ language.id }>
+                            <p key={ language.id } className={ language.id }>
                                 { language.language.charAt(0).toUpperCase() + language.language.slice(1) }
 
                             </p>

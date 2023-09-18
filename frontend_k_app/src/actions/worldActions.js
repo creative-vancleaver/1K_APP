@@ -19,7 +19,7 @@ export const getWorld = () => async(dispatch) => {
   } catch(error) {
     dispatch({
       type: WORLD_FAIL,
-      payload: error.response && error.response.data.detail ?
+      payload: error.message && error.response.data.detail ?
         error.response.data.detail 
         : error.message
     })

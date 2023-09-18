@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // ACTIONS
 import { listUsers, deleteUser } from '../actions/userActions';
-import { listLanguages } from '../actions/languageActions';
+import { listLanguages, listCountries } from '../actions/languageActions';
 
 // COMPONENTS
 import Spinner from '../components/spinner/Spinner';
@@ -33,6 +33,9 @@ const AdminScreen = () => {
     const languageList = useSelector(state => state.languageList);
     const { languages } = languageList;
 
+    const countryList = useSelector(state => state.countryList);
+    const { countries } = countryList;
+
     const addLanguage = useSelector(state => state.addLanguage);
     const { success: addLanguageSuccess } = addLanguage;
 
@@ -44,6 +47,7 @@ const AdminScreen = () => {
         if (userInfo && userInfo.isAdmin) {
             dispatch(listUsers())
             dispatch(listLanguages())
+            dispatch(listCountries())
         } else {
             navigate('/login')
         }

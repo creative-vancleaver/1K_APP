@@ -206,7 +206,7 @@ export const userUpdateReducer = (state = { user: {} }, action) => {
     }
 }
 
-export const addLanguageToUserReducer = (state = { user: { languages: [] } }, action) => {
+export const addLanguageToUserReducer = (state = { user: { languages: [] }  }, action) => {
 
     switch(action.type) {
 
@@ -218,7 +218,8 @@ export const addLanguageToUserReducer = (state = { user: { languages: [] } }, ac
                 loading: false,
                 success: true,
                 ...state,
-                languages: [...state.languages, action.payload]
+                // user: [...state.user, action.payload]
+                languages: action.payload
             }
 
         case ADD_LANGUAGE_TO_USER_FAIL:

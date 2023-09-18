@@ -15,6 +15,7 @@ import {
   languageListReducer,
   activeLanguageReducer,
   addLanguageReducer,
+  getCountryListReducer,
 } from './reducers/languageReducers'
 
 import {
@@ -43,6 +44,7 @@ const reducer = combineReducers({
   languageList: languageListReducer,
   activeLanguage: activeLanguageReducer,
   addLanguage: addLanguageReducer,
+  countryList: getCountryListReducer,
 
   world: getWorldReducer,
 

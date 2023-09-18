@@ -9,6 +9,10 @@ import {
   ADD_LANGUAGE_REQUEST,
   ADD_LANGUAGE_SUCCESS,
   ADD_LANGUAGE_FAIL,
+
+  GET_COUNTRY_LIST_REQUEST,
+  GET_COUNTRY_LIST_SUCCESS,
+  GET_COUNTRY_LIST_FAIL,
 } from '../constants/languageConstants'
 import { WORD_LIST_FAIL } from '../constants/wordConstants'
 
@@ -29,6 +33,33 @@ export const languageListReducer = (state = { languages: [] }, action) => {
       return state
 
   } 
+}
+
+export const getCountryListReducer = (state = { countries: [] }, action) => {
+
+  switch(action.type) {
+
+    case GET_COUNTRY_LIST_REQUEST:
+      return {
+        loading: true, 
+      }
+
+    case GET_COUNTRY_LIST_SUCCESS: 
+      return {
+        loading: false,
+        success: true,
+        countries: action.payload
+      }
+
+    case GET_COUNTRY_LIST_FAIL: 
+      return {
+        loading: false,
+        error: action.payload
+      }
+
+    default:
+      return state
+  }
 }
 
 export const activeLanguageReducer = (state = { language: {} }, action) => {

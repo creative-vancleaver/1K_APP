@@ -12,6 +12,10 @@ import {
   ADD_LANGUAGE_SUCCESS,
   ADD_LANGUAGE_FAIL,
 
+  GET_COUNTRY_LIST_REQUEST,
+  GET_COUNTRY_LIST_SUCCESS,
+  GET_COUNTRY_LIST_FAIL,
+
 } from '../constants/languageConstants'
 
 export const listLanguages = () => async(dispatch) => {
@@ -28,10 +32,49 @@ export const listLanguages = () => async(dispatch) => {
 
     dispatch({
       type: LANGUAGE_LIST_FAIL,
-      payload: error.response && error.response.data.detail ?
+      payload: error.message && error.response.data.detail ?
         error.response.data.detail
         : error.message
     })
+  }
+}
+
+export const listCountries = () => async (dispatch, getState) => {
+
+  try {
+
+    dispatch({
+      type: GET_COUNTRY_LIST_REQUEST
+    });
+
+    const {
+      userLogin: { userInfo }
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${ userInfo.token }`
+      }
+    }
+
+    const { data } = await axios.get(
+      '/countries/',
+      config
+      );
+
+    dispatch({
+      type: GET_COUNTRY_LIST_SUCCESS, payload: data
+    })
+
+  } catch (error) {
+
+    dispatch({
+      type: GET_COUNTRY_LIST_FAIL,
+      payload: error.message && error.response.data.detail ?
+        error.response.data.detail 
+          : error.message
+    })
+
   }
 }
 
@@ -89,7 +132,7 @@ export const addLanguage = (language, url) => async(dispatch, getState) => {
 
     dispatch({
       type: ADD_LANGUAGE_FAIL,
-      payload: error.response && error.response.data.detail ?
+      payload: error.message && error.response.data.detail ?
         error.response.data.detail 
           : error.message
     })
