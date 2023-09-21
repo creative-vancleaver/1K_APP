@@ -22,14 +22,14 @@ class CustomUserAdmin(UserAdmin):
     # list_filter = ('id', 'email', 'is_staff')
     inlines = [UserWordInline]
     fieldsets = (
-        (None, {'fields': ('first_name', 'last_name', 'email', 'password', 'native_language', 'languages')}),
+        (None, {'fields': ('first_name', 'email', 'password', 'native_language', 'languages')}),
         ('Permissions', {'fields': ('is_staff', 'is_active', 'groups', 'user_permissions')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
             'fields': (
-                'first_name', 'last_name', 'email', 'native_language', 'languages', 'password', 'password2', 'is_staff', 'is_active', 'groups', 'user_permissions'
+                'first_name', 'email', 'native_language', 'languages', 'password1', 'password2', 'is_staff', 'is_active', 'groups', 'user_permissions'
             )}
         ),
     )
