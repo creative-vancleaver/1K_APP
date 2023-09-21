@@ -95,7 +95,7 @@ function Header() {
                 id='offcanvasNavbarDropdown-expand-expand'
               >
                 { languages.map(language => (
-                  <NavDropdown.Item href={ `/languages/${ language.language }` }>
+                  <NavDropdown.Item key={ language.id } href={ `/languages/${ language.language }` }>
                     { language.language.charAt(0).toUpperCase() + language.language.slice(1) }
                   </NavDropdown.Item>
                 ))}

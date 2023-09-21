@@ -56,7 +56,7 @@ const AdminScreen = () => {
             dispatch(listLanguages())
         }
 
-    }, [dispatch, navigate, successDelete, userInfo])
+    }, [dispatch, navigate, successDelete, userInfo, addLanguageSuccess])
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);

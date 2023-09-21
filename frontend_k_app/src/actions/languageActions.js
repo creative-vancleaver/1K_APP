@@ -41,6 +41,8 @@ export const listLanguages = () => async(dispatch) => {
 
 export const listCountries = () => async (dispatch, getState) => {
 
+  console.log('list countriess!!!! ')
+
   try {
 
     dispatch({
@@ -58,7 +60,7 @@ export const listCountries = () => async (dispatch, getState) => {
     }
 
     const { data } = await axios.get(
-      '/countries/',
+      '/languages/countries/',
       config
       );
 
@@ -97,7 +99,7 @@ export const activeLanguage = (language) => (dispatch) => {
 }
 
 // NOTE: GETTING PARAMS FROM FROM DATA
-export const addLanguage = (language, url) => async(dispatch, getState) => {
+export const addLanguage = (formData) => async(dispatch, getState) => {
 
   try {
 
@@ -105,23 +107,34 @@ export const addLanguage = (language, url) => async(dispatch, getState) => {
       type: ADD_LANGUAGE_REQUEST
     })
 
+
     const {
       userLogin: { userInfo }
     } = getState()
 
     const config = {
       headers: {
-        'Content-Type': 'application/JSON',
+        // 'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${ userInfo.token }`
       }
     }
 
+    // const formData = new FormData();
+    // formData.append('language', language);
+    // formData.append('url', url);
+    // formData.append('countries', countries);
+    // formData.append('img', img);
+
     const { data } = await axios.post(
-      `/get1000words/`,
+      `/languages/get1000words/`,
       // MUST PASS IN ALL FORM DATA TO BACKEND
-      { 'language': language, 'url': url },
+      // { 'language': language, 'url': url, 'countries': countries, 'img': img },
+      formData,
       config
     )
+
+    console.log(data)
 
     dispatch({
       type: ADD_LANGUAGE_SUCCESS,
@@ -132,8 +145,8 @@ export const addLanguage = (language, url) => async(dispatch, getState) => {
 
     dispatch({
       type: ADD_LANGUAGE_FAIL,
-      payload: error.message && error.response.data.detail ?
-        error.response.data.detail 
+      payload: error.message && error.response.data.detail 
+      ? error.response.data.detail
           : error.message
     })
   }

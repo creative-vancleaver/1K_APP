@@ -136,6 +136,20 @@ function LanguageScreen() {
               </Col>
             ))}
           </Row>
+
+          <Row className='justify-content-center mt-5'>
+            <Col xs={6}>
+              {/* <Button className='w-100'>Play</Button> */}
+              <Button as={ Link } to={`/languages/${language}/random`} className='w-100' onClick={ addLang }>Play</Button>
+              {/* <Button as={ Link } to={`/${ word.id }`} className='w-100'>Play</Button> */}
+            </Col>
+
+            {/* <Col xs={5}>
+              <Button className='w-100'></Button>
+            </Col> */}
+
+          </Row>
+
           </div>
         )
       }
@@ -148,18 +162,7 @@ function LanguageScreen() {
         ))}
       </Row> */}
 
-      <Row className='justify-content-center mt-5'>
-        <Col xs={6}>
-          {/* <Button className='w-100'>Play</Button> */}
-          <Button as={ Link } to={`/languages/${language}/random`} className='w-100' onClick={ addLang }>Play</Button>
-          {/* <Button as={ Link } to={`/${ word.id }`} className='w-100'>Play</Button> */}
-        </Col>
-
-        {/* <Col xs={5}>
-          <Button className='w-100'></Button>
-        </Col> */}
-
-      </Row>
+ 
 
     </div>
 

@@ -177,59 +177,144 @@ def get1000WordsFromHTMLTable(request):
 #    requests.get(url)
 #    print(requests.get(url)) # RESPONSE === 200
 
-   data = request.data
-   print(data)
-#    print(data['language']['language'])
-#    url = data['url']
-   url = data['language']['url']
-   print(requests.get(url))
+#    data = request.data
+#    # files = request.FILES
+#    print(data)
 
-#    pages = requests.get(url)
-   pages = requests.get(url)
-#    parser-lxml = Change html into Python friendly format
-   soup = BeautifulSoup(pages.text, 'lxml')
-#    print(soup)
-#    print(soup.table)
-#    print(soup.table.find('tr'))
-#    language = soup.table.find('tr').text
-   row1 = soup.table.find('tr')
-   row1_data = row1.find_all('td')
-   print(row1_data)
-#    language_from_page = row1_data[1].text.lower() #spanish
-   language_from_form = data['language']['language'].lower()
-   print('language from form, ', language_from_form)
-#    language_exists = Language.objects.filter(language=language_from_page).exists()
-   language_exists = Language.objects.filter(language=language_from_form).exists()
+#    selected_country_names = []
+#    country_index = 0
 
-   if not language_exists:
-      new_language = Language.objects.create(language=language_from_form)
-      new_language.save()
-      print('created new language')
+#    while f'selectedCountries[{ country_index }]' in data:
+#       selected_country = data[f'selectedCountries[{ country_index }]']
+#       selected_country_names.append(selected_country)
+#       country_index += 1
 
-      print('adding new words to ', new_language)
+#    print(selected_country_names)
 
-      tabel_rows = soup.table.find_all('tr')
-   #    print(tabel_rows)
-      for tr in tabel_rows[1:]:
-         print(tr)
-         tabel_data = tr.find_all('td')
-         no = tabel_data[0].text
-         word = tabel_data[1].text
-         translation = tabel_data[2].text
-         print(no, word, translation)
-         new_word = Word.objects.create(language=new_language, word=word, translation=translation)
-         new_word.save()
+#    selected_countries = Country.objects.filter(name__in=selected_country_names)
 
-   else:
-      print('language already exists ---- checking for words')
-      exists_language = Language.objects.get(language=language_from_form)
-      exists_words = Word.objects.filter(language=exists_language).count()
-      new_language = exists_language
-      print(new_language, ' word count ', exists_words)
+#    # if data['selectedCountries']:
+#    #    print(data['selectedCountries'])
+
+#    if data['img']:
+#       image = data['img']
+#       print(image)
+# #    print(data['language']['language'])
+# #    url = data['url']
+#    if data['url']:
+#       url = data['url']
+#       print(requests.get(url))
+
+#    #    pages = requests.get(url)
+#       pages = requests.get(url)
+#    #    parser-lxml = Change html into Python friendly format
+#       soup = BeautifulSoup(pages.text, 'lxml')
+#    #    print(soup)
+#    #    print(soup.table)
+#    #    print(soup.table.find('tr'))
+#    #    language = soup.table.find('tr').text
+#       row1 = soup.table.find('tr')
+#       row1_data = row1.find_all('td')
+#       print(row1_data)
+# #    language_from_page = row1_data[1].text.lower() #spanish
+#    language_from_form = data['language'].lower()
+#    print('language from form, ', language_from_form)
+# #    language_exists = Language.objects.filter(language=language_from_page).exists()
+#    language_exists = Language.objects.filter(language=language_from_form).exists()
+
+#    if not language_exists:
+#       new_language = Language.objects.create(language=language_from_form)
+#       new_language.save()
+#       print('created new language')
+
+
+#       if data['url']:
+#          print('adding new words to ', new_language)
+
+
+#          tabel_rows = soup.table.find_all('tr')
+#       #    print(tabel_rows)
+#          for tr in tabel_rows[1:]:
+#             print(tr)
+#             tabel_data = tr.find_all('td')
+#             no = tabel_data[0].text
+#             word = tabel_data[1].text
+#             translation = tabel_data[2].text
+#             print(no, word, translation)
+#             new_word = Word.objects.create(language=new_language, word=word, translation=translation)
+#             new_word.save()
+
+#       else:
+#          print('no URL provided -- no words to be added')
+#          return Response({'message': 'No URL provided. No words added'}, status=status.HTTP_200_OK)
+
+#    else:
+#       print('language already exists ---- checking for words')
+#       exists_language = Language.objects.get(language=language_from_form)
+#       exists_words = Word.objects.filter(language=exists_language).count()
+#       new_language = exists_language
+#       print(new_language, ' word count ', exists_words)
+
+#       return Response({'message': 'Langauge already exists'}, status=status.HTTP_200_OK)
 
 #    if exists_words == 0:
 
+   data = request.data
 
+   language_from_form = data['language'].lower()
+   language_exists = Language.objects.filter(language=language_from_form).exists()
+
+   if not language_exists:
+      language = Language.objects.create(language=language_from_form)
+      language.save()
+   else:
+      language = Language.objects.get(language=language_from_form)
+
+   if data['img']:
+      image = data['img']
+      if not language.image:
+         language.image = image
+         language.save()
+
+   selected_country_names = []
+   country_index = 0
+
+   while f'selectedCountries[{ country_index }]' in data:
+      selected_country = data[f'selectedCountries[{ country_index }]']
+      selected_country_names.append(selected_country)
+      country_index += 1
+
+   selected_countries = Country.objects.filter(name__in=selected_country_names)
+   language_country_names = language.countries.values_list('name', flat=True)
+   # new_countries = []
+
+   if len(selected_countries) > 0:
+      for country_name in selected_countries:
+         if country_name not in language_country_names:
+            country = Country.objects.get(name=country_name)
+            language.countries.add(country)
+            language.save()
+   
+   if data['url']:
+      url = data['url']
+      pages = request.get(url)
+      soup = BeautifulSoup(pages.text, 'lxml')
+
+      language_words = Word.objects.filter(language=language)
+
+      table_rows = soup.table.find_all('tr')
+
+      for tr in table_rows[1:]:
+         table_data = tr.find_all('td')
+         no = table_data[0].text
+         word = table_data[1].text
+         translation = table_data[2].text
+
+         existing_word = language_words.filter(word=word).first()
+         
+         if existing_word is None:
+            new_word = Word.objects.create(language=language, word=word, translation=translation)
+            new_word.save()
 
 
    return Response({'message': 'success'})

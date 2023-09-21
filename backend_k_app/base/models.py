@@ -1,12 +1,17 @@
+import os
+
 from django.db import models
 from django.conf import settings
 
 # from users.models import User
 
 # Create your models here.
+
+def country_path(instance, filename):
+    return '/'.join(['countries', str(instance.name), filename])
 class Country(models.Model):
     name = models.CharField(max_length=500, unique=True)
-    flag = models.ImageField(null=True, blank=True)
+    flag = models.ImageField(null=True, blank=True, upload_to=country_path)
 
     class Meta:
         ordering = ['id']
@@ -15,9 +20,11 @@ class Country(models.Model):
     def __str__(self):
         return self.name
 
+def language_path(instance, filename):
+    return '/'.join(['languages', str(instance.language), filename])
 class Language(models.Model):
     language = models.CharField(max_length=200, blank=True, null=True)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True, upload_to=language_path)
     countries = models.ManyToManyField(Country, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

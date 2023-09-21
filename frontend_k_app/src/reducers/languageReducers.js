@@ -45,6 +45,7 @@ export const getCountryListReducer = (state = { countries: [] }, action) => {
       }
 
     case GET_COUNTRY_LIST_SUCCESS: 
+      console.log('getCountryListReducer ', action.payload)
       return {
         loading: false,
         success: true,
@@ -95,28 +96,29 @@ export const addLanguageReducer = (state = { languages: [] }, action) => {
 
     case ADD_LANGUAGE_SUCCESS:
 
-      const lang = action.payload;
-      const existLang = state.languages.find(x => x.langauge == lang.language)
+      // const lang = action.payload;
+      // const existLang = state.languages.find(x => x.langauge == lang.language)
 
-      if(existLang) {
+      // if(existLang) {
 
-        return {
-          loading: false,
-          success: false,
-          state,
-          // languages: state.languages.map(x => x.language === lang.language ? lang : x)
-        }
+      //   return {
+      //     loading: false,
+      //     success: false,
+      //     ...state,
+      //     // languages: state.languages.map(x => x.language === lang.language ? lang : x)
+      //   }
 
-      } else {
+      // } else {
 
-        return {
-          loading: false,
-          success: true,
-          ...state,
-          languages: [...state.languages, lang]
-        }
-
+      return {
+        loading: false,
+        success: true,
+        // ...state,
+        // languages: [...state.languages, action.payload]
+        langauges: action.payload
       }
+
+      // }
 
     case ADD_LANGUAGE_FAIL:
       return {

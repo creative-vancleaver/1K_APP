@@ -13,8 +13,10 @@ const AddLanguage = () => {
 
     const [language_name, setLanguage_Name] = useState('');
     const [language_url, setLanguage_Url] = useState('');
-    const [country_names, setCounty_Names] = useState([])
-    const [selectedCounties, setSelectedCountries] = useState([])
+    const [country_names, setCountry_Names] = useState([])
+    const [selectedCountries, setSelectedCountries] = useState([])
+    const [formKey, setFormKey] = useState(0);
+    const [img, setImg] = useState();
     
     const languageList = useSelector(state => state.languageList);
     const { languages } = languageList;
@@ -33,41 +35,104 @@ const AddLanguage = () => {
             value: c.name
         }))
         console.log('countryNames ', countryNames);
+        // setCountry_Names(countryNames);
         return countryNames
 
     }
 
-    const handleChange = (selectedCounties) => {
-        setSelectedCountries({ selectedCounties })
+    const handleChange = (selectedCountries) => {
+        setSelectedCountries( selectedCountries )
+    }
+
+    const clearForm = () => {
+        setLanguage_Name('');
+        setLanguage_Url('');
+        setSelectedCountries([]);
+        setImg(null)
+        setFormKey(formKey + 1);
     }
 
     const submitHandler = (e) => {
         e.preventDefault();
-        console.log('adding language ', language_name, language_url, selectedCounties);
+        console.log('adding language ', language_name, language_url, selectedCountries, img);
+        // if (language_url) {
+        //     const url = language_url
+        // } else {
+        //     const url = null
+        // }
+
+        // const formData = {
+        //     language: {
+        //         language: language_name,
+        //         url: language_url,
+        //         img: img,
+        //         countries: selectedCountries
+        //     }
+        // }
+
+        const countryObjects = {};
+        selectedCountries.forEach((country, index) => {
+            countryObjects[`selectedCountries[${ index }][value]`] = country.label;
+        })
+
+        const formData = new FormData();
+        formData.append('language', language_name);
+        formData.append('url', language_url);
+        formData.append('img', img)
+
+        // formData.append('selectedCountries', selectedCountries)
+
+        selectedCountries.map((c, index) => {
+            formData.append(`selectedCountries[${ index }]`, c.value)
+        })
+
+        // for (const key in countryObjects) {
+        //     if (countryObjects.hasOwnProperty(key)) {
+        //         formData.append(key, countryObjects[key])
+        //     }
+        // }
+        // formData.append('countries[0]', selectedCountries[0])
+        // formData.append('countries[1]', selectedCountries[1])
+
+        dispatch(addLanguage(formData))
 
         // dispatch(addLanguage({
         //     language: language_name,
-        //     url: language_url
+        //     url: language_url,
+        //     countries: selectedCountries,
+        //     img: img
         // }))
+
+        clearForm();
     }
 
     useEffect(() => {
 
         dispatch(listCountries());
 
-        if (countriesSuccess) {
-            setCounty_Names(countryOptions());
-        }
+        // if (countriesSuccess) {
+        //     setCountry_Names(countryOptions());
+        //     // countryOptions()
+        // }
 
         // if (countriesSuccess) {
-        //     // setCounty_Names(countryOptions());
+        //     // setCountry_Names(countryOptions());
         //     const countryOptions = countries.map(c => ({
         //         label: c.name,
         //         value: c.name
         //     }))
         // }
         
-    }, []);
+    }, [dispatch]);
+
+    useEffect(() => {
+
+        if (countriesSuccess && countries.length > 0) {
+            const formattedCountryNames = countryOptions();
+            setCountry_Names(formattedCountryNames);
+        }
+
+    }, [countriesSuccess]);
 
     // const countryOptions = countries.map(c => ({
     //     label: c.name,
@@ -80,7 +145,7 @@ const AddLanguage = () => {
     <FormContainer>
         <h1>Add a New Language</h1>
 
-        <Form onSubmit={ submitHandler }>
+        <Form key={ formKey } onSubmit={ submitHandler }>
 
             <Form.Group controlId='languageName'>
                 <Form.Label>
@@ -91,6 +156,7 @@ const AddLanguage = () => {
                     placeholder='Enter Language Name'
                     value={ language_name }
                     onChange={ (e) => setLanguage_Name(e.target.value) }
+                    required
                 ></Form.Control>
             </Form.Group>
 
@@ -112,8 +178,10 @@ const AddLanguage = () => {
                 </Form.Label>
                 <Form.Control
                     type='file'
+                    onChange={ (e) => setImg(e.target.files[0]) }
                     // placeholder='Upload an Image'
-                    // value={ language_image }
+                    // value={ img }
+                    // autoComplete='off'
                     // onChange={}
                 ></Form.Control>
             </Form.Group>
@@ -126,7 +194,7 @@ const AddLanguage = () => {
                     isMulti
                     options={ country_names }
                     placeholder='Select a Country'
-                    value={ selectedCounties.value }
+                    value={ selectedCountries }
                     onChange={ handleChange }
                     className='basic-multi-select'
                     classNamePrefix='select'
@@ -138,6 +206,7 @@ const AddLanguage = () => {
             </Form.Group>
 
             <Button type='submit' variant='primary' className='my-3'>Add Language</Button>
+            <Button variant='danger' className='my-3 ms-3' onClick={ clearForm }>Cancel</Button>
         </Form>
     </FormContainer>
 
