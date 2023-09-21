@@ -55,10 +55,10 @@ function Header() {
 
           <Offcanvas.Body>
             <Nav className='justify-content-end flex-grow-1 pe-3 me-3'>
-              <Nav.Link href='#' className='d-flex'>
+              {/* <Nav.Link href='#' className='d-flex'>
                 <i className='fa-sharp fa-solid fa-house me-1'></i>
                 Home
-              </Nav.Link>
+              </Nav.Link> */}
               {/* <Nav.Link href='#'>Link 1</Nav.Link> */}
 
               { userInfo ? (
@@ -75,7 +75,7 @@ function Header() {
                   <NavDropdown.Item href='/profile'>Profile</NavDropdown.Item>
 
                   { userInfo.isAdmin && (
-                    <NavDropdown.Item href='/admin'>Admin</NavDropdown.Item>
+                    <NavDropdown.Item href='/profile/admin'>Admin</NavDropdown.Item>
                   )}
 
                   <NavDropdown.Item onClick={ logoutHandler }>Logout</NavDropdown.Item>

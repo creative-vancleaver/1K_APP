@@ -41,7 +41,7 @@ const UserUpdateModal = ({ show, handleClose }) => {
         
         if(successUpdate) {
             dispatch({ type: USER_UPDATE_RESET });
-            navigate('/admin')
+            navigate('/profile/admin')
         } else {
             
             // if (!user.name || user.id !== Number(userId.id)) {

@@ -45,8 +45,8 @@ function App() {
             <Route path='/register/' element={ <UserRegisterScreen /> } />
             <Route path='/profile/' element={ <UserProfileScreen /> } />
 
-            <Route path='/admin/' element={ <AdminScreen /> } />
-            <Route path='/admin/user/:id/edit' element={ <UserUpdate /> } />
+            <Route path='/profile/admin/' element={ <AdminScreen /> } />
+            <Route path='/profile/admin/user/:id/edit' element={ <UserUpdate /> } />
 
             <Route path='/languageform/' element={ <LanguageForm /> } />
             {/* <Route path='/users/' element={ <UserListScreen /> } /> */}
