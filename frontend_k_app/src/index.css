@@ -294,7 +294,8 @@ h3 {
   justify-items: center;
   position: absolute;
   z-index: 5;
-  top: 50vh;
+  /* ADD MEDIA QUERIES FOR top/left STYLNG AT VARIOUS SCREEN SIZES */
+  top: 80vh;
   left: 45vw;
 }
 

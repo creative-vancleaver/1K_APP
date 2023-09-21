@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
-
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { activeLanguage as getActiveLanguage } from '../../actions/languageActions';
@@ -28,6 +28,8 @@ const Map = () => {
   // }
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [languageAvailable, setLanguageAvailable] = useState(false);
 
   const[isHovering, setIsHovering] = useState(false);
@@ -61,7 +63,7 @@ const Map = () => {
       const countries = languages[l].countries;
       for (const c in countries) {
         if (countries[c].name.includes(targetCountry)) {
-          return languages[l].language
+          return languages[l]
         }
       }
     }
@@ -72,12 +74,12 @@ const Map = () => {
     // }
   }
 
-  const languageObject = useSelector(state => getLanguageByName(state, activeLanguage.language));
+  const languageObject = useSelector(state => state.activeLanguage);
   console.log('language obj = ', languageObject);
 
-  const handleClick = (e, geo) => {
-    console.log(geo.properties.NAME, geo.properties.ISO_A2_EH);
-    console.log(e, e.target);
+  const handleClick = (geo) => {
+    // console.log(geo.properties.NAME, geo.properties.ISO_A2_EH);
+    // console.log(e, e.target);
     // if (supportedCountries.includes(geo.properties.NAME)) {
     //   dispatch(activeLanguage(geo.properties.NAME));
     // }
@@ -86,6 +88,8 @@ const Map = () => {
     const language = findLanguageByCountry(country);
     console.log('country ', country, 'language ', language, 'languages', languages);
     // dispatch(getActiveLanguage(language));
+
+    navigate(`/languages/${ language.language }`)
 
 
 
@@ -98,19 +102,19 @@ const Map = () => {
   }
 
   const isCountrySupported = (country) => {
-    console.log(languages)
+    // console.log(languages)
     for (const l in languages) {
-      console.log(languages[l].countries)
+      // console.log(languages[l].countries)
       const countries = languages[l].countries
       for (const c in countries) {
         if (countries[c].name.includes(country)) {
-          console.log('true')
+          // console.log('true')
           return true
         }
       }
 
     }
-    console.log('false');
+    // console.log('false');
     return false;
     // for (const language in languages) {
     //   console.log('isCountrySuppored lang ', language.id)
@@ -137,7 +141,10 @@ const Map = () => {
   const handleMouseOver = (geo) => {
     setIsHovering(true);
     const country = geo.properties.NAME;
-    const language = findLanguageByCountry(country).charAt(0).toUpperCase() + findLanguageByCountry(country).slice(1);
+    // const language = findLanguageByCountry(country).charAt(0).toUpperCase() + findLanguageByCountry(country).slice(1);
+    const language = findLanguageByCountry(country);
+    // language = language.charAt(0).toUpperCase() + language.slice(1); 
+    // const lang_name = language.language.charAt(0).toUpperCase() + language.language.slice(1);
     dispatch(getActiveLanguage(language));
 
   };
@@ -192,11 +199,11 @@ const Map = () => {
                   // }}
                   onMouseOver={ () => handleMouseOver(geo) }
                   onMouseOut={ handleMouseOut }
-                  // onClick={(e) => handleClick(e, geo)}
+                  onClick={ () => handleClick(geo) }
                   style={{
                     // hover: { outline: 'none', fill: 'lightgrey', backgroundImage: `url('https://flagcdn.com/256x192/${ geo.properties.ISO_A2_EH.toString().toLowerCase() }.png')` },
                     // backgroundColor: languageAvailable ? 'black' : 'white',
-                    default: { backgroundImage: 'url("https://flagcdn.com/256x192/mx.png")' },
+                    // default: { backgroundImage: 'url("https://flagcdn.com/256x192/mx.png")' },
                     hover: { fill: 'lightslategrey', cursor: 'pointer' },
                     pressed: { outline: 'none'}
                   }}
@@ -211,7 +218,7 @@ const Map = () => {
                   // onMouseEnter={() => {
                   //   getFlag()
                   // }}
-                  // onClick={(e) => handleClick(e, geo)}
+                  onClick={ () => handleClick(geo) }
                   style={{
                     // hover: { outline: 'none', fill: 'lightgrey', backgroundImage: `url('https://flagcdn.com/256x192/${ geo.properties.ISO_A2_EH.toString().toLowerCase() }.png')` },
                     // backgroundColor: languageAvailable ? 'black' : 'white',
@@ -237,12 +244,12 @@ const Map = () => {
     { isHovering && activeLanguage && (
         <div className='country-hover flex-col justify-content-center'>
          
-          <h2>{activeLanguage.language}</h2>
+          <h2>{ activeLanguage.language.language.charAt(0).toUpperCase() + activeLanguage.language.language.slice(1) }</h2>
           {/* <h4>{ languageObject.image }</h4> */}
           {/* <h4>{ languages[activeLanguage.language] }</h4> */}
-          {/* { languageObject.image && (
-            <img src={ languageObject.image } style={{ maxWidth: '200px' }}></img>
-          )} */}
+          { languageObject.language.image && (
+            <img src={ languageObject.language.image } style={{ maxWidth: '200px' }}></img>
+          )}
         </div>
       )}
 
