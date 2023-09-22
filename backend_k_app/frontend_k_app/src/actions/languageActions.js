@@ -24,7 +24,7 @@ export const listLanguages = () => async(dispatch) => {
   
     dispatch({ type: LANGUAGE_LIST_REQUEST });
 
-    const { data } = await axios.get('/languages/');
+    const { data } = await axios.get('/api/languages/');
 
     dispatch({ type: LANGUAGE_LIST_SUCCESS, payload: data })
 
@@ -60,7 +60,7 @@ export const listCountries = () => async (dispatch, getState) => {
     }
 
     const { data } = await axios.get(
-      '/languages/countries/',
+      '/api/languages/countries/',
       config
       );
 
@@ -127,7 +127,7 @@ export const addLanguage = (formData) => async(dispatch, getState) => {
     // formData.append('img', img);
 
     const { data } = await axios.post(
-      `/languages/get1000words/`,
+      `/api/languages/get1000words/`,
       // MUST PASS IN ALL FORM DATA TO BACKEND
       // { 'language': language, 'url': url, 'countries': countries, 'img': img },
       formData,

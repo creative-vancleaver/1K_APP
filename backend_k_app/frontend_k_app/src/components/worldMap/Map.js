@@ -9,6 +9,8 @@ import { getLanguageByName } from '../../selectors/languageSelectors';
 
 import LanguageList from '../LanguageList';
 
+import geoData from '../../../src/geojson_data.geojson'
+
 const Map = () => {
 
   // const geoPath =   "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
@@ -174,7 +176,7 @@ const Map = () => {
         // width={1000}
         // height={800}
       >
-        <Geographies geography="/geojson_data.geojson">
+        <Geographies geography={ geoData }>
           {({ geographies }) => 
             geographies.map((geo) => {
               // console.log('geo ', geo.properties.NAME, geo);

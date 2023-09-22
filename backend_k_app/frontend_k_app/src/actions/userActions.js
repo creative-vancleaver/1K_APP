@@ -61,7 +61,7 @@ export const login = (email, password) => async (dispatch) => {
         }
 
         const { data } = await axios.post(
-            '/users/login/',
+            '/api/users/login/',
             { 'email': email, 'password': password },
             config
         )
@@ -110,7 +110,7 @@ export const register = (first_name, last_name, email, password) => async (dispa
         }
 
         const { data } = await axios.post(
-            '/users/register/',
+            '/api/users/register/',
             { 'first_name': first_name, 'last_name': last_name, 'email': email, 'password': password },
             config
         )
@@ -156,7 +156,7 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
         }
 
         const { data } = await axios.get(
-            `/users/${ id }/`,
+            `/api/users/${ id }/`,
             config
         )
 
@@ -199,7 +199,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
         }
 
         const { data } =  await axios.put(
-            `/users/profile/update/`,
+            `/api/users/profile/update/`,
             user,
             config
         )
@@ -249,7 +249,7 @@ export const addUserLanguage = (user) => async (dispatch, getState) => {
         }
 
         const { data } = await axios.put(
-            `/users/${ userInfo.id }/add_lang/`,
+            `/api/users/${ userInfo.id }/add_lang/`,
             user,
             config
         )
@@ -294,7 +294,7 @@ export const getUserStats = () => async (dispatch, getState) => {
         }
 
         const { data } = await axios.get(
-            `/users/${ userInfo.id }/stats`,
+            `/api/users/${ userInfo.id }/stats`,
             config
         )
         console.log('userStats Redcuer data ', data)
@@ -337,7 +337,7 @@ export const listUsers = () => async (dispatch, getState) => {
             }
         }
 
-        const { data } =  await axios.get('/users/', config);
+        const { data } =  await axios.get('/api/users/', config);
         console.log('data ', data);
 
         dispatch({ 
@@ -377,8 +377,8 @@ export const deleteUser = (id) => async (dispatch, getState) => {
         }
 
         const { data } = await axios.delete(
-            // `/users/delete/${ id }`,
-            `/users/${ id }/delete`,
+            // `/api/users/delete/${ id }`,
+            `/api/users/${ id }/delete`,
             config
         )
 
@@ -420,7 +420,7 @@ export const updateUser = (user) => async (dispatch, getState) => {
 
         const { data } = await axios.put(
             // `users/all/update/${ user.id }/`,
-            `/users/${ user.id }/update/`,
+            `/api/users/${ user.id }/update/`,
             user,
             config
         )
