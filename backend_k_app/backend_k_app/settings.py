@@ -14,7 +14,7 @@ import os
 
 from pathlib import Path
 from datetime import timedelta
-
+from decouple import config
 import colorama
 
 colorama.init()
@@ -27,12 +27,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-($%6f3@5nl^w2njly)7pye^vh&tp@=_^kotl#etzl5lt9vxl%m'
+SECRET_KEY = config('DJANGO_SECRET_KEYA')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    
+]
 
 
 # Application definition
@@ -50,6 +52,7 @@ INSTALLED_APPS = [
     
     'rest_framework',
     'corsheaders',
+    'storages',
 ]
 
 # DJANGO REST FRAMEWORK JSON WEB TOKEN
@@ -99,8 +102,6 @@ REST_FRAMEWORK = {
     )
 }
 
-from datetime import timedelta
-
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
 }
@@ -149,20 +150,20 @@ WSGI_APPLICATION = 'backend_k_app.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-
     # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'K_App',
-    #     'USER': 'postgres',
-    #     'PASSWORD': 'postgres',
-    #     'HOST': 'localhost',
-    #     'PORT': '5432'
-
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
+
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('PGSQL_NAME'),
+        'USER': config('PGSQL_USER'),
+        'PASSWORD': config('PGSQL_PWD'),
+        'HOST': config('PGSQL_HOST'),
+        'PORT': '5432'
+
+    }
 }
 
 
@@ -202,19 +203,41 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+# STATIC_URL = 'static/'
+
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static',
+#     BASE_DIR / 'frontend_k_app/build/static'
+# ]
+
+# # MEDIA_URL = '/images/'
+
+# # MEDIA_ROOT = 'static/images'
+
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_URL = '/media/'
+
+# AWS S3 CONFIG
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+# AWS_S3_OBJECT_PARAMETERS = {
+#     'CacheControl': 'max-age=86400',
+# }
+
+AWS_LOCATION = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-    BASE_DIR / 'frontend_k_app/build/static'
+    os.path.join(BASE_DIR, 'frontend_k_app/build/static'),
+    # os.path.join(BASE_DIR, 'static')
 ]
+STATIC_URL = 'https://%s/%s' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-# MEDIA_URL = '/images/'
-
-# MEDIA_ROOT = 'static/images'
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+# AWS S3 MEDIA FILES
+DEFAULT_FILE_STORAGE = 'backend_k_app.storage_backends.MediaStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -222,3 +245,5 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True

@@ -95,8 +95,11 @@ const UserProfileScreen = () => {
                 setFirst_Name(user.first_name);
                 setLast_Name(user.last_name);
                 setEmail(user.email);
-                setNativeLanguage(user.native_language.language);
                 setLanguagesLearning(user.languages);
+
+                if (user.native_language) {
+                    setNativeLanguage(user.native_language.language);
+                }
 
                 // dispatch(getUserStats());
             }
