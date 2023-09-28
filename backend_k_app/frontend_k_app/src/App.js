@@ -10,6 +10,7 @@ import HomeScreen from './screens/HomeScreen';
 import WordScreen from './screens/WordScreen';
 import LanguageScreen from './screens/LanguageScreen';
 import UserListScreen from './screens/UserListScreen';
+import NotFound from './screens/NotFound';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -49,6 +50,10 @@ function App() {
             <Route path='/profile/admin/user/:id/edit' element={ <UserUpdate /> } />
 
             <Route path='/languageform/' element={ <LanguageForm /> } />
+
+            {/* 404 PAGE */}
+            <Route path='*' element={ <NotFound /> } />
+
             {/* <Route path='/users/' element={ <UserListScreen /> } /> */}
 
             {/* <Route path=':language/:id/' element={ <WordScreen /> } /> */}

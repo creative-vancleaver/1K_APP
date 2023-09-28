@@ -12,6 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     languages = LanguageSerializer(many=True)
     native_language = LanguageSerializer(many=False)
     # user_words = UserWordSerializer(many=True)
+    first_name = serializers.CharField(required=True, error_messages={'required': 'Please provide a name.'})
 
     class Meta:
         model = User
@@ -73,7 +74,7 @@ class UserSerializerWithToken(UserSerializer):
     class Meta:
         model = User
         # ALL USER DATA DESIRED IN FRONTEND NEEDS TO BE PASSED IN HERE
-        fields = ['id', 'email', 'name', 'isAdmin', 'token', 'first_name', 'last_name', 'languages', 'native_language']
+        fields = ['id', 'email', 'isAdmin', 'token', 'first_name', 'languages', 'native_language']
 
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)

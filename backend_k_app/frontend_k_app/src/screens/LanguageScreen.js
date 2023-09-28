@@ -46,39 +46,11 @@ function LanguageScreen() {
   }
 
   useEffect(() => {
+
     dispatch(listLanguages());
-    dispatch(listWordsLanguage(language))
-    // dispatch(listLanguages())
-
-
-    if(error) {
-      console.log('llll');
-      if (error.includes('supported')) {
-      console.log('dingus');
-      }
+    if (language !== 'english') {
+      dispatch(listWordsLanguage(language))
     }
-
-
-    // dispatch(listLanguages()) 
-
-    // language = language.slice(0,1).toUpperCase() + language.slice(1, language.length)
-    // console.log(language)
-
-    // if(languages.filter(lang => lang.language.toString().toLowerCase() != language)) {
-    //   console.log('no match')
-    //   navigate('/')
-    // }
-
-
-
-    // if (!languages.includes(language.slice(0,1).toUpperCase() + language.slice(1, language.length))) {
-    //   console.log()
-    //   navigate('/')
-    // }
-
-    // if (error) {
-    //   navigate('/')
-    // }
 
   }, [dispatch, language])
 
@@ -126,7 +98,7 @@ function LanguageScreen() {
       { loading && <Spinner /> }
 
       {error ? ( <Message variant='danger'>{ error }</Message> )
-        : (
+        : language !== 'english' ? (
 
           <div>
           <Row className='mt-5 d-flex justify-items-center'>
@@ -151,6 +123,13 @@ function LanguageScreen() {
           </Row>
 
           </div>
+
+        ) : (
+
+          <div className='d-flex justify-content-center'>
+            <h4>Coming Soon</h4>
+          </div>
+
         )
       }
 

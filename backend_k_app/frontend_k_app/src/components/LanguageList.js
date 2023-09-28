@@ -12,10 +12,21 @@ function LanguageList() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  const userLogin = useSelector(state => state.userLogin);
+  const { userInfo } = userLogin;
+
   const languageList = useSelector(state => state.languageList)
   const { error, loading, languages } = languageList
 
   const [index, setIndex] = useState(0);
+
+  const langArray = languages.reduce(function(acc, lang) {
+    if (lang.language !== 'english') {
+      acc.push(lang);
+    }
+    console.log('langArray LIST ', acc)
+    return acc;
+  }, [])
 
   const handleSelect = (selectedIndex, e) => {
     setIndex(selectedIndex);
@@ -76,14 +87,16 @@ function LanguageList() {
                 <Card.Img src={language.image} className='flag' />
                 <Card.ImgOverlay>
                 <Card.Title>{ language.language }</Card.Title>
-                <Card.Link 
-                  as={Button} 
-                  href={`/languages/${languageLink}`}
+
+                <Card.Link
+                  as={ Button }
+                  href={ `/languages/${ languageLink }/`}
                   className='mt-3'
-                  variant='info-outline'  
+                  variant='info-outline'
                 >
                   Let's Learn
                 </Card.Link>
+
                 </Card.ImgOverlay>
               </Card>
               // </LinkContainer>

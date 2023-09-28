@@ -49,14 +49,14 @@ const AdminScreen = () => {
             dispatch(listLanguages())
             dispatch(listCountries())
         } else {
-            navigate('/login')
+            navigate('/login/')
         }
 
         if (addLanguageSuccess) {
             dispatch(listLanguages())
         }
 
-    }, [dispatch, navigate, successDelete, userInfo, addLanguageSuccess])
+    }, [dispatch, successDelete, userInfo, addLanguageSuccess])
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);

@@ -39,6 +39,9 @@ function WordScreen() {
   const updateWordScore = useSelector(state => state.updateWordScore)
   const { error: updateWordError, success: updateWordSuccess, word: updateWordWord } = updateWordScore
 
+  const userLogin = useSelector(state => state.userLogin);
+  const { userInfo } = userLogin;
+
   function handleChildFlipStateChange(newState) {
     setFlip(newState);
   }
@@ -48,11 +51,19 @@ function WordScreen() {
   // const word = words.find((w) => w.id == wordID.id)
 
   useEffect(() => {
-    dispatch(randomWordByLanguage(language))
+
+    if (userInfo) {
+      if (language !== 'english') {
+        dispatch(randomWordByLanguage(language))
+      }
+    } else {
+      navigate('/login/');
+    }
     setFlip(false)
     // setFlip(!flip)
-    document.getElementById('word_card').classList.remove('flip')
-
+    if (language !== 'english') {
+      document.getElementById('word_card').classList.remove('flip')
+    }
 
     if (updateWordSuccess) {
       console.log('updateWordSuccess - un flip?')
@@ -128,74 +139,42 @@ function WordScreen() {
 
     <Link to={`/languages/${ language }`} className='backLink'>Go Back</Link>
 
+    { language === 'english' ? (
+      <div className='d-flex justify-content-center mt-5 pt-5'>
+        <h4 className='mt-5 pt-5'>Coming Soon</h4>
+      </div>
+    ) : (
+    <>
     {/* { flip && ()} */}
-    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10rem' }}> 
-      <RecallScore value={ word.score } color={ '#f8e825' } />
-    </div>
-      
-    <div className='card-page d-flex'>
-
-      <Row className='card-row'>
-        <Col className='card-col'>
-          <Word word={ word } onStateChange={ handleChildFlipStateChange } />
-          {/* { word.word } */}
-        </Col>
-      </Row>
-
-      { flip && (
-        <div className={`d-flex justify-content-center me-3`} style={{ display: 'block' }}>
-          <Answers word={ word } language={ language } />
-        </div>
-       )}
-
-      {/* { flip && (
-        <div className='d-flex justify-content-center me-3'>
-          <Answers word={ word } />
-        </div>
-      )} */}
-
-      {/* <div className='d-flex justify-content-center me-3'> */}
-
-        {/* <Form.Control
-          as={ Button }
-          className='mt-5 me-3'
-          variant='success'
-          value='correct'
-          onClick={ (e) => answerSubmitHandler(e, e.target.value)}
-          // onClick={ setScore(score + 1 )}
-        >Correct</Form.Control> */}
-
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10rem' }}> 
+        <RecallScore value={ word.score } color={ '#f8e825' } />
+      </div>
         
-        {/* <Button 
-          className='mt-5 me-3' 
-          variant='success'
-          value='correct'
-          onClick={ (e) => answerSubmitHandler(e, e.target.value) }  
-        >Correct</Button>
+      <div className='card-page d-flex'>
 
+        <Row className='card-row'>
+          <Col className='card-col'>
+            <Word word={ word } onStateChange={ handleChildFlipStateChange } />
+            {/* { word.word } */}
+          </Col>
+        </Row>
 
+        { flip && (
+          <div className={`d-flex justify-content-center me-3`} style={{ display: 'block' }}>
+            <Answers word={ word } language={ language } />
+          </div>
+        )}
 
-        <Button 
-          className='mt-5' 
-          variant='danger'
-          value='incorrect'
-          onClick={(e) => answerSubmitHandler(e, e.target.value) }
-        
-        >Incorrect</Button>
-      </div> */}
+      </div>
 
-
-
-    </div>
-
-    {/* { !flip && 
-    <div className='d-flex justify-content-center' style={{ marginTop: '5rem' }}>
-      <span className='me-2'><b>Score: </b>{ word.score }/10</span>
-      <RecallScore value={ word.score } color={ '#f8e825' } />
-    </div>
-    } */}
-
-
+      {/* { !flip && 
+      <div className='d-flex justify-content-center' style={{ marginTop: '5rem' }}>
+        <span className='me-2'><b>Score: </b>{ word.score }/10</span>
+        <RecallScore value={ word.score } color={ '#f8e825' } />
+      </div>
+      } */}
+    </>
+    )}
 
     </div>
   )

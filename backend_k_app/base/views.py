@@ -18,7 +18,7 @@ from django.http import QueryDict, JsonResponse, HttpResponse
 # DJANGO REST FRAMEWORK
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework import status
 
 from .serializers import WordSerializer, LanguageSerializer, CountrySerializer
@@ -297,29 +297,65 @@ def get1000WordsFromHTMLTable(request):
    
    if data['url']:
       url = data['url']
-      pages = request.get(url)
+      pages = requests.get(url)
       soup = BeautifulSoup(pages.text, 'lxml')
 
       language_words = Word.objects.filter(language=language)
 
+      # if language_from_form == 'english':
+      #    # ordered_list = soup.find('ol')
+      #    # # print(ordered_list)
+      #    # list_items = ordered_list.find_all('li')
+      #    # print(len(list_items))
+
+      #    # for item in list_items:
+      #    #    word = item.text
+
+      #       existing_word = language_words.filter(word=word).first()
+
+      #       if existing_word is None:
+      #          new_word = Word.objects.create(language=language, word=word)
+      #          new_word.save()
+         
+      # else:
+
       table_rows = soup.table.find_all('tr')
+
+      # if language_from_form == 'english':
+      #    print(len(table_rows))          
 
       for tr in table_rows[1:]:
          table_data = tr.find_all('td')
-         no = table_data[0].text
-         word = table_data[1].text
-         translation = table_data[2].text
+         # print(len(table_rows))
 
-         existing_word = language_words.filter(word=word).first()
+         if language_from_form == 'english':
+            # print(len(table_rows))
+            word = table_data[1].text
+
+            existing_word = language_words.filter(word=word).first()
          
-         if existing_word is None:
-            new_word = Word.objects.create(language=language, word=word, translation=translation)
-            new_word.save()
+            if existing_word is None:
+               new_word = Word.objects.create(language=language, word=word)
+               new_word.save()
+               # new_word = Word.objects.create(language=language, word=word, translation=translation)
+               # new_word.save()
+
+         else:
+            no = table_data[0].text
+            word = table_data[1].text
+            translation = table_data[2].text
+
+            existing_word = language_words.filter(word=word, translation=translation).first()
+            
+            if existing_word is None:
+               new_word = Word.objects.create(language=language, word=word, translation=translation)
+               new_word.save()
 
 
    return Response({'message': 'success'})
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def getLanguages(request):
     languages = Language.objects.all()
     serializer = LanguageSerializer(languages, many=True)

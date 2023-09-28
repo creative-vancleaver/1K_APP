@@ -18,7 +18,7 @@ const UserProfileScreen = () => {
     const [show, setShow] = useState(false);
 
     const [first_name, setFirst_Name] = useState('');
-    const [last_name, setLast_Name] = useState('');
+    // const [last_name, setLast_Name] = useState('');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [nativeLanguage, setNativeLanguage] = useState('');
@@ -79,7 +79,7 @@ const UserProfileScreen = () => {
         // dispatch(getUserStats());
         
         if (!userInfo) {
-            navigate('/login');
+            navigate('/login/');
         } else {
             dispatch(getUserStats());
 
@@ -93,7 +93,7 @@ const UserProfileScreen = () => {
                 // console.log(user)
                 setName(user.name);
                 setFirst_Name(user.first_name);
-                setLast_Name(user.last_name);
+                // setLast_Name(user.last_name);
                 setEmail(user.email);
                 setLanguagesLearning(user.languages);
 
@@ -112,7 +112,7 @@ const UserProfileScreen = () => {
     }, [navigate, dispatch, userInfo, user, success])
 
     const handleClick = () => {
-        console.log('update profile clicked');
+        console.log('update profile clicked ', user.id);
         setUpdateProfile(!updateProfile);
     }
 
@@ -126,12 +126,12 @@ const UserProfileScreen = () => {
         if (password !== confirmPassword) {
             setMessage('Passwords do not match');
         } else {
-            console.log('Updating profile');
+            console.log('Updating profile ', user.id);
             dispatch(updateUserProfile({
                 'id': user.id,
                 // 'name': name,
                 'first_name': first_name,
-                'last_name': last_name,
+                // 'last_name': last_name,
                 'email': email,
                 'password': password
             }))
@@ -180,7 +180,7 @@ const UserProfileScreen = () => {
                     ></Form.Control>
                 </Form.Group>
 
-                <Form.Group controlId='last_name'>
+                {/* <Form.Group controlId='last_name'>
                     <Form.Label>
                         Last Name
                     </Form.Label>
@@ -192,7 +192,7 @@ const UserProfileScreen = () => {
                         value={ last_name }
                         onChange={ (e) => setLast_Name(e.target.value) }
                     ></Form.Control>
-                </Form.Group>
+                </Form.Group> */}
 
                 <Form.Group controlId='email'>
                     <Form.Label>

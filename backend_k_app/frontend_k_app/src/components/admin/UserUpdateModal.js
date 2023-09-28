@@ -17,7 +17,7 @@ const UserUpdateModal = ({ show, handleClose }) => {
 
     const [email, setEmail] = useState('');
     const [first_name, setFirst_Name] = useState('');
-    const [last_name, setLast_Name] = useState('');
+    // const [last_name, setLast_Name] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
 
     const navigate = useNavigate();
@@ -41,7 +41,7 @@ const UserUpdateModal = ({ show, handleClose }) => {
         
         if(successUpdate) {
             dispatch({ type: USER_UPDATE_RESET });
-            navigate('/profile/admin')
+            navigate('/profile/admin/')
         } else {
             
             // if (!user.name || user.id !== Number(userId.id)) {
@@ -50,7 +50,7 @@ const UserUpdateModal = ({ show, handleClose }) => {
                 console.log('no user ID form parmas');
             } else {
                 setFirst_Name(user.first_name)
-                setLast_Name(user.last_name)
+                // setLast_Name(user.last_name)
                 setIsAdmin(user.isAdmin)
             }
         }
@@ -96,7 +96,7 @@ const UserUpdateModal = ({ show, handleClose }) => {
                                 ></Form.Control>
                             </Form.Group>
 
-                            <Form.Group controlId='last_name'>
+                            {/* <Form.Group controlId='last_name'>
                                 <Form.Label>Last Name</Form.Label>
                                 <Form.Control
                                     type='name'
@@ -104,7 +104,7 @@ const UserUpdateModal = ({ show, handleClose }) => {
                                     value={ last_name }
                                     onChange={ (e) => setLast_Name(e.target.value) }
                                 ></Form.Control>
-                            </Form.Group>
+                            </Form.Group> */}
 
                             <Form.Group controlId='email'>
                                 <Form.Label>Email</Form.Label>

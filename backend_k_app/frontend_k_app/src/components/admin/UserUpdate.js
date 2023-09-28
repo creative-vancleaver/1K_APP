@@ -15,7 +15,7 @@ const UserUpdate = () => {
     const userId = useParams();
 
     const [first_name, setFirst_Name] = useState('')
-    const [last_name, setLast_Name] = useState('');
+    // const [last_name, setLast_Name] = useState('');
     const [email, setEmail] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
 
@@ -25,28 +25,45 @@ const UserUpdate = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const redirect = location.state ? Number(location.state) : '/'
 
+    const userLogin = useSelector(state => state.userLogin);
+    const { userInfo } = userLogin;
+
     const userDetails = useSelector(state => state.userDetails);
     const { error, loading, user } = userDetails;
 
     const userUpdate = useSelector(state => state.userUpdate);
     const { error: errorUpdate, loading: loadingUpdate, success: successUpdate } = userUpdate;
 
+    // useEffect(() => {
+    //     if (!userInfo || !userInfo.isAdmin) {
+    //         navigate('/login/');
+    //     }
+    // }, [])
+
     useEffect(() => {
 
-        if (successUpdate) {
-            dispatch({ type: USER_UPDATE_RESET })
-            navigate('/profile/admin')
-        } else {
+        if (userInfo && userInfo.isAdmin) {
 
-            if (!user.name || user.id !== Number(userId.id)) {
-                dispatch(getUserDetails(userId.id))
+            if (successUpdate) {
+                dispatch({ type: USER_UPDATE_RESET })
+                navigate('/profile/admin/')
             } else {
-                setFirst_Name(user.first_name)
-                setLast_Name(user.last_name)
-                setEmail(user.email)
-                setIsAdmin(user.isAdmin)
+    
+                if (!user.name || user.id !== Number(userId.id)) {
+                    dispatch(getUserDetails(userId.id))
+                } else {
+                    setFirst_Name(user.first_name)
+                    // setLast_Name(user.last_name)
+                    setEmail(user.email)
+                    setIsAdmin(user.isAdmin)
+                }
             }
+
+        } else {
+            navigate('/login/');
         }
+
+
     }, [userId.id, user, successUpdate, navigate])
 
     const submitHandler = (e) => {
@@ -54,7 +71,7 @@ const UserUpdate = () => {
         dispatch(updateUser({
             id: user.id,
             first_name,
-            last_name,
+            // last_name,
             email,
             isAdmin
         }))

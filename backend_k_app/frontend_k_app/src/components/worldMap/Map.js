@@ -91,7 +91,7 @@ const Map = () => {
     console.log('country ', country, 'language ', language, 'languages', languages);
     // dispatch(getActiveLanguage(language));
 
-    navigate(`/languages/${ language.language }`)
+    navigate(`/languages/${ language.language }/`)
 
 
 

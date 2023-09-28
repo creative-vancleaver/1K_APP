@@ -1,11 +1,17 @@
 from django.shortcuts import render
 from django.contrib.auth.hashers import make_password
+from django.views.decorators.csrf import csrf_exempt
+
+import logging
 
 # DJANGO REST FRAMEWORK
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework import status
+
+# SPECIFIC EXCEPTION CATCHES
+from django.db import IntegrityError
 
 # DJANGO REST FRAMEWORK JSON WEB TOKEN AUTHENTICATION
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -29,12 +35,18 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     #     token['message'] = 'hello world'
 
     #     return token
+
+    default_error_messages = {
+        'no_active_account': 'Username or Password does not match.'
+    }
+
     def validate(self, attrs):
         data = super().validate(attrs)
 
         # data['username'] = self.user.username
         # data['email'] = self.user.email
         serializer = UserSerializerWithToken(self.user).data
+        print(serializer)
 
         for key, value in serializer.items():
             data[key] = value
@@ -42,6 +54,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return data
     
 class MyTokenObtainPairView(TokenObtainPairView):
+    authentication_classes = ()
+    permission_classes = ()
     serializer_class = MyTokenObtainPairSerializer
 
 @api_view(['GET'])
@@ -56,31 +70,43 @@ def getRoutes(request):
 
     return Response(routes)
 
+logger = logging.getLogger(__name__)
+
 @api_view(['POST'])
+@csrf_exempt
+# @permission_classes([AllowAny])
+@authentication_classes([])
+@permission_classes([])
 def registerUser(request):
     data = request.data
-    print('user register data ', data)
+    # print(data['native_language']['value'].lower())
 
     try:
-        user = User.objects.create(
+        language = Language.objects.get(language=data['native_language']['value'].lower())
+        user = User.objects.create_user(
             first_name = data['first_name'],
-            last_name = data['last_name'],
+            native_language = language,
+            # last_name = data['last_name'],
             # username = data['email'],
             # name = data['name'],
             email = data['email'],
             password = make_password(data['password'])
         )
+        user.is_active = True
+        user.save()
         print(user)
         serializer = UserSerializerWithToken(user, many=False)
+        print(serializer.data)
         return Response(serializer.data)
+        # return Response({ 'detail': 'success' })
     
-    except:
+    except IntegrityError:
         message = { 'detail': 'Useer with this email already exists.' }
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-def updateUserProfile(request):
+def updateUserProfile(request, pk):
     user = request.user
     serializer = UserSerializerWithToken(user, many=False)
 
@@ -88,7 +114,7 @@ def updateUserProfile(request):
     # user.first_name = data['first_name']
     # user.name = data['name']
     user.first_name = data['first_name']
-    user.last_name = data['last_name']
+    # user.last_name = data['last_name']
     user.email = data['email']
 
     if data['password'] != '':
@@ -101,6 +127,7 @@ def updateUserProfile(request):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def addLanguageToUser(request, pk):
+    print('ADDLANGUAGETOUSER ', request.data)
     # existing_country = Country.objects.filter(name=country_name).first()
     # user = request.user
     user = User.objects.get(id=pk)
@@ -108,7 +135,6 @@ def addLanguageToUser(request, pk):
     print('data ', data)
 
 
-    serializer = UserSerializerWithToken(user, many=False)
 
     # existing_lang = User.languages.all()
     # for l in existing_lang:
@@ -119,11 +145,21 @@ def addLanguageToUser(request, pk):
         new_language = Language.objects.get(language=data['language'])
         user.languages.add(new_language)
 
+        print(new_language.word_set.count())
+
         user.save()
         print('updated user ', user)
+
     
     else:
+        
         print(f'language already associated with this user')
+        language = Language.objects.get(language=data['language'])
+        print(language.word_set.count())
+
+    serializer = UserSerializerWithToken(user, many=False)
+
+
 
     return Response(serializer.data)
 
@@ -137,7 +173,8 @@ def getUsers(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
+@authentication_classes([])
 def getUserById(request, pk):
     user = User.objects.get(id=pk)
     serializer = UserSerializer(user, many=False)

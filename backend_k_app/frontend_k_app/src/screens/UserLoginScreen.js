@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 
 import FormContainer from '../components/FormContainer';
+import Message from '../components/Message';
 
 import { login } from '../actions/userActions';
 
@@ -38,6 +39,8 @@ const UserLoginScreen = () => {
     <FormContainer>
 
         <h1>Sign In</h1>
+
+        { error && <Message variant='danger'>{ error }</Message> }
 
         <Form onSubmit={ submitHandler }>
 
@@ -75,7 +78,8 @@ const UserLoginScreen = () => {
             <Col>
                 New User? 
                 <Link
-                    to={ redirect ? `/register?redirect${ redirect }` : 'register'}
+                    // to={ redirect ? `/register?redirect${ redirect }` : 'register'}
+                    to={'/register/'}
                 >
                     Register
                 </Link>

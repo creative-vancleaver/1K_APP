@@ -13,12 +13,13 @@ function Header() {
 
   const languageList = useSelector(state => state.languageList)
   const { error, loading, success, languages } = languageList
-  // console.log(languages)
+  console.log('languageList ', languages)
 
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
   // const { languages: userLanguages } = userInfo;
   // console.log(userInfo);
+  // const result = []
 
   const logoutHandler = () => {
     console.log('LOGOUT');
@@ -27,6 +28,9 @@ function Header() {
 
   useEffect(() => {
     // dispatch(listLanguages())
+
+    // langArray();
+
   }, [])
 
   return (
@@ -82,11 +86,17 @@ function Header() {
                 </NavDropdown>
 
               ) : (
-                // <LinkContainer to='/login'>
-                  <Nav.Link as={ Link } to='/login'>
+                <>
+                {/* <LinkContainer to='/login'> */}
+                  <Nav.Link as={ Link } to='/login/'>
                     <i className='fa fa-user me-1'></i>Login
                   </Nav.Link>
-                // </LinkContainer>
+                {/* </LinkContainer> */}
+
+                  <Nav.Link as={ Link } to='/register/'>
+                    <i className='fa fa-user-plus me-1'></i>Sign Up
+                  </Nav.Link>
+                </>
               )}
 
 
@@ -94,17 +104,15 @@ function Header() {
                 title='Languages'
                 id='offcanvasNavbarDropdown-expand-expand'
               >
-                { languages.map(language => (
-                  <NavDropdown.Item key={ language.id } href={ `/languages/${ language.language }` }>
-                    { language.language.charAt(0).toUpperCase() + language.language.slice(1) }
+
+                { languages.map(l => (
+
+                  <NavDropdown.Item key={ l.key } href={ `/languages/${ l.language }` }>
+                    { l.language.charAt(0).toUpperCase() + l.language.slice(1) }
                   </NavDropdown.Item>
+
                 ))}
-                {/* {languages.map(language => (
-                  <NavDropdown.Item key={ language.id } href={`/${ language.language }`}>{ language.language }</NavDropdown.Item>
-                ))} */}
-                {/* <NavDropdown.Item href='/languages/spanish'>Spanish</NavDropdown.Item>
-                <NavDropdown.Item href='/languages/french'>French</NavDropdown.Item>
-                <NavDropdown.Item href='/languages/italian'>Italian</NavDropdown.Item> */}
+                
               </NavDropdown>
             
             </Nav>

@@ -27,6 +27,10 @@ class User(AbstractUser):
 class UserWord(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     user_word = models.ForeignKey(Word, on_delete=models.CASCADE)
+    score = models.IntegerField(null=True, blank=True, default=0)
+
+    class Meta:
+        unique_together = ('user', 'user_word')
 
     def __str__(self):
         return self.user_word.word

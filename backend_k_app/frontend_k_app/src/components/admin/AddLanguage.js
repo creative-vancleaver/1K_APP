@@ -24,6 +24,9 @@ const AddLanguage = () => {
     const countryList = useSelector(state => state.countryList);
     const { countries, success: countriesSuccess } = countryList;
 
+    const userLogin = useSelector(state => state.userLogin);
+    const { userInfo } = userLogin;
+
     // const countryOptions = countries.map(c => ({
     //     label: c.name,
     //     value: c.name
@@ -108,7 +111,10 @@ const AddLanguage = () => {
 
     useEffect(() => {
 
-        dispatch(listCountries());
+        if (userInfo && userInfo.isAdmin) {
+            dispatch(listCountries());
+        }
+
 
         // if (countriesSuccess) {
         //     setCountry_Names(countryOptions());

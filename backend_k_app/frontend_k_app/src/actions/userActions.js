@@ -54,6 +54,8 @@ export const login = (email, password) => async (dispatch) => {
             type: USER_LOGIN_REQUEST
         })
 
+        console.log(email, password)
+
         const config = {
             headers: {
                 'Content-type': 'application/json'
@@ -95,7 +97,7 @@ export const logout = () => (dispatch) => {
 }
 
 // first_name, last_name
-export const register = (first_name, last_name, email, password) => async (dispatch) => {
+export const register = (first_name, email, password, native_language) => async (dispatch) => {
     
     try {
 
@@ -105,16 +107,16 @@ export const register = (first_name, last_name, email, password) => async (dispa
 
         const config = {
             headers: {
-                'Content-type': 'application/JSON'
+                'Content-type': 'application/json'
             }
         }
-
+        console.log('register ', config);
         const { data } = await axios.post(
             '/api/users/register/',
-            { 'first_name': first_name, 'last_name': last_name, 'email': email, 'password': password },
+            { 'first_name': first_name, 'email': email, 'password': password, 'native_language': native_language },
             config
         )
-
+        console.log('register ', data, config);
         dispatch({
             type: USER_REGISTER_SUCCESS,
             payload: data
@@ -128,7 +130,7 @@ export const register = (first_name, last_name, email, password) => async (dispa
         localStorage.setItem('userInfo', JSON.stringify(data))
 
     } catch(error) {
-        
+        console.log(error);
         dispatch({
             type: USER_REGISTER_FAIL,
             payload: error.message && error.response.data.detail
@@ -156,7 +158,8 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
         }
 
         const { data } = await axios.get(
-            `/api/users/${ id }/`,
+            // `/api/users/${ id }/`,
+            `/api/users/profile/`,
             config
         )
 
@@ -199,7 +202,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
         }
 
         const { data } =  await axios.put(
-            `/api/users/profile/update/`,
+            `/api/users/profile/update/${ userInfo.id }/`,
             user,
             config
         )
@@ -261,7 +264,7 @@ export const addUserLanguage = (user) => async (dispatch, getState) => {
 
         // I WILL NEED TO UPDATE THE USERINFO STATE HERE--- OR BETTER IN THE REDUCER
 
-        localStorage.setItem('userInfo', JSON.stringify(data))
+        // localStorage.setItem('userInfo', JSON.stringify(data))
 
     } catch (error) {
 
@@ -294,7 +297,7 @@ export const getUserStats = () => async (dispatch, getState) => {
         }
 
         const { data } = await axios.get(
-            `/api/users/${ userInfo.id }/stats`,
+            `/api/users/${ userInfo.id }/stats/`,
             config
         )
         console.log('userStats Redcuer data ', data)
