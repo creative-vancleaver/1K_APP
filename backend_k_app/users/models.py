@@ -28,6 +28,7 @@ class UserWord(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     user_word = models.ForeignKey(Word, on_delete=models.CASCADE)
     score = models.IntegerField(null=True, blank=True, default=0)
+    isMastered = models.BooleanField(default=False, null=True, blank=True)
 
     class Meta:
         unique_together = ('user', 'user_word')

@@ -54,7 +54,7 @@ function WordScreen() {
 
     if (userInfo) {
       if (language !== 'english') {
-        dispatch(randomWordByLanguage(language))
+        dispatch(randomWordByLanguage(language, userInfo.id))
       }
     } else {
       navigate('/login/');
@@ -137,7 +137,7 @@ function WordScreen() {
 
     <div className=''>
 
-    <Link to={`/languages/${ language }`} className='backLink'>Go Back</Link>
+    <Link to={`/languages/${ language }/`} className='backLink'>Go Back</Link>
 
     { language === 'english' ? (
       <div className='d-flex justify-content-center mt-5 pt-5'>

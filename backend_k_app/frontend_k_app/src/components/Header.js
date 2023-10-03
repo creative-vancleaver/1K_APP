@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Button, Container, Form, Nav, Navbar, NavDropdown, Offcanvas } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { listLanguages } from '../actions/languageActions'
@@ -10,6 +10,7 @@ import { logout } from '../actions/userActions'
 function Header() {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const languageList = useSelector(state => state.languageList)
   const { error, loading, success, languages } = languageList
@@ -24,10 +25,11 @@ function Header() {
   const logoutHandler = () => {
     console.log('LOGOUT');
     dispatch(logout())
+    navigate('/')
   }
 
   useEffect(() => {
-    // dispatch(listLanguages())
+    dispatch(listLanguages())
 
     // langArray();
 

@@ -40,7 +40,7 @@ class UserWordSerializer(serializers.ModelSerializer):
     # word = serializers.SerializerMethodField()
     class Meta:
         model = UserWord
-        fields = ['user_word']
+        fields = ['user_word', 'score', 'isMastered']
 
     # def get_word(self, obj):
     #     word = obj.word.word

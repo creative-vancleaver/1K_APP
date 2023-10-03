@@ -1,14 +1,39 @@
 {% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+    <script src="{% static 'admin_custom.js' %}"></script>
+{% endblock %}
 
 {% block extrahead %}
 {{ block.super }}
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectAllCheckbox = document.querySelector('.select-all-checkbox');
+        const itemCheckboxes = document.querySelectorAll('input[name$="-DELETE"]');
+        
+        selectAllCheckbox.addEventListener('change', function () {
+            const isChecked = this.checked;
+            itemCheckboxes.forEach(function (checkbox) {
+                checkbox.checked = isChecked;
+            });
+        });
+    });
+</script>
 {% endblock %}
 
 {% block conent %}
+{{ block.super }}
+
 <div class="related-widget-wrapper">
     <h2>User Words:</h2>
     <p>{{ user_words_display }}</p>
 </div>
 
-{{ block.super }}
+<div class="submit-row">
+    <input type="checkbox" class="select-all-checkbox" /> {% trans "Select All" %}
+    <input type="submit" value="{% trans 'Delete selected items' %}" class="deletelinkj" name="action" />
+</div>
+
 {% endblock %}

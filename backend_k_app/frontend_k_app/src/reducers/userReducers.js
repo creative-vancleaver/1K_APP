@@ -4,6 +4,8 @@ import {
     USER_LOGIN_SUCCESS,
     USER_LOGIN_FAIL,
 
+    UPDATE_USER_INFO,
+
     USER_LOGOUT,
 
     USER_LIST_REQUEST,
@@ -53,6 +55,12 @@ export const userLoginReducer = (state = {}, action) => {
 
         case USER_LOGIN_SUCCESS:
             return { loading: false, userInfo: action.payload }
+
+        case UPDATE_USER_INFO:
+            return {
+                loading: false,
+                userInfo: action.payload
+            }
 
         case USER_LOGIN_FAIL:
             return { loading: false, error: action.payload }
@@ -225,6 +233,7 @@ export const addLanguageToUserReducer = (state = { user: { languages: [] }  }, a
         case ADD_LANGUAGE_TO_USER_FAIL:
             return {
                 loading: false,
+                success: false,
                 error: action.payload
             }
 

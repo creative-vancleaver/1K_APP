@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate, Navigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Row, Col, ListGroup, Card, Button, Form } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
 import { listWordsLanguage } from '../actions/wordActions'
 import { addUserLanguage } from '../actions/userActions';
+
+import { USER_LOGIN_SUCCESS } from '../constants/userConstants';
 
 import Word from '../components/Word'
 import Message from '../components/Message'
@@ -36,6 +38,9 @@ function LanguageScreen() {
   const languageList = useSelector(state => state.languageList)
   const { languages } = languageList
   console.log(languageList)
+
+  const addLanguageToUser = useSelector(state => state.addLanguageToUser);
+  const { success: languageAddSuccess, loading: languageAddLoading } = addLanguageToUser;
   // console.log(error)
 
   // const availLanguages = languages.map(language => language.language)
@@ -52,7 +57,11 @@ function LanguageScreen() {
       dispatch(listWordsLanguage(language))
     }
 
-  }, [dispatch, language])
+    if (languageAddSuccess) {
+      navigate(`/languages/${ language }/random/`);
+    }
+
+  }, [dispatch, language, languageAddSuccess])
 
   const checkLanguage = (lang) => {
     return userInfo.languages.some(function (l) {
@@ -71,19 +80,46 @@ function LanguageScreen() {
     const existingLang = checkLanguage(language)
     console.log('existing language ', userInfo.languages, 'current language ', language,  existingLang);
 
-    if (existingLang == false) {
-      console.log('false')
+    if (!existingLang) {
       dispatch(addUserLanguage({
         'id': user.id,
         'language': language
       }))
+      
+      // , () => {
+      //   navigate(`languages/${ language }/random/`)
+      // });
+
     } else {
       console.log('language already associated with user');
+      navigate(`/languages/${ language }/random/`)
+
     }
 
+    // if (existingLang == false) {
+    //   console.log('false')
+    //   dispatch(addUserLanguage({
+    //     'id': user.id,
+    //     'language': language
+    //   }))
+    // } else {
+    //   console.log('language already associated with user');
+    // }
 
-    console.log('lets learn ', language)
+
+    // console.log('lets learn ', language)
   }
+
+  const checkLanguageExists = (language) => {
+    if (userInfo) {
+      return userInfo.languages.some(lang => lang.language === language);
+    } else {
+      return null
+    }
+  }
+
+  const languageExists = checkLanguageExists(language);
+  console.log('langaugeExists ', languageExists);
 
 
   return (
@@ -97,14 +133,16 @@ function LanguageScreen() {
 
       { loading && <Spinner /> }
 
-      {error ? ( <Message variant='danger'>{ error }</Message> )
+      { languageAddLoading ? (<Spinner />) :
+
+      error ? ( <Message variant='danger'>{ error }</Message> )
         : language !== 'english' ? (
 
           <div>
           <Row className='mt-5 d-flex justify-items-center'>
             { words.slice(0, 12).map(word => (
               <Col key={ word.id } sm={12} lg={6} xl={4} className={`my-3 ${word.id}`}>
-                <Word word={word} onStateChange={ handleChildFlipStateChange }/>
+                <Word word={ word } onStateChange={ handleChildFlipStateChange }/>
               </Col>
             ))}
           </Row>
@@ -112,7 +150,21 @@ function LanguageScreen() {
           <Row className='justify-content-center mt-5'>
             <Col xs={6}>
               {/* <Button className='w-100'>Play</Button> */}
-              <Button as={ Link } to={`/languages/${language}/random`} className='w-100' onClick={ addLang }>Play</Button>
+
+              { !userInfo ? (
+                <Button as={ Link } to={'/register/'} className='w-100'>Sign Up</Button>
+              ) : languageExists ? (
+                <Button as={ Link } to={`/languages/${ language }/random/`} className='w-100'>
+                  Learn
+                </Button>
+              ) : (
+                <Button className='w-100' onClick={ addLang }>
+                  Start Learning
+                </Button>
+              )}
+
+              {/* <Button as={ Link } className='w-100' onClick={ addLang }>Play</Button> */}
+
               {/* <Button as={ Link } to={`/${ word.id }`} className='w-100'>Play</Button> */}
             </Col>
 

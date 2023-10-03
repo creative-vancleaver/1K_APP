@@ -42,6 +42,8 @@ import {
     ADD_LANGUAGE_TO_USER_REQUEST,
     ADD_LANGUAGE_TO_USER_SUCCESS,
     ADD_LANGUAGE_TO_USER_FAIL,
+
+    UPDATE_USER_INFO,
 } from '../constants/userConstants';
 import jquery from 'jquery';
 
@@ -261,6 +263,13 @@ export const addUserLanguage = (user) => async (dispatch, getState) => {
             type: ADD_LANGUAGE_TO_USER_SUCCESS,
             payload: data
         })
+
+        dispatch({
+            type: UPDATE_USER_INFO,
+            payload: data
+        })
+
+        localStorage.setItem('userInfo', JSON.stringify(data))
 
         // I WILL NEED TO UPDATE THE USERINFO STATE HERE--- OR BETTER IN THE REDUCER
 

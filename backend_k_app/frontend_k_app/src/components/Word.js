@@ -60,7 +60,9 @@ function Word({ word, onStateChange }) {
           // onClick={ () => (setFlip(!flip) )}
           onClick={ handleClick }
         >
-          { word.word }
+          { word.user_word ? ( `userWord: ${word.user_word.word}` ) : ( word.word ) }
+          {/* { word.word ? ( word.word ) : word.user_word.word ? ( word.user_word.word ) : ('') } */}
+          {/* { word.user_word.word } */}
           <div>
             {/* <Score value={ word.score } color='#f8e825' text={ word.score } /> */}
           </div>
@@ -71,7 +73,8 @@ function Word({ word, onStateChange }) {
           // onClick={ () => setFlip(!flip)}
           onClick={ handleClick }
         >
-          { word.translation }
+          { word.user_word ? ( word.user_word.translation ) : ( word.translation ) }
+          {/* { word.user_word.translation } */}
           {/* { word.score } */}
         </div>
       

@@ -124,6 +124,21 @@ def updateUserProfile(request, pk):
 
     return Response(serializer.data)
 
+
+def remove_duplicates(user_word_objects):
+    unique_combinations = {}
+
+    unique_user_word_objects = []
+
+    for user_word in user_word_objects:
+        identfier= (user_word.user.id, user_word.user_word.id)
+
+        if identfier not in unique_combinations:
+            unique_combinations[identfier] = True
+            unique_user_word_objects.append(user_word)
+
+    return unique_user_word_objects
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def addLanguageToUser(request, pk):
@@ -133,8 +148,6 @@ def addLanguageToUser(request, pk):
     user = User.objects.get(id=pk)
     data = request.data
     print('data ', data)
-
-
 
     # existing_lang = User.languages.all()
     # for l in existing_lang:
@@ -146,6 +159,19 @@ def addLanguageToUser(request, pk):
         user.languages.add(new_language)
 
         print(new_language.word_set.count())
+        words = new_language.word_set.all()
+        user_word_objects = []
+
+        for word in words:
+            user_word = UserWord(user=user, user_word=word)
+            user_word_objects.append(user_word)
+
+        unique_user_word_objects = remove_duplicates(user_word_objects)
+        UserWord.objects.bulk_create(unique_user_word_objects)
+
+        # for word in new_language.word_set.all().first():
+        #     user_word = Word.objects.get(word=word, language=new_language)
+        #     UserWord.objects.create(user=user, user_word=user_word)
 
         user.save()
         print('updated user ', user)
@@ -248,22 +274,9 @@ def getUserProfile(request):
 @permission_classes([IsAuthenticated])
 def getUserStats(request, pk):
     user = User.objects.get(id=pk)
-    # print(user)
-    languages = user.languages.all()
-    # print(languages)
-    word_list = {}
-    for language in languages:
-        words = Word.objects.filter(language=language)[:10]
-        word_list[language] = words
-    # print(word_list)
-    words = UserWord.objects.filter(user=user)
-    # print(words)
-    # user_words = UserWord.objects.filter(user=user)
-    # serializer = UserProfileSerializer(context={ 'user': user, 'words': word_list})
-    # serializer = WordSerializer(word_list, many=True)
-    # serializer = UserProfileSerializer(context={'user': user, 'words': words})
+    words = UserWord.objects.filter(user=user, isMastered=True)
+
     serializer = UserWordSerializer(words, many=True)
-    # print(serializer.data)
 
     return Response(serializer.data)
 

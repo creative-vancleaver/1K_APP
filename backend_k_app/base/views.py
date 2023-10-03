@@ -22,8 +22,10 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework import status
 
 from .serializers import WordSerializer, LanguageSerializer, CountrySerializer
+from users.serializers import UserWordSerializer
 
 from .models import Language, Translation, Word, Spanish, Country
+from users.models import User, UserWord
 
 # from .words import words
 
@@ -409,7 +411,7 @@ def getWordsByLanguage(request, language):
   #    context = {'detail': 'This language is not yet supported.'}
   #    return Response(context, status=status.HTTP_400_BAD_REQUEST)
   language = Language.objects.get(language=language)
-  words = Word.objects.filter(language=language)
+  words = Word.objects.filter(language=language)[:12]
 
   if words.count() != 0:
      serializer = WordSerializer(words, many=True)
@@ -417,6 +419,16 @@ def getWordsByLanguage(request, language):
   else:
      context = {'detail': 'This language has no words yet.'}
      return Response(context, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getUserWordsByLanguage(request, language):
+   language = Language.objects.get(language=language)
+   user_words = UserWord.objects.filter(user_word__language=language)
+
+   serializer = WordSerializer(user_words, many=True)
+
+   return Response(serializer.data)
     
 
 @api_view(['GET'])
@@ -448,28 +460,54 @@ def getWord(request, pk):
 
 @api_view(['GET', 'PUT'])
 def wordScore(request, pk, language):
-    word = Word.objects.get(pk=pk)
-    seriazlizer = WordSerializer(word, many=False)
-    oldScore = seriazlizer.data['score']
-    data = request.data
-    answer = data['value']
-    print(word, 'answer ', answer)
-    context = None
+   print('wordScore request pk language ', request.data, pk, language)
+   print(request.user)
 
-    if request.method == 'GET':
-       context = {'message': 'you are making a get request', 'word': seriazlizer.data, 'oldScore': oldScore}
-    #    return Response(context)
-    elif request.method == 'PUT':
-       if answer == 'correct':
-            print('old score ', word.score)
-            word.score += 1
-            word.save()
-            print('new score ', word.score)
-            seriazlizer = WordSerializer(word, many=False)
-            context = {'message': 'you are making a put request', 'new_score': seriazlizer.data['score'], 'word': seriazlizer.data}
-            # return Response(context)
+   user_word = UserWord.objects.get(user__email=request.user, user_word__pk=pk)
+   print(user_word)
+   # serializer = UserWordSerializer(user_word, many=False)
+   # oldScore = serializer.data['score']
+   data = request.data
+   answer = data['value']
+   print(user_word, 'answer ', answer)
+   # context = None
+   
+   # if request.method == 'GET'
+   if request.method == 'PUT':
+      if answer == 'correct':
+         print('old score ', user_word.score)
+         user_word.score += 1
+         user_word.save()
+         print('new score ', user_word.score)
+         serializer = UserWordSerializer(user_word, many=False)
+         # context = 
+
+         return Response(serializer.data)
+   # return Response({ 'detail': 'testing user word score' })
+
+
+   #  word = Word.objects.get(pk=pk)
+   #  seriazlizer = WordSerializer(word, many=False)
+   #  oldScore = seriazlizer.data['score']
+   #  data = request.data
+   #  answer = data['value']
+   #  print(word, 'answer ', answer)
+   #  context = None
+
+   #  if request.method == 'GET':
+   #     context = {'message': 'you are making a get request', 'word': seriazlizer.data, 'oldScore': oldScore}
+   #  #    return Response(context)
+   #  elif request.method == 'PUT':
+   #     if answer == 'correct':
+   #          print('old score ', word.score)
+   #          word.score += 1
+   #          word.save()
+   #          print('new score ', word.score)
+   #          seriazlizer = WordSerializer(word, many=False)
+   #          context = {'message': 'you are making a put request', 'new_score': seriazlizer.data['score'], 'word': seriazlizer.data}
+   #          # return Response(context)
                         
-    return Response(context)
+   #  return Response(context)
 
 
 # @api_view(['GET'])
@@ -508,12 +546,31 @@ def getRandomWord(request):
 
 @api_view(['GET'])
 def getRandomWordLanguage(request, language):
+   # print('request.user = ', request.user)
+   # print('requst.data = ', request.data)
    language = Language.objects.get(language=language)
-   words = Word.objects.filter(language=language)
-   word = random.choice(words)
-   serializer = WordSerializer(word, many=False)
 
-   return Response(serializer.data)
+   if request.user != 'AnonymousUser':
+      user = User.objects.get(email=request.user)
+      user_words = UserWord.objects.filter(user=user, user_word__language=language)
+      user_word = random.choice(user_words)
+      serializer = UserWordSerializer(user_word, many=False)
+
+      return Response(serializer.data)
+
+   else:
+
+      return Response({ 'detail': 'You must log in to view this page.' })
+
+
+   # words = Word.objects.filter(language=language)
+   # # words = UserWord.objects.filter(user_word__language=language)
+   # word = random.choice(words)
+   # # serializer = UserWordSerializer(word, many=False)
+   # serializer = WordSerializer(word, many=False)
+
+
+   # return Response(serializer.data)
 #   print(language)
 #   lang = Language.objects.get(language=language)
 

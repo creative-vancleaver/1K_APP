@@ -85,15 +85,26 @@ export const randomWord = () => async(dispatch) => {
   }
 }
 
-export const randomWordByLanguage = (language) => async(dispatch) => {
+export const randomWordByLanguage = (language, user_id) => async(dispatch, getState) => {
   console.log('randomwordbylanguage ', language);
 
   try {
 
     dispatch({ type: WORD_RANDOM_LANGUAGE_REQUEST })
 
+    const {
+      userLogin: { userInfo },
+    } = getState()
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${ userInfo.token }`
+      }
+    }
+
     // const { data } = await axios.get(`/words/random/${ language }/`)
-    const { data } = await axios.get(`/api/languages/${ language }/words/random/`)
+    const { data } = await axios.get(`/api/languages/${ language }/words/random/`, config, user_id)
 
     dispatch({ type: WORD_RANDOM_LANGUAGE_SUCCESS, payload: data })
 
@@ -108,7 +119,7 @@ export const randomWordByLanguage = (language) => async(dispatch) => {
   }
 }
 
-export const updateScore = (language, word, value) => async(dispatch) => {
+export const updateScore = (language, word, value) => async(dispatch, getState) => {
   console.log('updateWordScore ', word, value)
 
   try {
@@ -116,11 +127,17 @@ export const updateScore = (language, word, value) => async(dispatch) => {
     dispatch({
       type: UPDATE_WORD_SCORE_REQUEST,
     })
+
+    const {
+      userLogin: { userInfo },
+    } = getState()
+
     
     const config = {
       headers: {
         // 'Content-type': 'multipart/form-data'
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${ userInfo.token }`
       }
     }
 
@@ -131,7 +148,7 @@ export const updateScore = (language, word, value) => async(dispatch) => {
     const { data } = await axios.put(
     //   `/words/score/${ word.id }/`,
       // `/words/${ word.id }/score/`,
-      `/api/languages/${ language }/words/${ word.id }/score/`,
+      `/api/languages/${ language }/words/${ word }/score/`,
 
       {
         language,

@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.db import models
 
+from django import forms
+from django.forms import BaseInlineFormSet, Media
+
 from django.contrib.auth.admin import UserAdmin
 
 from users.forms import CustomUserCreationForm, CustomUserChangeForm
@@ -8,9 +11,25 @@ from users.models import User, UserWord
 from .models import Language, Word, Country
 
 # Register your models here.
+# class UserWordInlineFormSet(BaseInlineFormSet):
+#     # pass
+#     select_all = forms.BooleanField(
+#         required=False,
+#         label='Select All',
+#         widget=forms.CheckboxInput(attrs={'class': 'select-all-checkbox'}),
+#     )
+
+#     def clean(self):
+#         cleaned_data = super().clean()
+#         select_all = cleaned_data.get('select_all')
+#         if select_all:
+#             for form in self.forms:
+#                 form.cleaned_data['DELETE'] = True
 
 class UserWordInline(admin.TabularInline):
     model = UserWord
+    # form = UserWordInlineForm
+    # formset = UserWordInlineFormSet
     extra = 0
 
 class CustomUserAdmin(UserAdmin):
@@ -18,7 +37,7 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = User
-    list_display = ('id', 'email', 'is_staff')
+    list_display = ('id', 'email', 'user_word_count', 'is_staff')
     # list_filter = ('id', 'email', 'is_staff')
     inlines = [UserWordInline]
     fieldsets = (
@@ -37,6 +56,15 @@ class CustomUserAdmin(UserAdmin):
     # exclude=['username']
     # django.core.exceptions.FieldError: Unknown field(s) (username) specified for User. Check fields/fieldsets/exclude attributes of class CustomUserAdmin.
     ordering = ['id']
+    actions = ['bulk_delete_user_words']
+
+    class Media:
+        js = ('admin_custom.js',)
+
+    def user_word_count(self, obj):
+        return obj.userword_set.count()
+
+    user_word_count.short_description = 'UserWord Count'
 
     def display_user_words(self, obj):
         user_words = obj.userword_set.all()
@@ -45,7 +73,6 @@ class CustomUserAdmin(UserAdmin):
     display_user_words.short_description = 'User Words'
     
     def change_view(self, request, object_id, form_url='', extra_context=None):
-        response = super().change_view(request, object_id, form_url, extra_context)
 
         user = self.get_object(request, object_id)
 
@@ -54,9 +81,19 @@ class CustomUserAdmin(UserAdmin):
 
         if extra_context is None:
             extra_context = {}
+        
         extra_context['user_words_display'] = user_words_display
 
+        response = super().change_view(request, object_id, form_url, extra_context)
+
         return response
+
+    def bulk_delete_user_words(self, request, queryset):
+        # queryset.delete()
+        for user_word in queryset:
+            user_word.delete()
+
+    bulk_delete_user_words.short_description = 'Delete all UserWords'
 
 admin.site.register(User, CustomUserAdmin)
 

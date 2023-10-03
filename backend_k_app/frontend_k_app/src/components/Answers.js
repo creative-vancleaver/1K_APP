@@ -11,7 +11,7 @@ function Answers({ word, language }) {
   const dispatch = useDispatch()
 
   // const { language } = useParams();
-  console.log('Answer props language = ', language);
+  console.log('Answer props language = ', language, word);
 
   // useEffect(() => {
 
@@ -21,10 +21,11 @@ function Answers({ word, language }) {
   const [flip, setFlip] = useState(false);
 
   function answerSubmitHandler(e, value) {
+    console.log('submithandler ', word);
     e.preventDefault();
     dispatch(updateScore(
       language,
-      word,
+      word.user_word.id,
       value,
     ));
     // setFlip(!flip)
