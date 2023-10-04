@@ -247,7 +247,7 @@ const UserRegisterScreen = () => {
         <Row className='py-3'>
             <Col>
                 Have an account?
-                <Link to='#'>
+                <Link to='/login/'>
                     Sign In
                 </Link>
             </Col>

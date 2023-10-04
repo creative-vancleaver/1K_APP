@@ -302,7 +302,7 @@ h3 {
   position: absolute;
   z-index: 5;
   /* ADD MEDIA QUERIES FOR top/left STYLNG AT VARIOUS SCREEN SIZES */
-  top: 80vh;
+  top: 70vh;
   left: 45vw;
 }
 

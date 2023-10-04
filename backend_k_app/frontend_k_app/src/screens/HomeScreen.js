@@ -76,7 +76,8 @@ function HomeScreen() {
 
 
       <Map />
-      <LanguageList />
+
+      {/* <LanguageList /> */}
 
 {/* REMOVED THE WORD LIST FROM THE HOME PAGE!! UPDATING THE URLS TO BE LANGUAGE BASED AND WILL LIKELY NOT USE ALL WORDS FROM DB FOR ANYTIHNG... */}
       {/* <div>{ words.map(word => word.word) }</div> */}
