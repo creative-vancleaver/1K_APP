@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { randomWord, RandomWord, updateScore } from '../actions/wordActions'
 
 
-function Answers({ word, language }) {
+function Answers({ word, language, correct }) {
 
   const dispatch = useDispatch()
 
@@ -23,6 +23,11 @@ function Answers({ word, language }) {
   function answerSubmitHandler(e, value) {
     console.log('submithandler ', word);
     e.preventDefault();
+
+    if (value === 'correct') {
+      correct();
+    }
+
     dispatch(updateScore(
       language,
       word.user_word.id,

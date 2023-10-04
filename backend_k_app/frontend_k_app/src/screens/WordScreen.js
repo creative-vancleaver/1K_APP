@@ -32,12 +32,13 @@ function WordScreen() {
   const [flip, setFlip] = useState(false);
   const [childState, setChildState] = useState(null);
 
-  const wordRandomLanguage = useSelector(state => state.wordRandomLanguage)
-  const { error, succes, loading, word} = wordRandomLanguage
-  console.log(wordRandomLanguage, flip)
+  const wordRandomLanguage = useSelector(state => state.wordRandomLanguage);
+  const { error, succes, loading, word} = wordRandomLanguage;
+  console.log(wordRandomLanguage, flip);
 
   const updateWordScore = useSelector(state => state.updateWordScore)
-  const { error: updateWordError, success: updateWordSuccess, word: updateWordWord } = updateWordScore
+  const { error: updateWordError, success: updateWordSuccess, word: updateWordWord } = updateWordScore;
+  const isUpdateWordScoreRequset = updateWordScore.type === 'UPDATE_WORD_SCORE_REQUEST';
 
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
@@ -46,9 +47,9 @@ function WordScreen() {
     setFlip(newState);
   }
 
-  // const [score, setScore] = useState(word.score)
-  // console.log(wordRandom)
-  // const word = words.find((w) => w.id == wordID.id)
+  const correctAnswerClick = () => {
+    setScore(score + 1)
+  }
 
   useEffect(() => {
 
@@ -60,6 +61,7 @@ function WordScreen() {
       navigate('/login/');
     }
     setFlip(false)
+    // setScore(word.score)
     // setFlip(!flip)
     if (language !== 'english') {
       document.getElementById('word_card').classList.remove('flip')
@@ -67,71 +69,24 @@ function WordScreen() {
 
     if (updateWordSuccess) {
       console.log('updateWordSuccess - un flip?')
-      // setFlip(!flip)
-
-      // document.getElementById('word_card').classList.remove('flip')
-      // resetFlipState()
 
     }
-    // setFlip(!flip)
-    // if (updateWordSuccess) {
-    //   console.log(updateWordWord);
-    //   setScore(c => c + 1)
-    //   console.log(score)
+
+
+  }, [])
+
+  useEffect(() => {
+
+    if (updateWordSuccess) {
+      dispatch(randomWordByLanguage(language, userInfo.id))
+    }
+    setFlip(false)
+
+    // if (isUpdateWordScoreRequset) {
+    //   setScore(word.score)
     // }
 
-    // if (successRandom) {
-    //   // dispatch(randomWord())
-    //   navigate(`/${ word.id }`)
-    // }
-    // dispatch({ type: WORD_LIST_RESET })
-    // return () => {
-    //   dispatch({ type: WORD_RANDOM_RESET })
-    // }
-
-    // return () => {
-      // THIS HAS THE SAME EFFECT AS 'UNMOUNT'
-    //   dispatch({ type: WORD_LIST_RESET })
-    // }
-
-    // async function fetchWord() {
-    //   const { data } = await axios.get(`/words/${wordID.id}`)
-    //   setWord(data)
-    //   console.log(data)
-    // }
-    // fetchWord()
-
-  }, [dispatch, score, updateWordScore])
-
-  // function answerSubmitHandler (e, value) {
-  //   e.preventDefault();
-  //   console.log('value ', value);
-  //   // console.log(score);
-
-  //   // if (value == 'correct') {
-  //   //   setIsCorrect(true)
-  //   dispatch(updateScore(
-  //     word,
-  //     value,
-      
-  //   ))
-
-  //   if (value === 'correct') {
-  //     setScore(score => score + 1)
-  //   }
-    // }
-
-    // if (value === 'correct') {
-    //   setScore(prevScore => score + 1);
-    //   console.log('new score ', score);
-    // } else if (value === 'incorrect') {
-    //   setScore(prevScore => score);
-    //   console.log('incorrect score ', score);
-    // }
-
-
-    // dispatch(updateWordScore(word, value));
-  // }
+  }, [updateWordSuccess])
 
   return (
 
@@ -161,18 +116,12 @@ function WordScreen() {
 
         { flip && (
           <div className={`d-flex justify-content-center me-3`} style={{ display: 'block' }}>
-            <Answers word={ word } language={ language } />
+            <Answers word={ word } language={ language } correct={ correctAnswerClick } />
           </div>
         )}
 
       </div>
 
-      {/* { !flip && 
-      <div className='d-flex justify-content-center' style={{ marginTop: '5rem' }}>
-        <span className='me-2'><b>Score: </b>{ word.score }/10</span>
-        <RecallScore value={ word.score } color={ '#f8e825' } />
-      </div>
-      } */}
     </>
     )}
 

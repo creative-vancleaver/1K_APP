@@ -483,7 +483,8 @@ def wordScore(request, pk, language):
          # context = 
 
          return Response(serializer.data)
-   # return Response({ 'detail': 'testing user word score' })
+   
+   return Response({ 'detail': 'updated word score' })
 
 
    #  word = Word.objects.get(pk=pk)

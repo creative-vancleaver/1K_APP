@@ -43,7 +43,6 @@ function Word({ word, onStateChange }) {
   useEffect(() => {
     if (updateWordSuccess) {
       setFlip(false)
-      
     }
   }, [updateWordSuccess])
 
@@ -60,7 +59,7 @@ function Word({ word, onStateChange }) {
           // onClick={ () => (setFlip(!flip) )}
           onClick={ handleClick }
         >
-          { word.user_word ? ( `userWord: ${word.user_word.word}` ) : ( word.word ) }
+          { word.user_word ? ( word.user_word.word ) : ( word.word ) }
           {/* { word.word ? ( word.word ) : word.user_word.word ? ( word.user_word.word ) : ('') } */}
           {/* { word.user_word.word } */}
           <div>
