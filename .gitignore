@@ -2,6 +2,9 @@
 
 .env
 
+# __pycache__/*
+# *.pyc
+
 # dependencies
 /node_modules
 /.pnp
