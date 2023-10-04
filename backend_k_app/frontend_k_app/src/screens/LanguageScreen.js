@@ -155,7 +155,7 @@ function LanguageScreen() {
                 <Button as={ Link } to={'/register/'} className='w-100'>Sign Up</Button>
               ) : languageExists ? (
                 <Button as={ Link } to={`/languages/${ language }/random/`} className='w-100'>
-                  Learn
+                  Start Learning
                 </Button>
               ) : (
                 <Button className='w-100' onClick={ addLang }>
