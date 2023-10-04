@@ -38,6 +38,8 @@ ALLOWED_HOSTS = [
     'localhost',
     '3.229.63.24',
     'ec2-3-229-63-24.compute-1.amazonaws.com',
+    '1k-words.pro',
+    'www.1k-words.pro',
 ]
 
 
@@ -211,6 +213,8 @@ AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+#AWS_S3_CUSTOM_DOMAIN = config('AWS_CLOUD_FRONT')
+
 
 # AWS_S3_OBJECT_PARAMETERS = {
 #     'CacheControl': 'max-age=86400',
