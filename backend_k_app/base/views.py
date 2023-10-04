@@ -34,6 +34,9 @@ import requests
 
 # Create your views here.
 
+def index(request):
+	return render(request, 'backend_k_app/index.html')
+
 @api_view(['GET'])
 def getRoutes(request):
     
