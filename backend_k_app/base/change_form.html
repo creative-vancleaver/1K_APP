@@ -1,0 +1,51 @@
+{% extends "admin/change_form.html" %}
+
+{% block inline_field_sets %}
+  {{ block.super }}
+  {% for inline_admin_formset in inline_admin_formsets %}
+    <div class="inline-related">
+      <h2>{{ inline_admin_formset.opts.verbose_name_plural }}</h2>
+      <div class="tabular inline-related">
+        <table>
+          <thead>
+            <tr>
+              {% for fieldset in inline_admin_formset %}
+                {% for line in fieldset %}
+                  {% if forloop.first %}
+                    {% if not forloop.parentloop.first %}
+                      <tr>
+                    {% endif %}
+                  {% endif %}
+                  <th{% if line.fields.0 == 'DELETE' %} class="deletelink-box"{% endif %}>{{ line.label_tag }}</th>
+                  {% if forloop.last %}
+                    </tr>
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for form in inline_admin_formset.forms %}
+              {% if form.instance.pk %}
+                <tr class="{% cycle 'row1' 'row2' %} {% if formset.has_error %}errors{% endif %}">
+                  {% for fieldset in inline_admin_formset %}
+                    {% for line in fieldset %}
+                      {{ line }}
+                    {% endfor %}
+                  {% endfor %}
+                </tr>
+              {% endif %}
+              {% if forloop.last and inline_admin_formset.formset.is_paginated %}
+                <tr class="{% cycle 'row1' 'row2' %} add-row">
+                  <td colspan="{{ inline_admin_formset.total_form_count }}">
+                    {% include "admin/pagination.html" %}
+                  </td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% endfor %}
+{% endblock %}

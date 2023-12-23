@@ -32,6 +32,7 @@ function WordScreen() {
   const [flip, setFlip] = useState(false);
   const [childState, setChildState] = useState(null);
 
+  // NOTE: THE ACTION FOR THIS REDUCER FETCHES WORDS BY LANGUAGE and USER_ID ***
   const wordRandomLanguage = useSelector(state => state.wordRandomLanguage);
   const { error, succes, loading, word} = wordRandomLanguage;
   console.log(wordRandomLanguage, flip);

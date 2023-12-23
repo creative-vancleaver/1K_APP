@@ -70,15 +70,15 @@ const LanguageForm = ({ show, handleClose }) => {
     // </div>
     <>
     
-        <Modal show={ show } onHide={ handleClose }>
+        {/* <Modal show={ show } onHide={ handleClose }>
 
             <Modal.Header closeButton>
                 <Modal.Title>Start Learning a New Langauge</Modal.Title>
             </Modal.Header>
 
-            <Modal.Body>
+            <Modal.Body> */}
                 <FormContainer>
-                    <h1>Select A Language To Learn</h1>
+                    <h5>Select A Language To Learn</h5>
 
                     <Form onSubmit={ submitHandler }>
 
@@ -102,10 +102,10 @@ const LanguageForm = ({ show, handleClose }) => {
                     </Form>
 
                 </FormContainer>
-            </Modal.Body>
+            {/* </Modal.Body>
 
         </Modal>
-    
+     */}
     </>
 
     // <FormContainer>

@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'storages',
+    # 'django_admin_inline_paginator',
 ]
 
 # DJANGO REST FRAMEWORK JSON WEB TOKEN
@@ -85,6 +86,9 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
 
     ],
+    
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 
 }
 

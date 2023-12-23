@@ -44,6 +44,23 @@ import {
     ADD_LANGUAGE_TO_USER_FAIL,
 
     UPDATE_USER_INFO,
+
+    USER_WORDS_LANGUAGE_REQUEST,
+    USER_WORDS_LANGUAGE_SUCCESS,
+    USER_WORDS_LANGUAGE_FAIL,
+
+    MASTERED_WORDS_REQUEST,
+    MASTERED_WORDS_SUCCESS,
+    MASTERED_WORDS_FAIL,
+    UPDATE_MASTERED_WORDS,
+    MASTERED_WORDS_RESET,
+
+    NOT_MASTERED_WORDS_REQUEST,
+    NOT_MASTERED_WORDS_SUCCESS,
+    NOT_MASTERED_WORDS_FAIL,
+    UPDATE_NOT_MASTERED_WORDS,
+    NOT_MASTERED_WORDS_RESET,
+
 } from '../constants/userConstants';
 import jquery from 'jquery';
 
@@ -287,6 +304,47 @@ export const addUserLanguage = (user) => async (dispatch, getState) => {
     }
 }
 
+// export const getUserStats = () => async (dispatch, getState) => {
+//     console.log('stats action');
+
+//     try {
+
+//         dispatch({ type: USER_STATS_REQUEST})
+
+//         const {
+//             userLogin: { userInfo }
+//         } = getState();
+
+//         const config = {
+//             headers: {
+//                 'Content-type': 'application/json',
+//                 Authorization: `Bearer ${ userInfo.token }`
+//             }
+//         }
+
+//         const { data } = await axios.get(
+//             `/api/users/${ userInfo.id }/stats/`,
+//             config
+//         )
+//         console.log('userStats Redcuer data ', data)
+
+//         dispatch({
+//             type: USER_STATS_SUCCESS,
+//             payload: data
+//         })
+
+//     } catch (error) {
+
+//         dispatch({
+//             type: USER_STATS_FAIL,
+//             payload: error.message && error.response.data.detail 
+//                 ? error.response.data.detail
+//                 : error.message
+//         })
+//     }
+
+// }
+
 export const getUserStats = () => async (dispatch, getState) => {
     console.log('stats action');
 
@@ -305,18 +363,26 @@ export const getUserStats = () => async (dispatch, getState) => {
             }
         }
 
+        // const params = {
+        //     pageNumber,
+        //     language
+        // }
+
         const { data } = await axios.get(
             `/api/users/${ userInfo.id }/stats/`,
-            config
+            config,
+            // params
         )
         console.log('userStats Redcuer data ', data)
 
         dispatch({
             type: USER_STATS_SUCCESS,
             payload: data
-        })
+        });
 
     } catch (error) {
+
+        console.log('errror = ', error);
 
         dispatch({
             type: USER_STATS_FAIL,
@@ -326,6 +392,148 @@ export const getUserStats = () => async (dispatch, getState) => {
         })
     }
 
+}
+
+export const getMasteredWords = (language, offset = 0, limit = 20) => async(dispatch, getState) => {
+
+    try {
+
+        dispatch({ type: MASTERED_WORDS_REQUEST })
+
+        const {
+            userLogin: { userInfo }
+        } = getState();
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${ userInfo.token }`
+            }
+        }
+
+        const { data } = await axios.get(
+            `/api/users/${ userInfo.id }/mastered_words/${ language }/?limit=${ limit }&offset=${ offset }`,
+            config
+        )
+
+        dispatch({
+            type: MASTERED_WORDS_SUCCESS,
+            payload: data
+        })
+
+    } catch (error) {
+
+        dispatch({
+            type: MASTERED_WORDS_FAIL,
+            payload: error.message && error.response.data.detail
+                ? error.message.data.detail
+                : error.message
+        })
+    }
+}
+
+export const updateMasteredWords = (words) => ({
+    type: UPDATE_MASTERED_WORDS,
+    payload: words,
+});
+
+export const resetMasteredWords = () => ({
+    type: MASTERED_WORDS_RESET
+});
+
+export const getNotMasteredWords = (language, offset = 0 , limit = 20) => async(dispatch, getState) => {
+
+    try {
+
+        console.log('getNOTmasteredWords action ', offset, limit);
+
+        dispatch({ type: NOT_MASTERED_WORDS_REQUEST })
+
+        const {
+            userLogin: { userInfo }
+        } = getState();
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${ userInfo.token }`
+            }
+        }
+
+        const { data } = await axios.get(
+            `/api/users/${ userInfo.id }/not_mastered/${ language }/?limit=${ limit }&offset=${ offset }`,
+            config
+        )
+
+        dispatch({
+            type: NOT_MASTERED_WORDS_SUCCESS,
+            payload: data,
+        })
+
+    } catch (error) {
+
+        dispatch({
+            type: NOT_MASTERED_WORDS_FAIL,
+            payload: error.message && error.response.data.detail
+                ? error.response.data.detail
+                : error.message
+        })
+    }
+}
+
+export const updateNotMasteredWords = (words) => ({
+    type: UPDATE_NOT_MASTERED_WORDS,
+    payload: words,
+});
+
+export const resetNotMasteredWords = () => ({
+    type: NOT_MASTERED_WORDS_RESET
+});
+
+export const getUserWordsByLanguage = (language,  offset = 0, limit = 20) => async (dispatch, getState) => {
+    // pageNumber = 1, 
+    // limit = 10
+    try {
+
+        dispatch({ type: USER_WORDS_LANGUAGE_REQUEST })
+
+        const {
+            userLogin: { userInfo }
+        } = getState();
+
+        // const limit = 10;
+        // const offset = (pageNumber - 1) * limit;
+
+        const config = {
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: `Bearer ${ userInfo.token }`
+            }
+        }
+
+        const { data } = await axios.get(
+            // `/api/users/${ userInfo.id }/user_words/${ language }/?page=${ pageNumber }`,
+            `/api/users/${ userInfo.id }/user_words/${ language }/?limit=${ limit }&offset=${ offset }`,
+            config
+        )
+
+        console.log('RESPONSE DATA ++_ ', data);
+
+        dispatch({
+            type: USER_WORDS_LANGUAGE_SUCCESS,
+            payload: data,
+            // offset: offset
+        })
+
+    } catch (error) {
+
+        dispatch({
+            type: USER_WORDS_LANGUAGE_FAIL,
+            payload: error.message && error.response.data.detail
+                ? error.response.data.detail
+                : error.message
+        })
+    }
 }
 
 export const listUsers = () => async (dispatch, getState) => {
@@ -403,7 +611,7 @@ export const deleteUser = (id) => async (dispatch, getState) => {
         
         dispatch({
             type: USER_DELETE_FAIL,
-            paylaod: error.message && error.response.data.detail ?
+            payload: error.message && error.response.data.detail ?
                 error.response.data.detail 
                 : error.message
         })

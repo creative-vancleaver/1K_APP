@@ -51,6 +51,7 @@ export const listWordsLanguage = (language) => async(dispatch) => {
     dispatch({ type: WORD_LANGUAGE_REQUEST });
     // const { data } = await axios.get(`/words/${ language }`);
     const { data } = await axios.get(`/api/languages/${ language }/words/`)
+    
     dispatch({ type: WORD_LANGUAGE_SUCCESS, payload: data })
 
   } catch (error) {

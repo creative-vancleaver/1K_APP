@@ -59,7 +59,7 @@ function Word({ word, onStateChange }) {
           // onClick={ () => (setFlip(!flip) )}
           onClick={ handleClick }
         >
-          { word.user_word ? ( word.user_word.word ) : ( word.word ) }
+          { word.user_word ? ( word.user_word ) : ( word.word ) }
           {/* { word.word ? ( word.word ) : word.user_word.word ? ( word.user_word.word ) : ('') } */}
           {/* { word.user_word.word } */}
           <div>
@@ -72,7 +72,7 @@ function Word({ word, onStateChange }) {
           // onClick={ () => setFlip(!flip)}
           onClick={ handleClick }
         >
-          { word.user_word ? ( word.user_word.translation ) : ( word.translation ) }
+          { word.user_word ? ( word.translation ) : ( word.translation ) }
           {/* { word.user_word.translation } */}
           {/* { word.score } */}
         </div>

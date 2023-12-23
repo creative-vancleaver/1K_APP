@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db import models
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django import forms
 from django.forms import BaseInlineFormSet, Media
@@ -30,7 +31,12 @@ class UserWordInline(admin.TabularInline):
     model = UserWord
     # form = UserWordInlineForm
     # formset = UserWordInlineFormSet
-    extra = 0
+    # extra = 0
+    extra = 5
+    show_change_link = True
+    
+    # def get_queryset(self, request):
+    #     return super().get_queryset(request).select_related('user_word').all()[:50]
 
 class CustomUserAdmin(UserAdmin):
 
@@ -39,7 +45,7 @@ class CustomUserAdmin(UserAdmin):
     model = User
     list_display = ('id', 'email', 'user_word_count', 'is_staff')
     # list_filter = ('id', 'email', 'is_staff')
-    inlines = [UserWordInline]
+    # inlines = [UserWordInline]
     fieldsets = (
         (None, {'fields': ('first_name', 'email', 'password', 'native_language', 'languages')}),
         ('Permissions', {'fields': ('is_staff', 'is_active', 'groups', 'user_permissions')}),
@@ -66,23 +72,37 @@ class CustomUserAdmin(UserAdmin):
 
     user_word_count.short_description = 'UserWord Count'
 
-    def display_user_words(self, obj):
-        user_words = obj.userword_set.all()
-        return ', '.join(str(user_word) for user_word in user_words)
+    # def display_user_words(self, obj):
+    #     user_words = obj.userword_set.all()
+    #     return ', '.join(str(user_word) for user_word in user_words)
     
-    display_user_words.short_description = 'User Words'
+    # display_user_words.short_description = 'User Words'
     
     def change_view(self, request, object_id, form_url='', extra_context=None):
 
         user = self.get_object(request, object_id)
 
-        user_words = user.userword_set.all()
-        user_words_display = ', '.join(str(user_word) for user_word in user_words)
+        user_words = user.userword_set.all().order_by('id')
+        # user_words_display = ', '.join(str(user_word) for user_word in user_words)
+        
+        # PAGINATION
+        paginator = Paginator(user_words, 10)
+        page = request.GET.get('page')
+        
+        try:
+            user_words_page = paginator.page(page)
+        except PageNotAnInteger:
+            # IF PAGE IS NOT AN INTEGER, DELIVER FIRST PAGE
+            user_words_page = paginator.page(1)
+        except EmptyPage:
+            # IF PAGE IS OUT OF RANGE, DELIVER LAST PAGE OF RESULTS
+            user_words_page = paginator.page(paginator.num_pages)
 
         if extra_context is None:
             extra_context = {}
         
-        extra_context['user_words_display'] = user_words_display
+        # extra_context['user_words_display'] = user_words_display
+        extra_context['user_words_page'] = user_words_page
 
         response = super().change_view(request, object_id, form_url, extra_context)
 
@@ -96,6 +116,19 @@ class CustomUserAdmin(UserAdmin):
     bulk_delete_user_words.short_description = 'Delete all UserWords'
 
 admin.site.register(User, CustomUserAdmin)
+
+
+class UserWordAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'user_word', 'score', 'isMastered')
+    list_filter = ('isMastered',)
+    search_fields = ('id', 'user__email', 'user_word__word')
+    
+    def user(self, obj):
+        return obj.user.email
+    
+    user.short_description = 'User'
+    
+admin.site.register(UserWord, UserWordAdmin)
 
 class WordInline(admin.StackedInline):
     model = Word
@@ -114,6 +147,7 @@ admin.site.register(Language, LanguageAdmin)
 
 class WordAdmin(admin.ModelAdmin):
     list_display = ('id', 'language', 'word', 'translation')
+    search_fields = ('id',)
     ordering = ['id', 'language']
 
 admin.site.register(Word, WordAdmin)

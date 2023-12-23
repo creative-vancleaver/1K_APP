@@ -302,6 +302,7 @@ def get1000WordsFromHTMLTable(request):
    
    if data['url']:
       url = data['url']
+      print('add1000Words URL === ', url)
       pages = requests.get(url)
       soup = BeautifulSoup(pages.text, 'lxml')
 

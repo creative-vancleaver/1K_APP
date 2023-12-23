@@ -78,13 +78,13 @@ function Header() {
                     <NavDropdown.Item>Profile</NavDropdown.Item>
                   </Nav.Link> */}
                   {/* </LinkContainer> */}
-                  <NavDropdown.Item href='/profile'>Profile</NavDropdown.Item>
+                  <NavDropdown.Item key='profile' href='/profile'>Profile</NavDropdown.Item>
 
                   { userInfo.isAdmin && (
-                    <NavDropdown.Item href='/profile/admin'>Admin</NavDropdown.Item>
+                    <NavDropdown.Item key='admin' href='/profile/admin'>Admin</NavDropdown.Item>
                   )}
 
-                  <NavDropdown.Item onClick={ logoutHandler }>Logout</NavDropdown.Item>
+                  <NavDropdown.Item key='logout' onClick={ logoutHandler }>Logout</NavDropdown.Item>
                 </NavDropdown>
 
               ) : (
@@ -109,7 +109,7 @@ function Header() {
 
                 { languages.map(l => (
 
-                  <NavDropdown.Item key={ l.key } href={ `/languages/${ l.language }` }>
+                  <NavDropdown.Item key={ l.id } href={ `/languages/${ l.language }` }>
                     { l.language.charAt(0).toUpperCase() + l.language.slice(1) }
                   </NavDropdown.Item>
 

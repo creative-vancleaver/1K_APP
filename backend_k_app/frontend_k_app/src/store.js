@@ -32,6 +32,9 @@ import {
   userUpdateReducer,
   userDeleteReducer,
   addLanguageToUserReducer,
+  userWordsByLanguageReducer,
+  masteredWordsReducer,
+  notMasteredWordsReducer,
 } from './reducers/userReducers';
 
 const reducer = combineReducers({
@@ -57,6 +60,9 @@ const reducer = combineReducers({
   userUpdate: userUpdateReducer,
   userDelete: userDeleteReducer,
   addLanguageToUser: addLanguageToUserReducer,
+  userWordsByLanguage: userWordsByLanguageReducer,
+  masteredWords: masteredWordsReducer,
+  notMasteredWords: notMasteredWordsReducer,
 
 })
 

@@ -4,11 +4,14 @@ from django.views.decorators.csrf import csrf_exempt
 
 import logging
 
+from collections import defaultdict
+
 # DJANGO REST FRAMEWORK
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 
 # SPECIFIC EXCEPTION CATCHES
 from django.db import IntegrityError
@@ -18,7 +21,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import User, UserWord
-from .serializers import UserSerializer, UserSerializerWithToken, UserProfileSerializer, UserWordSerializer
+from .serializers import UserSerializer, UserSerializerWithToken, UserProfileSerializer, UserWordSerializer, OrganizedDataSerializer
 from base.serializers import WordSerializer
 
 from base.models import Language, Word
@@ -273,12 +276,240 @@ def getUserProfile(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getUserStats(request, pk):
+    # data = request.data
+    # print('data ', request.GET)
+    # page_number = data['pageNumber']
+    # language = data['language']
+    # print('data ', page_number, language)
+    # print(data)
+    # print(request.GET.get('pageNumber'))
+
     user = User.objects.get(id=pk)
-    words = UserWord.objects.filter(user=user, isMastered=True)
+    
+    # default_page_number = 1
+    # # page_number = data['pageNumber']
+    # page_number = request.GET.get('pageNumber')
+    # # default_language = user.languages[1]
+    # default_language = user.languages.all()[0]
+    # # language = data['language']
+    # language = request.GET.get('language')
+    # print('page no ,', default_page_number, page_number)
+    # print('lang ,', default_language, language)
+    
+    # if (language is None):
+    #     words = UserWord.objects.filter(user=user, user_word__language=default_language).order_by('id')
+    # else :
+    #     words = UserWord.objects.filter(user=user, user_word__language=language).order_by('id')
+    
+    
+    # words = UserWord.objects.filter(user=user, isMastered=True)
+    words = UserWord.objects.filter(user=user).order_by('id')
+    
+    # words = UserWord.objects.filter(user=user, user_word__language__language='spanish').order_by('id')
+    # print('userStats word count ', words.count())
+    
+    organized_data = defaultdict(list)
+    
+    for word in words:
+        language_name = word.user_word.language.language
+        organized_data[language_name].append(word)
+        
+    # organized_data = dict(organized_data)
+    
+    # # DRF PAGINATION
+    # # paginator = PageNumberPagination()
+    # # paginated_words = paginator.paginate_queryset(words, request)
 
     serializer = UserWordSerializer(words, many=True)
-
+    # # serializer = UserWordSerializer(paginated_words, many=True)
+    # organized_data_serializer = OrganizedDataSerializer(data={ 'organized_data_dict': organized_data })
+    
+    # if organized_data_serializer.is_valid():
+    #     serializer_data = organized_data_serializer.data
+    #     print(serializer_data)
+    #     return Response(serializer_data)
+        
+    # else:
+    #     errors = organized_data_serializer.errors
+    #     return Response(errors)
+        
+    
     return Response(serializer.data)
+    # return paginator.get_paginated_response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getUserWordsByLanguage(request, pk, language):
+    # print('data from getUserWordsByLanguage', request.GET)
+    # print('request.user = ', request.user.pk, pk)
+    user = User.objects.get(id=pk)
+    # page_number = request.GET.get('page')
+    # language = request.GET.get('language')
+    # print('User ID: ', user.id)
+    
+    if language == 'undefined':
+        language_id = user.languages.all()[0].id
+    else:
+        language_id = language
+        
+    # pagination = LimitOffsetPagination()
+    # limit = request.GET.get('limit', 10) #SHOLD I SET DEFAULT TO 10?
+    # offset = request.GET.get('offset', 0) #SHOULD I SET DEFAULT TO 0?
+    # pagination.default_limit = int(limit)
+    # pagination.offset = int(offset)
+    
+    # mastered_words = UserWord.objects.filter(user=user, isMastered=True, user_word__language=language_id).order_by('id')
+    # paginated_mastered = pagination.paginate_queryset(mastered_words, request)
+    # mastered_serializer = UserWordSerializer(paginated_mastered, many=True)
+    
+    # not_mastered_words = UserWord.objects.filter(user=user, isMastered=False, user_word__language=language_id).order_by('id')
+    # paginated_not_mastered = pagination.paginate_queryset(not_mastered_words, request)
+    # not_mastered_serializer = UserWordSerializer(paginated_not_mastered, many=True)
+    
+    # total_count = mastered_words.count() + not_mastered_words.count()
+    
+    # if language == 'undefined':
+    #     default_language = user.languages.all()[0].id
+    #     words = UserWord.objects.filter(user=user, user_word__language=default_language).order_by('id')
+    #     # mastered_words = UserWord.objects.filter(user=user, isMastered=True, user_word__language=default_language).order_by('id')
+    #     # not_mastered_words = UserWord.objects.fitler(user=user, isMastered=False, user_word__language=default_language).order_by('id')
+    # else:
+    words = UserWord.objects.filter(user=user, user_word__language=language_id).order_by('id')
+        # print('words ', words[:10])
+        # mastered_words = UserWord.objects.fitler(user=user, isMastered=True, user_word__language=default_language).order_by('id')
+        # not_mastered_words = UserWord.objects.filter(user=user, isMastered=False, user_word__language=language).order_by('id')
+        
+    # mastered_serializer = UserWordSerializer(mastered_words, many=True)
+    # not_mastered_serializer = UserWordSerializer(not_mastered_words, many=True)
+            
+    # paginator = PageNumberPagination()
+    # paginated_words = paginator.paginate_queryset(words, request)
+    # user_words = UserWord.objects.filter(user=user).order_by('id')
+    # print('UserWords filtered by USER ONLY ', user_words)
+    # print('Filtered Words: ', words)
+    
+    limit = request.GET.get('limit', None)
+    offset = request.GET.get('offset', None)
+    pagination = LimitOffsetPagination()
+    pagination.default_limit = 10
+    
+    if limit is not None:
+        pagination.default_limit = int(limit)
+        
+    if offset is not None:
+        pagination.offset = int(offset)
+        
+    paginated_words = pagination.paginate_queryset(words, request)
+    # print(paginated_words)
+     
+    serializer = UserWordSerializer(paginated_words, many=True)
+    # print('serializer data ', serializer.data)
+    
+    # return paginator.get_paginated_response(serializer.data)
+    # return Response(serializer.data)
+    
+    # response = {
+    #     'mastered': {
+    #         'mastered_words': mastered_serializer.data,
+    #         'mastered_count': mastered_words.count(),
+    #     }, 
+    #     'notMastered': {
+    #         'notMasted_words': not_mastered_serializer.data,
+    #         'notMastered_count': not_mastered_words.count()
+    #     },
+    #     'count': total_count,
+    # }
+    
+    return pagination.get_paginated_response(serializer.data)
+    # return pagination.get_paginated_response(response) 
+    # return Response(response)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMasteredWords(request, pk, language):
+    user = User.objects.get(id=pk)
+    if language == 'undefined':
+        language_id = user.languages.all()[0].id
+    else:
+        language_id = language
+        
+    pagination = LimitOffsetPagination()
+    limit = request.GET.get('limit', 10)
+    offset = request.GET.get('offset', 0)
+    pagination.default_limit = int(limit)
+    pagination.offset = int(offset)
+    
+    mastered_words = UserWord.objects.filter(user=user, isMastered=True, user_word__language=language_id).order_by('id')
+    # total_count = UserWord.objects.all().count()
+    # print('total_count ', total_count)
+    paginated_mastered = pagination.paginate_queryset(mastered_words, request)
+    mastered_serializer = UserWordSerializer(paginated_mastered, many=True)
+    
+    # response_data = {
+    #     'results': mastered_serializer.data,
+    #     'total_count': total_count
+    # }
+    
+    return pagination.get_paginated_response(mastered_serializer.data)
+    # return Response(response_data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getNotMasteredWords(request, pk, language):
+    
+    user = User.objects.get(id=pk)
+    if language == 'undefined':
+        language_id = user.languages.all()[0].id
+    else:
+        language_id = language
+        
+    language_name = Language.objects.get(id=language_id)
+    
+    pagination = LimitOffsetPagination()
+    limit = request.GET.get('limit', 10)
+    offset = request.GET.get('offset', 0)
+    pagination.default_limit = int(limit)
+    pagination.offset = int(offset)
+    
+    print('limit = ', limit, 'offst = ', offset, 'pagination_offset = ', pagination.offset, 'language_id = ', language_id, 'language = ', language_name)
+    
+    not_mastered_words = UserWord.objects.filter(user=user, isMastered=False, user_word__language=language_id).order_by('id')
+    print(not_mastered_words[34:64])
+    paginated_not_mastered = pagination.paginate_queryset(not_mastered_words, request)
+    print(paginated_not_mastered)
+    not_mastered_serializer = UserWordSerializer(paginated_not_mastered, many=True)
+    # print(not_mastered_serializer.data)
+    
+    return pagination.get_paginated_response(not_mastered_serializer.data)
+
+@api_view(['POST'])
+@csrf_exempt
+@permission_classes([IsAuthenticated])
+def update_word_status(request, user_pk, word_pk):
+    
+    print(request.user.id, user_pk)
+    print(word_pk)
+    
+    if request.user.id != int(user_pk):
+        return Response({ 'error': 'Unauthorized' }, status=status.HTTP_403_FORBIDDEN)
+    
+    try:
+        # user = User.objects.get(id=user_pk)
+        language = request.GET.get('language')
+        user_word = UserWord.objects.get(id=word_pk)
+        
+        user_word.isMastered = not user_word.isMastered
+        user_word.save()
+        
+        print(user_word, user_word.isMastered)
+        
+        serializer = UserWordSerializer(user_word)
+        return Response(serializer.data)
+    
+    except UserWord.DoesNotExist:
+        return Response({ 'message': 'Word not found' }, status=status.HTTP_404_NOT_FOUND)
+    
+
 
 # @api_view(['POST'])
 # def registerUser(request):

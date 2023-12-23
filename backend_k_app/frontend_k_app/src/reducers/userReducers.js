@@ -43,7 +43,26 @@ import {
     ADD_LANGUAGE_TO_USER_REQUEST,
     ADD_LANGUAGE_TO_USER_SUCCESS,
     ADD_LANGUAGE_TO_USER_FAIL,
+
+    USER_WORDS_LANGUAGE_REQUEST,
+    USER_WORDS_LANGUAGE_SUCCESS,
+    USER_WORDS_LANGUAGE_FAIL,
+    USER_WORDS_LANGUAGE_RESET,
+
+    MASTERED_WORDS_REQUEST,
+    MASTERED_WORDS_SUCCESS,
+    MASTERED_WORDS_FAIL,
+    UPDATE_MASTERED_WORDS,
+    MASTERED_WORDS_RESET,
+
+    NOT_MASTERED_WORDS_REQUEST,
+    NOT_MASTERED_WORDS_SUCCESS,
+    NOT_MASTERED_WORDS_FAIL,
+    UPDATE_NOT_MASTERED_WORDS,
+    NOT_MASTERED_WORDS_RESET,
+
 } from '../constants/userConstants';
+import { initialState } from '../store';
 
 // USER LOGIN REDUCER
 export const userLoginReducer = (state = {}, action) => {
@@ -105,10 +124,10 @@ export const userDetailsReducer = (state = { user: {} }, action) => {
             return { ...state, loading: true }
 
         case USER_DETAILS_SUCCESS:  
-            return { loading: false, user: action.payload }
+            return { loading: false, user: action.payload, success: true }
 
         case USER_DETAILS_FAIL:
-            return { loading: false, error: action.payload }
+            return { loading: false, error: action.payload, success: false}
 
         default:
             return state
@@ -151,16 +170,172 @@ export const userStatsReducer = (state = { stats: [] }, action) => {
             return { ...state, loading: true}
 
         case USER_STATS_SUCCESS:
-            return { ...state, loading: false, stats: action.payload }
+
+            const restructuredStats = action.payload.reduce((acc, stat) => {
+                // const languageName = stat.user_word.language.language;
+                // console.log('stat ==== ', stat);
+                const languageName = stat.language;
+                if (!acc[languageName]) {
+                    // acc[languageName] = { user_words: [] };
+                    acc[languageName] = { mastered: [], learning: [] };
+                }
+                // acc[languageName].user_words.push(stat.user_word);
+                if (stat.isMastered) {
+                    acc[languageName].mastered.push(stat.user_word);
+                } else {
+                    acc[languageName].learning.push(stat.user_word);
+                }
+                return acc;
+            }, {});
+
+            return { ...state, loading: false, stats: restructuredStats, success: true }
 
         case USER_STATS_FAIL:
-            return { ...state, loading: false, error: action.payload }
+            return { ...state, loading: false, error: action.payload, success: false }
 
         case USER_STATS_RESET:
             return {}
 
         default:
             return state
+    }
+}
+
+// const initialState = {
+//     notMasteredWords: [],
+//     masteredWords: [],
+// };
+
+const masteredWordsInitialState = {
+    masteredWords: {
+        results: [],
+        count: 0,
+    },
+    // masteredWordsOffset: 0,
+    loading: false,
+    error: null
+};
+
+export const masteredWordsReducer = (state = masteredWordsInitialState, action) => {
+
+    switch(action.type) {
+
+        case MASTERED_WORDS_REQUEST:
+            return { ...state, loading: true }
+
+        case MASTERED_WORDS_SUCCESS:
+
+            return {
+                ...state,
+                loading: false,
+                masteredWords: {
+                    ...state.masteredWords,
+                    results: [...state.masteredWords.results, ...action.payload.results],
+                    count: action.payload.count,
+                }
+                // masteredWordsOffset: state.masteredWordsOffset + action.payload.length
+            };
+
+        case UPDATE_MASTERED_WORDS:
+            return {
+                ...state,
+                masteredWords: {
+                    ...state.masteredWords,
+                    // results: [...state.masteredWords.results, ...action.payload]
+                    results: action.payload
+                }
+            };
+
+        case MASTERED_WORDS_RESET:
+            return masteredWordsInitialState;
+
+        case MASTERED_WORDS_FAIL:
+            return {...state, loading: false, error: action.payload }
+
+        default:
+            return state
+    }
+}
+
+const notMasteredInitialState = {
+    notMasteredWords: {
+        results: [],
+        count: 0,
+    },
+    // notMasteredOffset: 0,
+    loading: false,
+    error: null
+};
+
+export const notMasteredWordsReducer = (state = notMasteredInitialState, action) => {
+
+    switch(action.type) {
+
+        case NOT_MASTERED_WORDS_REQUEST:
+            return { ...state, loading: true }
+
+        case NOT_MASTERED_WORDS_SUCCESS:
+
+            // console.log('payload lenght = ', action.payload.results.length);
+            console.log('action.payload.total_count ', action.payload);
+
+            return {
+                ...state,
+                loading: false,
+                notMasteredWords: {
+                    ...state.notMasteredWords,
+                    results: [...state.notMasteredWords.results, ...action.payload.results],
+                    count: action.payload.count,
+                }
+                // notMasteredOffset: state.notMasteredOffset + action.payload.results.length
+            };
+
+        case NOT_MASTERED_WORDS_FAIL:
+            return { ...state, loading: false, error: action.payload, success: false };
+
+        case UPDATE_NOT_MASTERED_WORDS:
+            return {
+                ...state,
+                notMasteredWords: {
+                    ...state.notMasteredWords,
+                    // results: [...state.notMasteredWords.results, ...action.payload]
+                    results: action.payload
+                }
+            };
+
+        case NOT_MASTERED_WORDS_RESET:
+            return notMasteredInitialState;
+
+        default:
+            return state
+    }
+}
+
+export const userWordsByLanguageReducer = (state = { userWords: [] }, action) => {
+
+    switch(action.type) {
+
+        case USER_WORDS_LANGUAGE_REQUEST:  
+            return { ...state, loading: true }
+
+        case USER_WORDS_LANGUAGE_SUCCESS:
+
+        // const isAppending = action.offset > 0;
+        const isAppending = state.userWords.length > 0;
+        const newWords = isAppending ? state.userWords.concat(action.payload)
+            : action.payload;
+
+            return { ...state, loading: false, userWords: newWords, success: true }
+
+        case USER_WORDS_LANGUAGE_FAIL:
+            return { ...state, loading: false, error: action.payload, success: false }
+
+        case USER_WORDS_LANGUAGE_RESET:
+            return {}
+
+        default: 
+            return state
+
     }
 }
 

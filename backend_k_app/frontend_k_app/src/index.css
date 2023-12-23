@@ -327,3 +327,12 @@ h3 {
   background-position: right calc(.375rem + .25rem) center;
   background-size: calc(.75rem + .5rem) calc(.75rem + .5rem);
 }
+
+/* PROFILE PAGE */
+ul.nav-tabs li:last-child {
+  margin-left: auto;
+}
+
+.move-word-btn {
+  cursor: pointer;
+}

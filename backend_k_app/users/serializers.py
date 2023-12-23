@@ -36,16 +36,29 @@ class UserSerializer(serializers.ModelSerializer):
     
 class UserWordSerializer(serializers.ModelSerializer):
 
-    user_word = WordSerializer()
+    # user_word = WordSerializer()
+    user_word = serializers.CharField(source='user_word.word')
+    translation = serializers.CharField(source='user_word.translation')
+    language = serializers.SerializerMethodField()
+    # language = LanguageSerializer(source='user_word.language', read_only=True)
     # word = serializers.SerializerMethodField()
     class Meta:
         model = UserWord
-        fields = ['user_word', 'score', 'isMastered']
+        fields = ['user_word', 'translation', 'score', 'isMastered', 'language', 'user', 'id']
+        
+    def get_language(self, obj):
+        return obj.user_word.language.language if obj.user_word and obj.user_word.language else None
 
     # def get_word(self, obj):
     #     word = obj.word.word
     #     # score = obj.word.score
     #     return word
+    
+class OrganizedDataSerializer(serializers.Serializer):
+    # organized_data_dict = UserWordSerializer(many=True, read_only=True)
+    organized_data_dict = serializers.DictField(
+        child=UserWordSerializer(many=True)
+    )
     
 class UserProfileSerializer(serializers.Serializer):
     # user = UserSerializer(many=False)

@@ -14,6 +14,13 @@ urlpatterns = [
     # path('all/delete/<str:pk>/', views.deleteUser, name='user-delete'),
     path('<str:pk>/delete/', views.deleteUser, name='user_delete'),
     path('<str:pk>/stats/', views.getUserStats, name='user-stats'),
+    
+    path('<str:pk>/user_words/<str:language>/', views.getUserWordsByLanguage, name='user_words_by_language'),
+    
+    path('<str:pk>/mastered_words/<str:language>/', views.getMasteredWords, name='get_mastered_words'),
+    path('<str:pk>/not_mastered/<str:language>/', views.getNotMasteredWords, name='not_mastered_words'),
+    
+    path('<str:user_pk>/user_words/<int:word_pk>/update/', views.update_word_status, name='update_user_word_status'),
 
     path('<str:pk>/add_lang/', views.addLanguageToUser, name='add_lang_to_user'),
     # path('add_lang/', views.addLanguageToUser, name='add_lang_to_user'),
