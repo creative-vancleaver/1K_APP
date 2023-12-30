@@ -14,6 +14,7 @@ from ast import literal_eval
 
 from django.shortcuts import render
 from django.http import QueryDict, JsonResponse, HttpResponse
+from django.shortcuts import get_object_or_404
 
 # DJANGO REST FRAMEWORK
 from rest_framework.response import Response
@@ -363,7 +364,7 @@ def get1000WordsFromHTMLTable(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def getLanguages(request):
-    languages = Language.objects.all()
+    languages = Language.objects.all().order_by('id')
     serializer = LanguageSerializer(languages, many=True)
 
     return Response(serializer.data)
@@ -374,6 +375,71 @@ def getLanguage(request, lang):
    serializer = LanguageSerializer(language, many=False)
 
    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def update_language(request, language):
+   
+   # CHECK FOR ADMIN USER STATUS
+   if not request.user.is_staff:
+      return Response({ 'detail': 'You do not have permission to perform this action'}, status=403)
+   
+   data = request.data
+   print(data)
+   
+   language = Language.objects.get(language=language)
+   
+   # if data['img']:
+   #    image = data['img']
+   #    if image != language.image:
+   #       language.image = image
+   
+   image = request.FILES.get('img')
+   if image and image != language.image.name:
+      language.image.save(image.name, image, save=True)
+
+   selected_country_names = []
+   country_index = 0
+   
+   while f'selectedCountries[{ country_index }]' in data:
+      country = data[f'selectedCountries[{ country_index }]']
+      selected_country_names.append(country)
+      country_index += 1
+      
+   updated_countries = Country.objects.filter(name__in=selected_country_names)
+   existing_countries = language.countries.values_list('name', flat=True)
+   
+   if len(updated_countries) > 0:
+      for country_name in updated_countries:
+         if country_name not in existing_countries:
+            country = Country.objects.get(name=country_name)
+            language.countries.add(country)
+            language.save()
+   # if data['selectedCountries']:
+   #    for country_name in data['selectedCountries']:
+   #       country = Country.objects.get(name=country_name)
+   #       language.countries.add(country)
+         
+   language.save()
+   
+   serializer = LanguageSerializer(language, many=False)
+   
+   return Response(serializer.data)
+
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def delete_language(request, language_id):
+   
+   if not request.user.is_staff:
+      return Response({ 'detail': 'You do not have permission to perform this action.' }, status=403)
+   
+   # language = Language.objects.get(id=language_id)
+   language = get_object_or_404(Language, id=language_id)
+   language.delete()
+   
+   return Response({'success': True, 'detail':  'User successfully deleted.' })
+   
+   
 
 @api_view(['GET']) 
 @permission_classes([IsAdminUser])

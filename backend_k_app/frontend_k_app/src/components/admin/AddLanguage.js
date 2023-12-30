@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Form, Button, Modal } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 
 import FormContainer from '../FormContainer';
+import Spinner from '../spinner/Spinner';
+import Message from '../Message';
 
 import { listLanguages, addLanguage, listCountries } from '../../actions/languageActions';
 
-const AddLanguage = () => {
+const AddLanguage = ({ show, handleClose }) => {
 
     const dispatch = useDispatch();
 
@@ -148,73 +151,93 @@ const AddLanguage = () => {
 
   return (
 
-    <FormContainer>
-        <h1>Add a New Language</h1>
+    <>
+        <Modal show={ show } onHide={ handleClose }>
 
-        <Form key={ formKey } onSubmit={ submitHandler }>
+        <Modal.Header closeButton>
+            <Modal.Title>
+                Add Language
+            </Modal.Title>
+        </Modal.Header>
 
-            <Form.Group controlId='languageName'>
-                <Form.Label>
-                    Language
-                </Form.Label>
-                <Form.Control
-                    type='name'
-                    placeholder='Enter Language Name'
-                    value={ language_name }
-                    onChange={ (e) => setLanguage_Name(e.target.value) }
-                    required
-                ></Form.Control>
-            </Form.Group>
+        <Modal.Body>
+            {/* <FormContainer> */}
+                {/* <h4>Add a New Language</h4> */}
 
-            <Form.Group controlId='languageURL'>
-                <Form.Label>
-                    URL
-                </Form.Label>
-                <Form.Control
-                    type='url'
-                    placeholder='Enter URL'
-                    value={ language_url }
-                    onChange={ (e) => setLanguage_Url(e.target.value) }
-                ></Form.Control>
-            </Form.Group>
+                <Form key={ formKey } onSubmit={ submitHandler }>
 
-            <Form.Group controlId='languageIMG'>
-                <Form.Label>
-                    Image
-                </Form.Label>
-                <Form.Control
-                    type='file'
-                    onChange={ (e) => setImg(e.target.files[0]) }
-                    // placeholder='Upload an Image'
-                    // value={ img }
-                    // autoComplete='off'
-                    // onChange={}
-                ></Form.Control>
-            </Form.Group>
+                    <Form.Group controlId='languageName' className='mb-3'>
+                        <Form.Label>
+                            Language
+                        </Form.Label>
+                        <Form.Control
+                            type='name'
+                            placeholder='Enter Language Name'
+                            value={ language_name }
+                            onChange={ (e) => setLanguage_Name(e.target.value) }
+                            required
+                        ></Form.Control>
+                    </Form.Group>
 
-            <Form.Group controlId='langCountry'>
-                <Form.Label>
-                    Select a Country
-                </Form.Label>
-                <Select 
-                    isMulti
-                    options={ country_names }
-                    placeholder='Select a Country'
-                    value={ selectedCountries }
-                    onChange={ handleChange }
-                    className='basic-multi-select'
-                    classNamePrefix='select'
-                    // value={ country_name }
-                    // onChange={ (e) => setCountry_Name(e.target.value) }
-                >
-                    {/* { country_value.map(o => <p>{ o.value }</p>)} */}
-                </Select>
-            </Form.Group>
+                    <Form.Group controlId='languageURL' className='mb-3'>
+                        <Form.Label>
+                            URL
+                        </Form.Label>
+                        <Form.Control
+                            type='url'
+                            placeholder='Enter URL'
+                            value={ language_url }
+                            onChange={ (e) => setLanguage_Url(e.target.value) }
+                        ></Form.Control>
+                    </Form.Group>
 
-            <Button type='submit' variant='primary' className='my-3'>Add Language</Button>
-            <Button variant='danger' className='my-3 ms-3' onClick={ clearForm }>Cancel</Button>
-        </Form>
-    </FormContainer>
+                    <Form.Group controlId='languageIMG' className='mb-3'>
+                        <Form.Label>
+                            Image
+                        </Form.Label>
+                        <Form.Control
+                            type='file'
+                            onChange={ (e) => setImg(e.target.files[0]) }
+                            // placeholder='Upload an Image'
+                            // value={ img }
+                            // autoComplete='off'
+                            // onChange={}
+                        ></Form.Control>
+                    </Form.Group>
+
+                    <Form.Group controlId='langCountry' className='mb-3'>
+                        <Form.Label>
+                            Select a Country
+                        </Form.Label>
+                        <Select 
+                            isMulti
+                            options={ country_names }
+                            placeholder='Select a Country'
+                            value={ selectedCountries }
+                            onChange={ handleChange }
+                            className='basic-multi-select'
+                            classNamePrefix='select'
+                            // value={ country_name }
+                            // onChange={ (e) => setCountry_Name(e.target.value) }
+                        >
+                            {/* { country_value.map(o => <p>{ o.value }</p>)} */}
+                        </Select>
+                    </Form.Group>
+
+                    <Button type='submit' variant='primary' className='my-3'>Add Language</Button>
+                    <Button variant='danger' className='my-3 ms-3' onClick={ () => { 
+                        clearForm();
+                        handleClose();
+                    }}>Cancel</Button>
+                </Form>
+            {/* </FormContainer> */}
+
+        </Modal.Body>
+            
+        </Modal>
+    </>
+
+    
 
   )
 }

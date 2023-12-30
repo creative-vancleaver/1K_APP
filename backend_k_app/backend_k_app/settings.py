@@ -97,6 +97,9 @@ CSRF_TRUSTED_ORIGIN = [
     'http://127.0.0.1:3000'
 ]
 
+# SET THIS TO MATCH DOMAIN OF THE FRONTEND
+# CSRF_COOKIE_DOMAIN = 'http://127.0.0.1:3000'
+
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:3000',
     'http://localhost:3000',
@@ -200,7 +203,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
@@ -240,6 +242,14 @@ DEFAULT_FILE_STORAGE = 'backend_k_app.storage_backends.MediaStorage'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# EMAIL BACKEND
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 # CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ALLOW_ALL_ORIGINS = True

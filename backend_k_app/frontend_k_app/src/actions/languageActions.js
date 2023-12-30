@@ -12,11 +12,37 @@ import {
   ADD_LANGUAGE_SUCCESS,
   ADD_LANGUAGE_FAIL,
 
+  UPDATE_LANGUAGE_REQUEST,
+  UPDATE_LANGUAGE_SUCCESS,
+  UPDATE_LANGUAGE_FAIL,
+
+  DELETE_LANGUAGE_REQUEST,
+  DELETE_LANGUAGE_SUCCESS,
+  DELETE_LANGUAGE_FAIL,
+
   GET_COUNTRY_LIST_REQUEST,
   GET_COUNTRY_LIST_SUCCESS,
   GET_COUNTRY_LIST_FAIL,
 
-} from '../constants/languageConstants'
+  UPDATE_LANGUAGE_DISPLAY,
+
+} from '../constants/languageConstants';
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(',');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  console.log('cookieValue = ', cookieValue);
+  return cookieValue;
+}
 
 export const listLanguages = () => async(dispatch) => {
 
@@ -149,5 +175,100 @@ export const addLanguage = (formData) => async(dispatch, getState) => {
       ? error.response.data.detail
           : error.message
     })
+  }
+}
+
+export const updateLanguage = (language, formData) => async(dispatch, getState) => {
+
+  try {
+
+    dispatch({
+      type: UPDATE_LANGUAGE_REQUEST
+    });
+
+    const {
+      userLogin: { userInfo }
+    } = getState();
+
+    const csrfToken = getCookie('csrftoken');
+
+    const config = {
+      headers:{
+        'Content-Type': 'multipart/form-data',
+        'X-CSRFToken': csrfToken,
+        Authorization: `Bearer ${ userInfo.token }`
+      }
+    };
+
+    const { data } = await axios.post(
+      `/api/languages/${ language }/update/`,
+      formData,
+      config
+    );
+
+    dispatch({
+      type: UPDATE_LANGUAGE_SUCCESS,
+      payload: data
+    });
+
+  } catch (error) {
+    
+    dispatch({
+      type: UPDATE_LANGUAGE_FAIL,
+      payload: error.message && error.response.data.detail
+        ? error.response.data.detail
+          : error.message
+    });
+  }
+}
+
+export const updateLanguageDisplay = (languages) => ({
+  type: UPDATE_LANGUAGE_DISPLAY,
+  payload: languages
+})
+
+export const deleteLanguageSuccess = (languageId) => ({
+  type: DELETE_LANGUAGE_SUCCESS,
+  payload: languageId
+})
+
+export const deleteLanguage = (language_id) => async (dispatch, getState) => {
+
+  try {
+
+    dispatch({
+      type: DELETE_LANGUAGE_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${ userInfo.token }`
+      }
+    }
+
+    const { data } = await axios.delete(
+      `/api/languages/${ language_id }/delete/`,
+      config
+    )
+
+    dispatch({
+      type: DELETE_LANGUAGE_SUCCESS,
+      payload: language_id
+    })
+    
+  } catch (error) {
+
+    dispatch({
+      type: DELETE_LANGUAGE_FAIL,
+      payload: error.message && error.response.data.detail ?
+        error.response.data.detail
+          : error.message
+    })
+
   }
 }

@@ -11,7 +11,7 @@ import Message from '../Message';
 import FormContainer from '../FormContainer';
 
 
-const UserUpdateModal = ({ show, handleClose }) => {
+const UserUpdateModal = ({ show, handleClose, selectedUser }) => {
 
     // const userId = useParams();
 
@@ -42,18 +42,19 @@ const UserUpdateModal = ({ show, handleClose }) => {
         if(successUpdate) {
             dispatch({ type: USER_UPDATE_RESET });
             navigate('/profile/admin/')
-        } else {
+        } 
+        // else {
             
-            // if (!user.name || user.id !== Number(userId.id)) {
-            if (!user.name) {
-                // dispatch(getUserDetails(userId.id))
-                console.log('no user ID form parmas');
-            } else {
-                setFirst_Name(user.first_name)
-                // setLast_Name(user.last_name)
-                setIsAdmin(user.isAdmin)
-            }
-        }
+        //     // if (!user.name || user.id !== Number(userId.id)) {
+        //     if (!user.name) {
+        //         // dispatch(getUserDetails(userId.id))
+        //         console.log('no user ID form parmas');
+        //     } else {
+        //         setFirst_Name(user.first_name)
+        //         // setLast_Name(user.last_name)
+        //         setIsAdmin(user.isAdmin)
+        //     }
+        // }
     }, [user, successUpdate, navigate])
     // userId.id,
 
@@ -78,7 +79,7 @@ const UserUpdateModal = ({ show, handleClose }) => {
             </Modal.Header>
 
             <Modal.Body>
-                <FormContainer>
+                {/* <FormContainer> */}
                     { loadingUpdate && <Spinner /> }
                     { errorUpdate && <Message variant='danger'>{ errorUpdate }</Message> }
 
@@ -91,7 +92,7 @@ const UserUpdateModal = ({ show, handleClose }) => {
                                 <Form.Control
                                     type='name'
                                     placeholder='Enter First Name'
-                                    value={ first_name }
+                                    value={ selectedUser.first_name }
                                     onChange={ (e) => setFirst_Name(e.target.value) }
                                 ></Form.Control>
                             </Form.Group>
@@ -106,30 +107,35 @@ const UserUpdateModal = ({ show, handleClose }) => {
                                 ></Form.Control>
                             </Form.Group> */}
 
-                            <Form.Group controlId='email'>
+                            <Form.Group controlId='email' className='mt-3'>
                                 <Form.Label>Email</Form.Label>
                                 <Form.Control
                                     type='email'
                                     placeholder='Enter Email'
-                                    value={ email }
+                                    value={ selectedUser.email }
                                     onChange={ (e) => setEmail(e.target.value) }
                                 ></Form.Control>
                             </Form.Group>
 
-                            <Form.Group controlId='isAdmin'>
+                            <Form.Group controlId='isAdmin' className='mt-3 mb-3'>
                                 <Form.Check
                                     type='checkbox'
                                     label='Is Admin'
-                                    checked={ isAdmin }
+                                    checked={ selectedUser.isAdmin }
                                     onChange={ (e) => setIsAdmin(e.target.value) }
                                 ></Form.Check>
                             </Form.Group>
 
-                            <Button type='submit' variant='secondary' className='py-3'>Update</Button>
+                            <Button type='submit' variant='secondary' className='py-1'>
+                                Update
+                            </Button>
+                            <Button type='button' variant='danger' className='py-1 ms-3' onClick={ handleClose }>
+                                Cancel
+                            </Button>
                         </Form>
 
                     )}
-                </FormContainer>
+                {/* </FormContainer> */}
 
             </Modal.Body>
         </Modal>

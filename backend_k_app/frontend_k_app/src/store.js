@@ -16,6 +16,7 @@ import {
   activeLanguageReducer,
   addLanguageReducer,
   getCountryListReducer,
+  // updateLanguageReducer,
 } from './reducers/languageReducers'
 
 import {
@@ -30,11 +31,13 @@ import {
   userUpdateProfileReducer,
   userStatsReducer,
   userUpdateReducer,
-  userDeleteReducer,
+  // userDeleteReducer,
   addLanguageToUserReducer,
   userWordsByLanguageReducer,
   masteredWordsReducer,
   notMasteredWordsReducer,
+  activateUserReducer,
+  getUserFromTokenReducer,
 } from './reducers/userReducers';
 
 const reducer = combineReducers({
@@ -48,6 +51,7 @@ const reducer = combineReducers({
   activeLanguage: activeLanguageReducer,
   addLanguage: addLanguageReducer,
   countryList: getCountryListReducer,
+  // updateLanguage: updateLanguageReducer,
 
   world: getWorldReducer,
 
@@ -58,11 +62,13 @@ const reducer = combineReducers({
   userStats: userStatsReducer,
   userList: userListReducer,
   userUpdate: userUpdateReducer,
-  userDelete: userDeleteReducer,
+  // userDelete: userDeleteReducer,
   addLanguageToUser: addLanguageToUserReducer,
   userWordsByLanguage: userWordsByLanguageReducer,
   masteredWords: masteredWordsReducer,
   notMasteredWords: notMasteredWordsReducer,
+  activateUser: activateUserReducer,
+  userFromToken: getUserFromTokenReducer,
 
 })
 

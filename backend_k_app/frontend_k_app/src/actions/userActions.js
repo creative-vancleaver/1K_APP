@@ -61,8 +61,80 @@ import {
     UPDATE_NOT_MASTERED_WORDS,
     NOT_MASTERED_WORDS_RESET,
 
+    ADD_USER_REQUEST,
+    ADD_USER_SUCCESS,
+    ADD_USER_FAIL,
+
+    USER_ACTIVATION_REQUEST,
+    USER_ACTIVATION_SUCCESS,
+    USER_ACTIVATION_FAIL,
+
+    USER_FROM_TOKEN_REQUEST,
+    USER_FROM_TOKEN_SUCCESS,
+    USER_FROM_TOKEN_FAIL,
+
+    UPDATE_USER_LIST,
+
 } from '../constants/userConstants';
 import jquery from 'jquery';
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(',');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// ADMIN ADD USER
+export const addUser = (userData) => async (dispatch, getState) => {
+    
+    try {
+
+        dispatch({
+            type: ADD_USER_REQUEST
+        });
+
+        const {
+            userLogin: { userInfo }
+        } = getState();
+
+        const config = {
+            headers: {
+                // 'Content-Type': 'application/json',
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${ userInfo.token }`,
+            }
+        };
+
+        const { data } = await axios.post(
+            `/api/users/add_user/`,
+            userData,
+            config
+        );
+
+        dispatch({
+            type: ADD_USER_SUCCESS,
+            payload: data
+        });
+
+    } catch (error) {
+
+        dispatch({
+            type: ADD_USER_FAIL,
+            payload: error.message && error.response.data.detail
+                ? error.response.data.detail
+                : error.message
+        });
+    }
+}
 
 // USER LOGIN
 export const login = (email, password) => async (dispatch) => {
@@ -157,6 +229,74 @@ export const register = (first_name, email, password, native_language) => async 
                 : error.message
         })
     }
+}
+
+export const getUserFromToken = (token) => async (dispatch) => {
+
+    try {
+
+        dispatch({
+            type: USER_FROM_TOKEN_REQUEST
+        });
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        const { data } = await axios.get(
+            `/api/users/data_from_token/${ token }/`,
+            config
+        );
+
+        dispatch({
+            type: USER_FROM_TOKEN_SUCCESS,
+            payload: data
+        });
+
+    } catch  (error) {
+        dispatch({
+            type: USER_FROM_TOKEN_FAIL,
+            payload: error.message && error.response.data.detail
+                ? error.response.data.detail
+                    : error.message
+        });
+    }
+}
+
+export const activateUser = (token, password) => async (dispatch) => {
+
+    try {
+
+        dispatch({ type: USER_ACTIVATION_REQUEST});
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        const { data } = await axios.post(
+            `/api/users/activate_user/${ token }/`,
+            { 'password': password },
+            config
+        );
+
+        dispatch({
+            type: USER_ACTIVATION_SUCCESS,
+            payload: data
+        });
+
+    } catch (error) {
+        dispatch({
+            type: USER_ACTIVATION_FAIL,
+            payload: error.message && error.response.data.detail
+                ? error.response.data.detail
+                    : error.message
+        });
+    }
+
 }
 
 export const getUserDetails = (id) => async (dispatch, getState) => {
@@ -589,22 +729,25 @@ export const deleteUser = (id) => async (dispatch, getState) => {
         } = getState()
         console.log('user login ', userInfo)
 
+        const csrfToken = getCookie('csrftoken');
+
         const config = {
             headers: {
                 'Content-Type': 'application/JSON',
+                'X-CSRFToken': csrfToken,
                 Authorization: `Bearer ${ userInfo.token }`
             }
         }
 
         const { data } = await axios.delete(
             // `/api/users/delete/${ id }`,
-            `/api/users/${ id }/delete`,
+            `/api/users/${ id }/delete/`,
             config
         )
 
         dispatch({
             type: USER_DELETE_SUCCESS,
-            payload: data
+            payload: id
         })
 
     } catch (error) {
@@ -664,3 +807,14 @@ export const updateUser = (user) => async (dispatch, getState) => {
         })
     }
 }
+
+export const updateUserList = (users) => ({
+    type: UPDATE_USER_LIST,
+    payload: users
+});
+
+export const deleteUserSuccess = (user_id) => ({
+    type: USER_DELETE_SUCCESS,
+    payload: user_id
+});
+

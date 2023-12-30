@@ -31,6 +31,11 @@ const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageCh
     const { notMasteredWords, loading: notMasteredWordsLoading } = notMasteredWordsStore;
 
     useEffect(() => {
+        dispatch(getMasteredWords(language.id));
+        dispatch(getNotMasteredWords(language.id))
+    }, [language.id]);
+
+    useEffect(() => {
         setTotalResults(userWords.count);
     }, [userWords]);
 
@@ -72,7 +77,8 @@ const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageCh
             dispatch(updateNotMasteredWords(updatedNotMasteredWords));
             dispatch(updateMasteredWords(updatedMasteredWords));
 
-            if (updatedNotMasteredWords.results.length <= 20) {
+            // IF NEW updated ARRAY (with word removed) IS LESS THAN 20
+            if (updatedNotMasteredWords.length <= 20) {
                 // DO I WANT TO FETCH FROM THE NEW ARRAY LENGTH?? OR OLD ARRAY LENGTH?
                 // i think old? because the words will have been loaded, but MOVED...
                 dispatch(getNotMasteredWords(language.id, notMasteredWords.results.length, limit));
@@ -85,7 +91,7 @@ const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageCh
             dispatch(updateMasteredWords(updatedMasteredWords));
             dispatch(updateNotMasteredWords(updatedNotMasteredWords));
 
-            if (masteredWords.results.length <= 20) {
+            if (updatedMasteredWords.length <= 20) {
                 dispatch(getMasteredWords(language.id, masteredWords.results.length, limit));
             }
 
@@ -159,7 +165,7 @@ const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageCh
 
         <Col className='col-md-6'>
     
-            <h5>{ language.language } | Words { totalResults } { userInfo.id }</h5>
+            <h5>Words ({ notMasteredWords.count })</h5>
 
             { !notMasteredWords || notMasteredWordsLoading && notMasteredWords.results.length === 0 ? (
 
@@ -196,7 +202,7 @@ const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageCh
 
         <Col className='col-md-6'>
             
-            <h5>{ language.language } | Words Mastered </h5>
+            <h5>Words Mastered ({ masteredWords.count })</h5>
             
             { !masteredWords || masteredWordsLoading && masteredWords.results.length === 0 ? (
 
@@ -212,17 +218,29 @@ const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageCh
 
                     ))}
 
-                    <button onClick={ loadMoreMastered } className='btn btn-primary me-3'>Load More</button>
-                    <button onClick={ () => {
-                        setShowAllMastered(prevshowAllMastered => !prevshowAllMastered);
-                        if (displayCountMastered > 10) {
-                            setDisplayCountMastered(10);
-                        } else {
-                            setDisplayCountMastered(masteredWords.results.length);
-                        }
-                    } }
-                    className='btn btn-secondary'
-                    >{ showAllMastered ? 'Show Less' : 'Show More' }</button>
+                    { masteredWords.count ? (
+                        <>
+                            <button onClick={ loadMoreMastered } className='btn btn-primary me-3'>Load More</button>
+                            <button onClick={ () => {
+                                setShowAllMastered(prevshowAllMastered => !prevshowAllMastered);
+                                if (displayCountMastered > 10) {
+                                    setDisplayCountMastered(10);
+                                } else {
+                                    setDisplayCountMastered(masteredWords.results.length);
+                                }
+                            } }
+                            className='btn btn-secondary'
+                            >{ showAllMastered ? 'Show Less' : 'Show More' }</button>
+                        </>
+                    ) : (
+                        <div style={{ fontWeight: '100' }}>
+                            <p className='mb-0'>Words you've mastered will appear here.</p>
+                            <p className='mb-0'>You can master words by learning the flashcards.</p>
+                            <p>Or you can also select words you already know in the left column to move them to the 'Mastered' list.</p>
+                        </div>
+                    )}
+
+
 
                 </>
 

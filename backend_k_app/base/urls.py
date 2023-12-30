@@ -7,6 +7,10 @@ urlpatterns = [
     path('get1000words/', views.get1000WordsFromHTMLTable, name='get_1000_words'),
 
     # path('add_countries/', views.uploadCountryNames, name='add_countries'),
+    
+    path('<str:language>/update/', views.update_language, name='update_language'),
+    
+    path('<str:language_id>/delete/', views.delete_language, name='delete_language'),
 
     path('', views.getLanguages, name='languages'),
 

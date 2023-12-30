@@ -61,6 +61,20 @@ import {
     UPDATE_NOT_MASTERED_WORDS,
     NOT_MASTERED_WORDS_RESET,
 
+    ADD_USER_REQUEST,
+    ADD_USER_SUCCESS,
+    ADD_USER_FAIL,
+
+    USER_ACTIVATION_REQUEST,
+    USER_ACTIVATION_SUCCESS,
+    USER_ACTIVATION_FAIL,
+
+    USER_FROM_TOKEN_REQUEST,
+    USER_FROM_TOKEN_SUCCESS,
+    USER_FROM_TOKEN_FAIL,
+
+    UPDATE_USER_LIST,
+
 } from '../constants/userConstants';
 import { initialState } from '../store';
 
@@ -112,6 +126,60 @@ export const userRegisterReducer = (state = {}, action) => {
 
         default:
             return state
+    }
+}
+
+export const getUserFromTokenReducer = (state = {}, action) => {
+
+    switch(action.type) {
+
+        case USER_FROM_TOKEN_REQUEST:
+            return {
+                loading: true
+            };
+
+        case USER_FROM_TOKEN_SUCCESS:
+            return {
+                loading: false,
+                success: true,
+                userData: action.payload
+            };
+
+        case USER_FROM_TOKEN_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            };
+
+        default:
+            return state;
+    }
+}
+
+export const activateUserReducer = (state = {}, action) => {
+
+    switch(action.type) {
+
+        case USER_ACTIVATION_REQUEST:
+            return {
+                loading: true
+            };
+
+        case USER_ACTIVATION_SUCCESS:
+            return {
+                loading: false, 
+                success: true,
+                userInfo: action.payload
+            };
+
+        case USER_ACTIVATION_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            };
+
+        default:
+            return state;
     }
 }
 
@@ -353,11 +421,30 @@ export const userListReducer = (state = { users: [] }, action) => {
             }
         // console.log('users in reducer ', users);
 
+        case ADD_USER_SUCCESS:
+            return {
+                ...state,
+                users: [...state.users, action.payload]
+            }
+
         case USER_LIST_FAIL:
             return {
                 loading: false,
                 error: action.payload
+            };
+
+        case UPDATE_USER_LIST:
+            return {
+                ...state,
+                users: action.payload
             }
+
+        case USER_DELETE_SUCCESS:
+            return state;
+            // return {
+            //     ...state,
+            //     users: state.users.filter(user => user.id !== action.payload)
+            // };
 
         default:
             return state;
@@ -419,20 +506,20 @@ export const addLanguageToUserReducer = (state = { user: { languages: [] }  }, a
 
 }
 
-export const userDeleteReducer = (state = {}, action) => {
+// export const userDeleteReducer = (state = {}, action) => {
 
-    switch(action.type) {
+//     switch(action.type) {
 
-        case USER_DELETE_REQUEST:
-            return { loading: true}
+//         case USER_DELETE_REQUEST:
+//             return { loading: true}
 
-        case USER_DELETE_SUCCESS:
-            return { loading: false, success: true }
+//         case USER_DELETE_SUCCESS:
+//             return { loading: false, success: true }
 
-        case USER_DELETE_FAIL:
-            return { loading: false, error: action.payload }
+//         case USER_DELETE_FAIL:
+//             return { loading: false, error: action.payload }
 
-        default:
-            return state
-    }
-}
+//         default:
+//             return state
+//     }
+// }

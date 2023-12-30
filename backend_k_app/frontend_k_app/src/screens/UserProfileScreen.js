@@ -15,8 +15,10 @@ import LanguageForm from '../components/forms/LanguageForm';
 // COMPONENTS
 import UserWordsPaginate from '../components/profile/UserWordsPaginate';
 import Spinner from '../components/spinner/Spinner';
-import { defaultFormat } from 'moment';
+import Message from '../components/Message';
+import ConfirmModal from '../components/ConfirmModal';
 
+import { defaultFormat } from 'moment';
 
 const UserProfileScreen = () => {
 
@@ -31,6 +33,7 @@ const UserProfileScreen = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [languageMessage, setLanguageMessage] = useState('');
     const [updateProfile, setUpdateProfile] = useState(false);
 
     // const[key, setKey] = useState('languagesLearning'); // SET DEFAULT ACTIVE TAB
@@ -49,6 +52,12 @@ const UserProfileScreen = () => {
 
     const userLogin = useSelector(state => state.userLogin);
     const { userInfo } = userLogin;
+
+    const masteredWordsStore = useSelector(state => state.masteredWords);
+    const { masteredWords, loading: masteredWordsLoading } = masteredWordsStore;
+
+    const notMasteredWordsStore = useSelector(state => state.notMasteredWords);
+    const { notMasteredWords, loading: notMasteredWordsLoading } = notMasteredWordsStore;
 
     const userStats = useSelector(state => state.userStats);
     const { error: statsError, loading: statsLoading, success: statsSuccess, stats } = userStats;
@@ -79,8 +88,18 @@ const UserProfileScreen = () => {
 
     useEffect(() => {
         if (detailsSuccess) {
-            setNativeLanguage(user.native_language.language);
-            setLanguagesLearning(user.languages);
+
+            setFirst_Name(user.first_name);
+            setEmail(user.email);
+
+            if (user.natvive_language) {
+                setNativeLanguage(user.native_language.language);
+            }
+
+            if (user.languages) {
+                setLanguagesLearning(user.languages);
+            }
+
             dispatch(getUserStats());
             // console.log(languagesLearning);
         }
@@ -88,17 +107,23 @@ const UserProfileScreen = () => {
 
     useEffect(() => {
         // i COULD store this in state and initialize it as below...
-        var default_language = languagesLearning[0]?.id;
-        console.log('default language ', default_language);
-        // dispatch(getUserWordsByLanguage(default_language, 0, 10));
-        dispatch(getUserWordsByLanguage(default_language));
+        if (languagesLearning.length > 0) {
+            // var default_language = languagesLearning[0]?.id;
+            // console.log('default language ', default_language);
+            // dispatch(getUserWordsByLanguage(default_language, 0, 10));
+            setKey(languagesLearning[0]?.id);
+            dispatch(getUserWordsByLanguage(languagesLearning[0]?.id));
+            setLanguageMessage('');
+        } else {
+            setLanguageMessage('You have not selected a language to learn');
+        }
 
-    }, [languagesLearning])
+    }, [languagesLearning, dispatch]);
 
-    useEffect(() => {
-        setFirst_Name(user.first_name);
-        setEmail(user.email);
-    }, [user])
+    // useEffect(() => {
+    //     setFirst_Name(user.first_name);
+    //     setEmail(user.email);
+    // }, [user])
 
     const handleClick = () => {
         console.log('update profile clicked ', user.id);
@@ -107,6 +132,14 @@ const UserProfileScreen = () => {
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    // CALLBACK FUNCTION - PASSED AS PROP TO CHILD IN ORDER TO CLEAR LOCAL STATE FROM CHILD
+    const languageFormSubmit = () => {
+
+        setLanguageMessage('');
+        dispatch(getUserDetails(userInfo.id));
+
+    }
 
     const submitHandler = (e) => {
 
@@ -140,11 +173,16 @@ const UserProfileScreen = () => {
 
         setKey(key);
 
-        dispatch(getMasteredWords(key));
-        dispatch(getNotMasteredWords(key));
-        
-        setSelectedLanguage(key);
 
+        if (key !== 'addLanguage') {
+
+            dispatch(getUserWordsByLanguage(key));
+            // dispatch(getMasteredWords(key));
+            // dispatch(getNotMasteredWords(key));
+            
+            setSelectedLanguage(key);
+
+        }
     }
 
     const handlePageChange = (newPage, language) => {
@@ -153,13 +191,12 @@ const UserProfileScreen = () => {
         setSelectedLanguage(language);
     }
 
+
+
   return (
 
 
-    <>
-
-
-
+    <> 
 
         <Row>
 
@@ -168,6 +205,8 @@ const UserProfileScreen = () => {
             ) : (
 
                 <Row style={{ marginBottom: '2rem' }}>
+
+                    { message && <Message variant='danger'>{ message }</Message> }
 
                     <h2 style={{ marginBottom: '1rem' }}>User Profile</h2>
 
@@ -276,6 +315,8 @@ const UserProfileScreen = () => {
                     <>
 
                         <h2>Stats</h2>
+{/* 
+                        { languageMessage && <Message variant='danger'>{ languageMessage }</Message> } */}
 
                         <Tabs
                             id="userStatsTabs"
@@ -304,11 +345,11 @@ const UserProfileScreen = () => {
 
                             ))}
 
-                            <Tab eventKey="addLanuage" title="Add Language" className="add-lang-tab" id='addLangTab'>
+                            <Tab eventKey="addLanguage" title="+ Language" className="add-lang-tab" id='addLangTab'>
                                 <Col md={12} className="d-flex justify-content-center" style={{ marginTop: '3rem' }}>
-                                    <h4>Add Language</h4>
-                                    <Button onClick={ handleShow }>Learn a New Language</Button>
-                                    <LanguageForm show={ show } handleClose={ handleClose }></LanguageForm>
+                                    {/* <h4>Add Language</h4> */}
+                                    {/* <Button onClick={ handleShow }>Learn a New Language</Button> */}
+                                    <LanguageForm show={ show } handleClose={ handleClose } onFormSubmit={ languageFormSubmit }></LanguageForm>
                                 </Col>
                             </Tab>
 

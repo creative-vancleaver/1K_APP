@@ -1,10 +1,18 @@
 from django.shortcuts import render
+from django.conf import settings
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str 
+
+import urllib
 
 import logging
 
 from collections import defaultdict
+from datetime import datetime, timedelta
 
 # DJANGO REST FRAMEWORK
 from rest_framework.response import Response
@@ -17,6 +25,8 @@ from rest_framework.pagination import PageNumberPagination, LimitOffsetPaginatio
 from django.db import IntegrityError
 
 # DJANGO REST FRAMEWORK JSON WEB TOKEN AUTHENTICATION
+import jwt
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -55,7 +65,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             data[key] = value
 
         return data
-    
+
 class MyTokenObtainPairView(TokenObtainPairView):
     authentication_classes = ()
     permission_classes = ()
@@ -93,7 +103,8 @@ def registerUser(request):
             # username = data['email'],
             # name = data['name'],
             email = data['email'],
-            password = make_password(data['password'])
+            # password = make_password(data['password'])
+            password = data['password']
         )
         user.is_active = True
         user.save()
@@ -106,6 +117,138 @@ def registerUser(request):
     except IntegrityError:
         message = { 'detail': 'Useer with this email already exists.' }
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+# @authentication_classes([IsAdminUser])
+@permission_classes([IsAdminUser])
+def add_user(request):
+    
+    data = request.data
+    print(data)
+    
+    try:
+        # language = Language.objects.get
+        user = User.objects.create_user(
+            first_name = data['first_name'],
+            email = data['email'],
+            # password = make_password(data['password'])
+            # password = data['password']
+        )
+        # user.is_active = True
+        user.is_active = False
+        user.save()
+        
+        # GENERATE TOKEN + UID
+        # token = PasswordResetTokenGenerator().make_token(user)
+        # uid = urlsafe_base64_encode(force_bytes(user.pk))
+        
+        # GENERATE ACTIVATION TOKEN WITH JWT
+        token = jwt.encode({
+            'user_id': user.id,
+            'exp': datetime.utcnow() + timedelta(hours=24)
+        }, settings.SECRET_KEY, algorithm='HS256')
+        
+        print('token = ', token)
+        
+        # CONSTRUCT ACTIVATION URL (ADJUST DOMAIN AS NECESSARY)
+        # activation_url = f'https://1k_words.pro/activate/{ uid }/{ token }'
+        activation_link = f"{ request.build_absolute_uri('/activate/')}{ urllib.parse.quote(token) }"
+        
+        print('activation link = ', activation_link)
+        
+        # SEND EMAIL WITH ACTIVATION LINK
+        send_mail(
+            'Activate your account',
+            f'Hi { user.first_name }! Please use this link to activate your account: { activation_link }',
+            'creativevancleave@gmail.com',
+            [user.email],
+            fail_silently=False,
+        )
+        
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    except Exception as e:
+        print(e)
+        return Response({ 'error': str(e) }, status=status.HTTP_400_BAD_REQUEST)
+ 
+    # except IntegrityError:
+    #     message = { 'detail': 'User with this email already exists.' }
+    #     return Response(message, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def get_user_data_from_token(request, token):
+    
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        user = User.objects.get(id=payload['user_id'], is_active=False)
+        
+        serializer = UserSerializer(user, many=False)
+        
+        print(serializer.data)
+        
+        return Response(serializer.data)
+    
+    except jwt.ExpiredSignatureError:
+        return Response({ 'error': 'Activation link has expired.' }, status=status.HTTP_400_BAD_REQUEST)
+    except jwt.DecodeError:
+        return Response({ 'error': 'This activtion code is not valid.' }, status=status.HTTP_400_BAD_REQUEST)
+    except User.DoesNotExist:
+        return Response({ 'error': 'User not found.' }, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['POST'])
+def activate_user(request, token):
+    
+    print('activate_user')
+    data = request.data
+    
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        user = User.objects.get(id=payload['user_id'], is_active=False)      
+        user.is_active = True
+        user.password = make_password(data['password'])
+        user.save()
+        print(user)
+        
+        # GENERATE JWT TOKEN ON ACTIVATION
+        refresh = RefreshToken.for_user(user)
+        data = { 'refresh': str(refresh), 'access': str(refresh.access_token) }
+        
+        # MERGE WITH USER DATA
+        user_data = UserSerializerWithToken(user).data
+        data.update(user_data)
+        
+        print('data ', data)
+        
+        return Response(data, status=status.HTTP_200_OK)
+    
+    except jwt.ExpiredSignatureError:
+        return Response({ 'error': 'Acivation link has expired.' }, status=status.HTTP_400_BAD_REQUEST)
+    except jwt.DecodeError:
+        return Response({ 'error': 'Invalid activation link.' }, status=status.HTTP_400_BAD_REQUEST)
+    except User.DoesNotExist:
+        return Response({ 'error': 'User not found.' }, status=status.HTTP_404_NOT_FOUND)
+
+
+    # try:
+    #     payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+    # try:
+    #     uid = force_str(urlsafe_base64_decode)(uidb64)
+    #     user = User.objects.get(pk=uid)
+    # except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+    #     user = None
+        
+    # if user is not None and PasswordResetTokenGenerator().check_token(user, token):
+    #     user.is_active = True
+    #     user.save()
+        
+    # # SERIALIZER USER DATA WITH TOKEN
+    #     serializer = UserSerializerWithToken(user, many=False)
+    
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
+    # else:
+    #     return Response({ 'error': 'Activation link is invalid.' })
+        
     
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
@@ -196,7 +339,7 @@ def addLanguageToUser(request, pk):
 @permission_classes([IsAdminUser])
 def getUsers(request):
     # print('user = ', request.user)
-    users = User.objects.all()
+    users = User.objects.all().order_by('id')
     serializer = UserSerializer(users, many=True)
 
     return Response(serializer.data)
@@ -231,6 +374,7 @@ def updateUser(request, pk):
 @permission_classes([IsAdminUser])
 def deleteUser(request, pk):
     userForDeletion = User.objects.get(id=pk)
+    # serializer = UserSerializer(userForDeletion, many=False)
     # print(userForDeletion)
     userForDeletion.delete()
 

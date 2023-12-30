@@ -8,6 +8,10 @@ urlpatterns = [
 
     path('', views.getUsers, name='users'),
     path('login/', views.MyTokenObtainPairView.as_view(),name='token_obtain_pari'),
+    
+    path('add_user/', views.add_user, name='add_user'),
+    path('data_from_token/<str:token>/', views.get_user_data_from_token, name='data_from_token'),
+    path('activate_user/<str:token>/', views.activate_user, name='activate_user'),
 
     # path('all/update/<str:pk>/', views.updateUser, name='user-update'),
     path('<str:pk>/update/', views.updateUser, name='user_update'),

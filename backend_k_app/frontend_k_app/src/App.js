@@ -21,6 +21,7 @@ import UserRegisterScreen from './screens/UserRegisterScreen';
 import UserProfileScreen from './screens/UserProfileScreen';
 import AdminScreen from './screens/AdminScreen';
 import UserUpdate from './components/admin/UserUpdate';
+import UserActivationScreen from './screens/UserActivationScreen';
 
 // const history = createBrowswerHistory();
 
@@ -44,6 +45,7 @@ function App() {
 
             <Route path='/login/' element={ <UserLoginScreen /> } />
             <Route path='/register/' element={ <UserRegisterScreen /> } />
+            <Route path='/activate/:token' element={ <UserActivationScreen /> } />
             <Route path='/profile/' element={ <UserProfileScreen /> } />
 
             <Route path='/profile/admin/' element={ <AdminScreen /> } />

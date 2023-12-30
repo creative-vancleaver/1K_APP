@@ -6,7 +6,7 @@ import FormContainer from '../FormContainer';
 import { listLanguages } from '../../actions/languageActions';
 import { addUserLanguage, getUserDetails } from '../../actions/userActions';
 
-const LanguageForm = ({ show, handleClose }) => {
+const LanguageForm = ({ show, handleClose, onFormSubmit }) => {
 
     const dispatch = useDispatch();
 
@@ -47,7 +47,8 @@ const LanguageForm = ({ show, handleClose }) => {
             // dispatch(getUserDetails(user.id));
             handleClose();
             console.log('user from form ', user);
-            dispatch(getUserDetails(user.id))
+            onFormSubmit();
+            // dispatch(getUserDetails(user.id))
         } else {
             console.log('You are already learning this language');
         }
@@ -78,7 +79,7 @@ const LanguageForm = ({ show, handleClose }) => {
 
             <Modal.Body> */}
                 <FormContainer>
-                    <h5>Select A Language To Learn</h5>
+                    <h5 className='mb-3'>Select A Language To Learn</h5>
 
                     <Form onSubmit={ submitHandler }>
 
