@@ -2,6 +2,15 @@ main {
   min-height: 80vh;
 }
 
+/* HEADER STYLES */
+.offcanvas.offcanvas-end {
+  width: 200px !important;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none !important;
+}
+
 .container {
   /* margin-top: 30vh; */
   /* align-items: center; */
@@ -15,7 +24,7 @@ main {
   justify-content: center;
   align-items: center;
   /* margin-top: 30vh; */
-  margin-top: 10vh;
+  /* margin-top: 10vh; */
 }
 
 /* @media(max-width: 768px) {
@@ -70,11 +79,11 @@ main {
 
 /* HAD TO UPDATE THIS TO ONLY EFFECT WORD CARDS */
 .card.cards {
-  height: 0;
+  /* height: 0; */
   border: none !important;
-  box-shadow: none !important;
-  margin-bottom: 1rem;
-  margin-right: 1rem;
+  /* box-shadow: none !important; */
+  /* margin-bottom: 1rem; */
+  /* margin-right: 1rem; */
 }
 
 .cards {
@@ -138,6 +147,22 @@ main {
 .cards.flip {
   --rotate-y: 180deg;
   backface-visibility: hidden;
+}
+
+@keyframes scaleAnimation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animated-star {
+  animation: scaleAnimation .5s ease-in-out;
 }
 
 /* WORD PAGE */

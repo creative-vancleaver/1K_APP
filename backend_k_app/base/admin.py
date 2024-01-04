@@ -1,11 +1,14 @@
+from typing import Any
 from django.contrib import admin
 from django.db import models
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django import forms
+from django.db.models.query import QuerySet
 from django.forms import BaseInlineFormSet, Media
 
 from django.contrib.auth.admin import UserAdmin
+from django.http.request import HttpRequest
 
 from users.forms import CustomUserCreationForm, CustomUserChangeForm
 from users.models import User, UserWord
@@ -29,23 +32,32 @@ from .models import Language, Word, Country
 
 class UserWordInline(admin.TabularInline):
     model = UserWord
+    extra = 0
+    # fields = ['id', 'user_word', 'score', 'count', 'isMastered']
     # form = UserWordInlineForm
     # formset = UserWordInlineFormSet
     # extra = 0
-    extra = 5
-    show_change_link = True
+    # extra = 5
+    # show_change_link = True
+    max_num = 100
     
     # def get_queryset(self, request):
-    #     return super().get_queryset(request).select_related('user_word').all()[:50]
+    #     return super().get_queryset(request).select_related('user_word').all()
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # pagination logic here???
+        print(qs)
+        return qs
 
 class CustomUserAdmin(UserAdmin):
 
-    add_form = CustomUserCreationForm
-    form = CustomUserChangeForm
+    # add_form = CustomUserCreationForm
+    # form = CustomUserChangeForm
     model = User
     list_display = ('id', 'email', 'user_word_count', 'is_staff')
-    # list_filter = ('id', 'email', 'is_staff')
-    # inlines = [UserWordInline]
+    # list_filter = ('id', 'email', 'is_staff') ---  
+    inlines = [UserWordInline]
     fieldsets = (
         (None, {'fields': ('first_name', 'email', 'password', 'native_language', 'languages')}),
         ('Permissions', {'fields': ('is_staff', 'is_active', 'groups', 'user_permissions')}),
@@ -62,71 +74,100 @@ class CustomUserAdmin(UserAdmin):
     # exclude=['username']
     # django.core.exceptions.FieldError: Unknown field(s) (username) specified for User. Check fields/fieldsets/exclude attributes of class CustomUserAdmin.
     ordering = ['id']
-    actions = ['bulk_delete_user_words']
+    # actions = ['bulk_delete_user_words']
 
-    class Media:
-        js = ('admin_custom.js',)
+    # class Media:
+    #     js = ('admin_custom.js',)
 
     def user_word_count(self, obj):
-        return obj.userword_set.count()
+        return obj.userword_set.all().count()
 
     user_word_count.short_description = 'UserWord Count'
 
-    # def display_user_words(self, obj):
-    #     user_words = obj.userword_set.all()
-    #     return ', '.join(str(user_word) for user_word in user_words)
+    # # def display_user_words(self, obj):
+    # #     user_words = obj.userword_set.all()
+    # #     return ', '.join(str(user_word) for user_word in user_words)
     
-    # display_user_words.short_description = 'User Words'
+    # # display_user_words.short_description = 'User Words'
     
-    def change_view(self, request, object_id, form_url='', extra_context=None):
+    # def change_view(self, request, object_id, form_url='', extra_context=None):
 
-        user = self.get_object(request, object_id)
+    #     user = self.get_object(request, object_id)
 
-        user_words = user.userword_set.all().order_by('id')
-        # user_words_display = ', '.join(str(user_word) for user_word in user_words)
+    #     user_words = user.userword_set.all().order_by('id')
+    #     # user_words_display = ', '.join(str(user_word) for user_word in user_words)
         
-        # PAGINATION
-        paginator = Paginator(user_words, 10)
-        page = request.GET.get('page')
+    #     # PAGINATION
+    #     paginator = Paginator(user_words, 10)
+    #     page = request.GET.get('page')
         
-        try:
-            user_words_page = paginator.page(page)
-        except PageNotAnInteger:
-            # IF PAGE IS NOT AN INTEGER, DELIVER FIRST PAGE
-            user_words_page = paginator.page(1)
-        except EmptyPage:
-            # IF PAGE IS OUT OF RANGE, DELIVER LAST PAGE OF RESULTS
-            user_words_page = paginator.page(paginator.num_pages)
+    #     try:
+    #         user_words_page = paginator.page(page)
+    #     except PageNotAnInteger:
+    #         # IF PAGE IS NOT AN INTEGER, DELIVER FIRST PAGE
+    #         user_words_page = paginator.page(1)
+    #     except EmptyPage:
+    #         # IF PAGE IS OUT OF RANGE, DELIVER LAST PAGE OF RESULTS
+    #         user_words_page = paginator.page(paginator.num_pages)
 
-        if extra_context is None:
-            extra_context = {}
+    #     if extra_context is None:
+    #         extra_context = {}
         
-        # extra_context['user_words_display'] = user_words_display
-        extra_context['user_words_page'] = user_words_page
+    #     # extra_context['user_words_display'] = user_words_display
+    #     extra_context['user_words_page'] = user_words_page
 
-        response = super().change_view(request, object_id, form_url, extra_context)
+    #     response = super().change_view(request, object_id, form_url, {})
 
-        return response
+    #     return response
+    
+    # UPDATE 2024   
+    # def change_view(self, request, object_id, form_url='', extra_context=None):
+    #     user = self.get_object(request, object_id)
+        
+    #     user_words = user.userword_set.all().order_by('id')
+        
+    #     # PAGINATION
+    #     # paginator = Paginator(user_words, 10)
+    #     # page_number = request.GET.get('page')
+    #     # user_words_page = paginator.get_page(page_number)
+        
+    #     if extra_context is None:
+    #         extra_context = {}
+            
+    #     # extra_context['user_words_page'] = user_words_page
+        
+    #     return super().change_view(request, object_id, form_url, extra_context=extra_context)
 
-    def bulk_delete_user_words(self, request, queryset):
-        # queryset.delete()
-        for user_word in queryset:
-            user_word.delete()
+    # def bulk_delete_user_words(self, request, queryset):
+    #     # queryset.delete()
+    #     for user_word in queryset:
+    #         user_word.delete()
 
-    bulk_delete_user_words.short_description = 'Delete all UserWords'
+    # bulk_delete_user_words.short_description = 'Delete all UserWords'
 
 admin.site.register(User, CustomUserAdmin)
 
 
 class UserWordAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'user_word', 'score', 'isMastered')
+    model = UserWord
+    list_display = ('id', 'user', 'user_word', 'translation', 'count', 'isMastered')
     list_filter = ('isMastered',)
     search_fields = ('id', 'user__email', 'user_word__word')
+    actions = ['bulk_delete_user_words']
     
     def user(self, obj):
         return obj.user.email
     
     user.short_description = 'User'
+    
+    def translation(self, obj):
+        return obj.user_word.translation
+    
+    def bulk_delete_user_words(self, request, queryset):
+        queryset.delete()
+        
+    bulk_delete_user_words.short_description = 'Delete selected UserWords'
+    
     
 admin.site.register(UserWord, UserWordAdmin)
 

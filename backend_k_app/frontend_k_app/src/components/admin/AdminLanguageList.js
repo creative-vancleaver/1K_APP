@@ -37,8 +37,10 @@ const AdminLanguageList = ({ languages, addLanguageForm, updateLanguage, deleteL
                                 </span>
                             ))}
                         </td>
-                        <td></td>
-                        <td></td>
+                        <td>{ language.word_count }</td>
+                        <td>
+                            <i className='fas fa-x' style={{ color: 'red' }}></i>
+                        </td>
 
                         <td className="d-flex justify-content-center">
 

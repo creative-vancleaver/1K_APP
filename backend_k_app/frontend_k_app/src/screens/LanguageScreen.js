@@ -138,10 +138,10 @@ function LanguageScreen() {
       error ? ( <Message variant='danger'>{ error }</Message> )
         : language !== 'english' ? (
 
-          <div>
+          <div className=''>
           <Row className='mt-5 d-flex justify-items-center'>
             { words.slice(0, 12).map(word => (
-              <Col key={ word.id } sm={12} lg={6} xl={4} className={`my-3 ${word.id}`}>
+              <Col key={ word.id } sm={12} lg={6} xl={4} className={`my-3 ${word.id} card-container`}>
                 <Word word={ word } onStateChange={ handleChildFlipStateChange }/>
               </Col>
             ))}

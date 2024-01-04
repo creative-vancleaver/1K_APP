@@ -533,7 +533,8 @@ def wordScore(request, pk, language):
    print('wordScore request pk language ', request.data, pk, language)
    print(request.user)
 
-   user_word = UserWord.objects.get(user__email=request.user, user_word__pk=pk)
+   # user_word = UserWord.objects.get(user__email=request.user, user_word__pk=pk)
+   user_word = UserWord.objects.get(id=pk)
    print(user_word)
    # serializer = UserWordSerializer(user_word, many=False)
    # oldScore = serializer.data['score']
@@ -545,14 +546,28 @@ def wordScore(request, pk, language):
    # if request.method == 'GET'
    if request.method == 'PUT':
       if answer == 'correct':
-         print('old score ', user_word.score)
-         user_word.score += 1
+         # print('old score ', user_word.score)
+         print('old count ', user_word.count)
+         # user_word.score += 1
+         user_word.count -= 1
          user_word.save()
-         print('new score ', user_word.score)
-         serializer = UserWordSerializer(user_word, many=False)
+         print('new count ', user_word.count)
+         
+         if user_word.count == 0:
+            user_word.isMastered = True
+            user_word.save()
+            
+      if answer == 'incorrect':
+         print('old count ', user_word.count)
+         user_word.count += 1
+         user_word.save()
+         print('new count ', user_word.count)
+         
+      serializer = UserWordSerializer(user_word, many=False)
+      print('NEW WORD WITH COUNT === ', serializer.data)
          # context = 
 
-         return Response(serializer.data)
+      return Response(serializer.data)
    
    return Response({ 'detail': 'updated word score' })
 
@@ -623,11 +638,18 @@ def getRandomWordLanguage(request, language):
 
    if request.user != 'AnonymousUser':
       user = User.objects.get(email=request.user)
-      user_words = UserWord.objects.filter(user=user, user_word__language=language)
-      user_word = random.choice(user_words)
-      serializer = UserWordSerializer(user_word, many=False)
+      user_words = UserWord.objects.filter(user=user, user_word__language=language).exclude(isMastered=True)
+      user_words_total = UserWord.objects.filter(user=user, user_word__language=language).count()
+      print('getRandomWordLanguage counts ', user_words.count(), user_words_total)
+      
+      if user_words.exists():
+         user_word = random.choice(user_words)
+         serializer = UserWordSerializer(user_word, many=False)
 
-      return Response(serializer.data)
+         return Response(serializer.data)
+      
+      else:
+         return Response({ 'detail': 'There are no more un-mastered words.' })
 
    else:
 

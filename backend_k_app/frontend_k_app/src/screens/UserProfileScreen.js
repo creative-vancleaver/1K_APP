@@ -84,7 +84,7 @@ const UserProfileScreen = () => {
 
         }
         
-    }, [])
+    }, [userInfo]);
 
     useEffect(() => {
         if (detailsSuccess) {
@@ -92,7 +92,7 @@ const UserProfileScreen = () => {
             setFirst_Name(user.first_name);
             setEmail(user.email);
 
-            if (user.natvive_language) {
+            if (user.native_language) {
                 setNativeLanguage(user.native_language.language);
             }
 
@@ -173,6 +173,9 @@ const UserProfileScreen = () => {
 
         setKey(key);
 
+        // dispatch(getMasteredWords(key));
+        // dispatch(getNotMasteredWords(key));
+
 
         if (key !== 'addLanguage') {
 
@@ -191,18 +194,27 @@ const UserProfileScreen = () => {
         setSelectedLanguage(language);
     }
 
+    // useEffect(() => {
+    //     console.log('KEY == ', key);
+    //     if (key !== 'undefined') {
+    //         dispatch(getNotMasteredWords(key));
+    //         dispatch(getMasteredWords(key));
+    //     }
+    // }, [key]);
+
 
 
   return (
 
 
     <> 
-
+    { loading ? (
+    <Spinner />
+        ) : (
+        <>
         <Row>
 
-            { loading ? (
-                <Spinner />
-            ) : (
+
 
                 <Row style={{ marginBottom: '2rem' }}>
 
@@ -291,7 +303,7 @@ const UserProfileScreen = () => {
 
                             <Col>
                             <h6>Native Language:</h6>
-                            { nativeLanguage }
+                            { nativeLanguage.charAt(0).toUpperCase() + nativeLanguage.slice(1) }
                             </Col>
 
                             <Button onClick={ handleClick }>Update User Info</Button>
@@ -301,64 +313,69 @@ const UserProfileScreen = () => {
 
                 {/* </Col> */}
                 </Row>
-            )}
+        </Row>
 
 
-            <Row>
 
-                { userWordsLoading ? (
+        <Row>
 
-                    <Spinner />
+            {/* { userWordsLoading ? (
+                // masteredWordsLoading || notMasteredWordsLoading
 
-                ) : (
+                <Spinner />
 
-                    <>
+            ) : (        */}
 
-                        <h2>Stats</h2>
-{/* 
-                        { languageMessage && <Message variant='danger'>{ languageMessage }</Message> } */}
+                <>
 
-                        <Tabs
-                            id="userStatsTabs"
-                            activeKey={ key }
-                            // onSelect={(k) => setKey(k) }
-                            onSelect={ handleTabSelect }
-                        >
+                    <h2>Stats</h2>
+                    {/* 
+                    { languageMessage && <Message variant='danger'>{ languageMessage }</Message> } */}
 
-                            { languagesLearning.map((language) => (
+                    <Tabs
+                        id="userStatsTabs"
+                        activeKey={ key }
+                        // onSelect={(k) => setKey(k) }
+                        onSelect={ handleTabSelect }
+                    >
 
-                                <Tab key={ language.id } eventKey={ language.id } title={ language.language.charAt(0).toUpperCase() + language.language.slice(1) }>
+                        { languagesLearning.map((language) => (
 
-                                    <div className='d-flex justify-content-center mt-3'>
-    
-                                    </div>
+                            <Tab key={ language.id } eventKey={ language.id } title={ language.language.charAt(0).toUpperCase() + language.language.slice(1) }>
 
-                                    {/* ADD OTHER DATA HERE */}
+                                <div className='d-flex justify-content-center mt-3'>
 
-                                    { languagesLearning.length > 0 && (
+                                </div>
 
-                                        <UserWordsPaginate language={ language } userInfo={ userInfo } langaugesLearning={ languagesLearning } handlePageChange={ handlePageChange } currentPage={ currentPage } />
+                                {/* ADD OTHER DATA HERE */}
 
-                                    )}
+                                { languagesLearning.length > 0 && (
 
-                                </Tab>
+                                    <UserWordsPaginate language={ language } userInfo={ userInfo } langaugesLearning={ languagesLearning } handlePageChange={ handlePageChange } currentPage={ currentPage } />
 
-                            ))}
+                                )}
 
-                            <Tab eventKey="addLanguage" title="+ Language" className="add-lang-tab" id='addLangTab'>
-                                <Col md={12} className="d-flex justify-content-center" style={{ marginTop: '3rem' }}>
-                                    {/* <h4>Add Language</h4> */}
-                                    {/* <Button onClick={ handleShow }>Learn a New Language</Button> */}
-                                    <LanguageForm show={ show } handleClose={ handleClose } onFormSubmit={ languageFormSubmit }></LanguageForm>
-                                </Col>
                             </Tab>
 
-                        </Tabs>
-                    </>
-               
-               )}
-            </Row>
+                        ))}
+
+                        <Tab eventKey="addLanguage" title="+ Language" className="add-lang-tab" id='addLangTab'>
+                            <Col md={12} className="d-flex justify-content-center" style={{ marginTop: '3rem' }}>
+                                {/* <h4>Add Language</h4> */}
+                                {/* <Button onClick={ handleShow }>Learn a New Language</Button> */}
+                                <LanguageForm show={ show } handleClose={ handleClose } onFormSubmit={ languageFormSubmit }></LanguageForm>
+                            </Col>
+                        </Tab>
+
+                    </Tabs>
+                </>
+            
+            {/* )} */}
+
         </Row>
+        </>
+    )}
+
 
 
     </>

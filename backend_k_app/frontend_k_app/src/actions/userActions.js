@@ -600,10 +600,14 @@ export const getNotMasteredWords = (language, offset = 0 , limit = 20) => async(
             }
         }
 
+        console.log('GETNOTMASTEREDWORDS ACTION == ', limit, offset);
+
         const { data } = await axios.get(
             `/api/users/${ userInfo.id }/not_mastered/${ language }/?limit=${ limit }&offset=${ offset }`,
             config
         )
+
+        console.log(data)
 
         dispatch({
             type: NOT_MASTERED_WORDS_SUCCESS,

@@ -30,7 +30,8 @@ function Answers({ word, language, correct }) {
 
     dispatch(updateScore(
       language,
-      word.user_word.id,
+      // word.user_word.id,
+      word.id,
       value,
     ));
     // setFlip(!flip)
@@ -45,7 +46,7 @@ function Answers({ word, language, correct }) {
   // }, [dispatch, setFlip])
 
   return (
-    <div>
+    <div style={{ marginTop: '1rem' }}>
       
       <Button 
           className='mt-5 me-3' 

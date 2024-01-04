@@ -642,10 +642,18 @@ def update_word_status(request, user_pk, word_pk):
         language = request.GET.get('language')
         user_word = UserWord.objects.get(id=word_pk)
         
-        user_word.isMastered = not user_word.isMastered
+        # user_word.isMastered = not user_word.isMastered
+        
+        if user_word.isMastered:
+            user_word.count = 2
+            user_word.isMastered = False
+        elif not user_word.isMastered:
+            user_word.count = 0
+            user_word.isMastered = True
+            
         user_word.save()
         
-        print(user_word, user_word.isMastered)
+        print(user_word, user_word.isMastered, user_word.count)
         
         serializer = UserWordSerializer(user_word)
         return Response(serializer.data)

@@ -48,7 +48,7 @@ class UserWordSerializer(serializers.ModelSerializer):
     # word = serializers.SerializerMethodField()
     class Meta:
         model = UserWord
-        fields = ['user_word', 'translation', 'score', 'isMastered', 'language', 'user', 'id']
+        fields = ['user_word', 'translation', 'score', 'isMastered', 'language', 'user', 'id', 'count']
         
     def get_language(self, obj):
         return obj.user_word.language.language if obj.user_word and obj.user_word.language else None

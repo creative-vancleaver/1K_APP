@@ -55,7 +55,7 @@ function Header() {
 
           <Offcanvas.Header closeButton>
             <Offcanvas.Title id='offcanvasNavbarLabel-expand-expand'>
-              Offcanvas
+              1K Words
             </Offcanvas.Title>
           </Offcanvas.Header>
 

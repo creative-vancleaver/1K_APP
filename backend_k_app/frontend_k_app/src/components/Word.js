@@ -50,7 +50,8 @@ function Word({ word, onStateChange }) {
 
     <div>
 
-      <div className={`card-container `}>
+      <div className={` `}>
+        {/* card-container */}
 
       <Card id='word_card' className={`cards ${ flip ? "flip" : ""} `}>
 

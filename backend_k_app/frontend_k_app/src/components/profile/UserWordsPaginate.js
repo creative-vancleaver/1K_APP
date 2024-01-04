@@ -11,6 +11,8 @@ import WordListItem from './WordListItem';
 
 const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageChange, currentPage }) => {
 
+    console.log('language.id = ', language.id);
+
     const dispatch = useDispatch();
 
     const limit = 20;
@@ -31,9 +33,10 @@ const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageCh
     const { notMasteredWords, loading: notMasteredWordsLoading } = notMasteredWordsStore;
 
     useEffect(() => {
+        console.log('FIRST DISPATCH OF GET USER WORDS');
         dispatch(getMasteredWords(language.id));
-        dispatch(getNotMasteredWords(language.id))
-    }, [language.id]);
+        dispatch(getNotMasteredWords(language.id));
+    }, [language.id, dispatch]);
 
     useEffect(() => {
         setTotalResults(userWords.count);
@@ -81,6 +84,7 @@ const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageCh
             if (updatedNotMasteredWords.length <= 20) {
                 // DO I WANT TO FETCH FROM THE NEW ARRAY LENGTH?? OR OLD ARRAY LENGTH?
                 // i think old? because the words will have been loaded, but MOVED...
+                console.log('SECOND DISPATCH OF GET USER WORDS');
                 dispatch(getNotMasteredWords(language.id, notMasteredWords.results.length, limit));
             }
 

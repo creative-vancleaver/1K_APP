@@ -10,9 +10,15 @@ class CountrySerializer(serializers.ModelSerializer):
 class LanguageSerializer(serializers.ModelSerializer):
 
     countries = CountrySerializer(many=True)
+    word_count = serializers.SerializerMethodField()
+    
     class Meta:
         model = Language
-        fields = '__all__'      
+        # fields = '__all__' 
+        fields = ['id', 'language', 'countries', 'image', 'word_count']
+        
+    def get_word_count(self, obj):
+        return obj.word_set.count()
 
 class TranslationSerializer(serializers.ModelSerializer):
     class Meta:
