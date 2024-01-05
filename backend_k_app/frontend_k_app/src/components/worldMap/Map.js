@@ -77,18 +77,18 @@ const Map = () => {
   }
 
   const languageObject = useSelector(state => state.activeLanguage);
-  console.log('language obj = ', languageObject);
+  // console.log('language obj = ', languageObject);
 
   const handleClick = (geo) => {
-    // console.log(geo.properties.NAME, geo.properties.ISO_A2_EH);
-    // console.log(e, e.target);
+    // // console.log(geo.properties.NAME, geo.properties.ISO_A2_EH);
+    // // console.log(e, e.target);
     // if (supportedCountries.includes(geo.properties.NAME)) {
     //   dispatch(activeLanguage(geo.properties.NAME));
     // }
 
     const country = geo.properties.NAME;
     const language = findLanguageByCountry(country);
-    console.log('country ', country, 'language ', language, 'languages', languages);
+    // console.log('country ', country, 'language ', language, 'languages', languages);
     // dispatch(getActiveLanguage(language));
 
     navigate(`/languages/${ language.language }/`)
@@ -104,22 +104,22 @@ const Map = () => {
   }
 
   const isCountrySupported = (country) => {
-    // console.log(languages)
+    // // console.log(languages)
     for (const l in languages) {
-      // console.log(languages[l].countries)
+      // // console.log(languages[l].countries)
       const countries = languages[l].countries
       for (const c in countries) {
         if (countries[c].name.includes(country)) {
-          // console.log('true')
+          // // console.log('true')
           return true
         }
       }
 
     }
-    // console.log('false');
+    // // console.log('false');
     return false;
     // for (const language in languages) {
-    //   console.log('isCountrySuppored lang ', language.id)
+    //   // console.log('isCountrySuppored lang ', language.id)
     //   if (language.countries.name.includes(country)) {
     //     return true;
     //   }
@@ -137,7 +137,7 @@ const Map = () => {
   // }
 
   const getFlag = () => {
-    // console.log('HOVER');
+    // // console.log('HOVER');
   }
 
   const handleMouseOver = (geo) => {

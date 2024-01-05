@@ -14,7 +14,7 @@ function Header() {
 
   const languageList = useSelector(state => state.languageList)
   const { error, loading, success, languages } = languageList
-  console.log('languageList ', languages)
+  // console.log('languageList ', languages)
 
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
@@ -23,7 +23,7 @@ function Header() {
   // const result = []
 
   const logoutHandler = () => {
-    console.log('LOGOUT');
+    // console.log('LOGOUT');
     dispatch(logout())
     navigate('/')
   }

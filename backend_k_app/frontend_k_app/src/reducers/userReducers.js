@@ -75,6 +75,14 @@ import {
 
     UPDATE_USER_LIST,
 
+    SUBMIT_BUG_REPORT_REQUEST,
+    SUBMIT_BUG_REPORT_SUCCESS,
+    SUBMIT_BUG_REPORT_FAIL,
+
+    UPDATE_CONFIRM_RULES_REQUEST,
+    UPDATE_CONFIRM_RULES_SUCCESS,
+    UPDATE_CONFIRM_RULES_FAIL,
+
 } from '../constants/userConstants';
 import { initialState } from '../store';
 
@@ -94,6 +102,13 @@ export const userLoginReducer = (state = {}, action) => {
                 loading: false,
                 userInfo: action.payload
             }
+        
+        // case UPDATE_CONFIRM_RULES_SUCCESS:
+        //     // localStorage.setItem('userInfo', JSON.stringify({ ...state, userInfo: action.payload }));
+        //     return {
+        //         ...state,
+        //         userInfo: action.payload
+        //     }
 
         case USER_LOGIN_FAIL:
             return { loading: false, error: action.payload }
@@ -228,9 +243,29 @@ export const userUpdateProfileReducer = (state = {}, action) => {
     }
 }
 
+export const updateConfirmedRulesReducer = (state = { userInfo: {} }, action) => {
+    switch(action.type) {
+        case UPDATE_CONFIRM_RULES_REQUEST:
+            return { loading: true }
+
+        case UPDATE_CONFIRM_RULES_SUCCESS:
+            return {
+                loading: false,
+                success: true,
+                userInfo: action.payload
+            }
+
+        case UPDATE_CONFIRM_RULES_FAIL:
+            return { loading: false, erorr: action.payload }
+
+        default:
+            return state
+    }
+}
+
 // NOTE: STATS NEEDS TO BE AN ARRAY BECAUSE WE ARE USING MAP + REDUCE ON IT!! NOT SURE HOW IT WORKED EARLIER.
 export const userStatsReducer = (state = { stats: [] }, action) => {
-    console.log('stast redcuer');
+    // console.log('stast redcuer');
 
     switch(action.type) {
 
@@ -241,7 +276,7 @@ export const userStatsReducer = (state = { stats: [] }, action) => {
 
             const restructuredStats = action.payload.reduce((acc, stat) => {
                 // const languageName = stat.user_word.language.language;
-                // console.log('stat ==== ', stat);
+                // // console.log('stat ==== ', stat);
                 const languageName = stat.language;
                 if (!acc[languageName]) {
                     // acc[languageName] = { user_words: [] };
@@ -344,8 +379,8 @@ export const notMasteredWordsReducer = (state = notMasteredInitialState, action)
 
         case NOT_MASTERED_WORDS_SUCCESS:
 
-            // console.log('payload lenght = ', action.payload.results.length);
-            console.log('action.payload.total_count ', action.payload);
+            // // console.log('payload lenght = ', action.payload.results.length);
+            // console.log('action.payload.total_count ', action.payload);
 
             return {
                 ...state,
@@ -504,6 +539,32 @@ export const addLanguageToUserReducer = (state = { user: { languages: [] }  }, a
 
     }
 
+}
+
+export const submitBugReportReducer = (state = {}, action) => {
+
+    switch(action.type) {
+
+        case SUBMIT_BUG_REPORT_REQUEST:
+            return { loading: true }
+
+        case SUBMIT_BUG_REPORT_SUCCESS:
+            return {
+                loading: false,
+                success: true,
+                bugReport: action.payload
+            }
+
+        case SUBMIT_BUG_REPORT_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            }
+
+        default:
+            return state
+            
+    }
 }
 
 // export const userDeleteReducer = (state = {}, action) => {

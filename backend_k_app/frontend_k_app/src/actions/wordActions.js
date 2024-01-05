@@ -45,7 +45,7 @@ export const listWords = () => async(dispatch) => {
 }
 
 export const listWordsLanguage = (language) => async(dispatch) => {
-  console.log(language);
+  // console.log(language);
   try{
 
     dispatch({ type: WORD_LANGUAGE_REQUEST });
@@ -87,7 +87,7 @@ export const randomWord = () => async(dispatch) => {
 }
 
 export const randomWordByLanguage = (language, user_id) => async(dispatch, getState) => {
-  console.log('randomwordbylanguage ', language);
+  // console.log('randomwordbylanguage ', language);
 
   try {
 
@@ -121,7 +121,7 @@ export const randomWordByLanguage = (language, user_id) => async(dispatch, getSt
 }
 
 export const updateScore = (language, word, value) => async(dispatch, getState) => {
-  console.log('updateWordScore ', word, value)
+  // console.log('updateWordScore ', word, value)
 
   try {
 

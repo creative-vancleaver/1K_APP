@@ -10,6 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField(read_only=True)
     isAdmin = serializers.SerializerMethodField(read_only=True)
     isActive = serializers.SerializerMethodField(read_only=True)
+    confirmedRules = serializers.SerializerMethodField(read_only=True)
     languages = LanguageSerializer(many=True)
     native_language = LanguageSerializer(many=False)
     # user_words = UserWordSerializer(many=True)
@@ -18,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # fields = '__all__'
-        fields = ['id', 'email', 'name', 'isAdmin', 'first_name', 'last_name', 'languages', 'native_language', 'isActive']
+        fields = ['id', 'email', 'name', 'isAdmin', 'first_name', 'last_name', 'languages', 'native_language', 'isActive', 'confirmedRules']
     
     # def get_native_langauge(self, obj):
     #     native_language = obj.native_language.language
@@ -37,6 +38,9 @@ class UserSerializer(serializers.ModelSerializer):
     
     def get_isActive(self, obj):
         return obj.is_active
+    
+    def get_confirmedRules(self, obj):
+        return obj.confirm_rules
     
 class UserWordSerializer(serializers.ModelSerializer):
 
@@ -91,8 +95,9 @@ class UserSerializerWithToken(UserSerializer):
     class Meta:
         model = User
         # ALL USER DATA DESIRED IN FRONTEND NEEDS TO BE PASSED IN HERE
-        fields = ['id', 'email', 'isAdmin', 'token', 'first_name', 'languages', 'native_language', 'isActive']
+        fields = ['id', 'email', 'isAdmin', 'token', 'first_name', 'languages', 'native_language', 'isActive', 'confirmedRules']
 
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
         return str(token.access_token)
+    

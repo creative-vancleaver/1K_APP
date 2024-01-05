@@ -40,7 +40,7 @@ function getCookie(name) {
       }
     }
   }
-  console.log('cookieValue = ', cookieValue);
+  // console.log('cookieValue = ', cookieValue);
   return cookieValue;
 }
 
@@ -67,7 +67,7 @@ export const listLanguages = () => async(dispatch) => {
 
 export const listCountries = () => async (dispatch, getState) => {
 
-  console.log('list countriess!!!! ')
+  // console.log('list countriess!!!! ')
 
   try {
 
@@ -160,7 +160,7 @@ export const addLanguage = (formData) => async(dispatch, getState) => {
       config
     )
 
-    console.log(data)
+    // console.log(data)
 
     dispatch({
       type: ADD_LANGUAGE_SUCCESS,

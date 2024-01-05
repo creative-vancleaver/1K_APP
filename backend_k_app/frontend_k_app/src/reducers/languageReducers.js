@@ -86,7 +86,7 @@ export const getCountryListReducer = (state = { countries: [] }, action) => {
       }
 
     case GET_COUNTRY_LIST_SUCCESS: 
-      console.log('getCountryListReducer ', action.payload)
+      // console.log('getCountryListReducer ', action.payload)
       return {
         loading: false,
         success: true,

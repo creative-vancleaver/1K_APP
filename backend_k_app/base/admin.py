@@ -47,7 +47,7 @@ class UserWordInline(admin.TabularInline):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         # pagination logic here???
-        print(qs)
+        # print(qs)
         return qs
 
 class CustomUserAdmin(UserAdmin):
@@ -57,9 +57,9 @@ class CustomUserAdmin(UserAdmin):
     model = User
     list_display = ('id', 'email', 'user_word_count', 'is_staff')
     # list_filter = ('id', 'email', 'is_staff') ---  
-    inlines = [UserWordInline]
+    # inlines = [UserWordInline]
     fieldsets = (
-        (None, {'fields': ('first_name', 'email', 'password', 'native_language', 'languages')}),
+        (None, {'fields': ('first_name', 'email', 'confirm_rules', 'password', 'native_language', 'languages')}),
         ('Permissions', {'fields': ('is_staff', 'is_active', 'groups', 'user_permissions')}),
     )
     add_fieldsets = (

@@ -38,6 +38,7 @@ import {
   notMasteredWordsReducer,
   activateUserReducer,
   getUserFromTokenReducer,
+  submitBugReportReducer,
 } from './reducers/userReducers';
 
 const reducer = combineReducers({
@@ -52,6 +53,7 @@ const reducer = combineReducers({
   addLanguage: addLanguageReducer,
   countryList: getCountryListReducer,
   // updateLanguage: updateLanguageReducer,
+  bugReport: submitBugReportReducer,
 
   world: getWorldReducer,
 

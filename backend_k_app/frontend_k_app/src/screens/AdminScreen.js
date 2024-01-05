@@ -3,7 +3,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Table, Button, Modal, Row, Col } from 'react-bootstrap';
+import { Table, Button, Modal, Row, Col, Container } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 // ACTIONS
@@ -104,7 +104,7 @@ const AdminScreen = () => {
     const handleCloseUpdateLanguage = () => setShowUpdateLanguage(false);
 
     const deleteHandler = (id) => {
-        console.log('delete user id ', id);
+        // console.log('delete user id ', id);
         if (window.confirm('Are you sure you want to delete this user?')) {
             // dispatch(deleteUser(id))
         }
@@ -141,7 +141,7 @@ const AdminScreen = () => {
         dispatch(updateLanguageDisplay(updatedLanguageDisplay));
 
         try {
-            console.log('confirm delete language ID === ', language.id);
+            // console.log('confirm delete language ID === ', language.id);
             await deleteLanguageAJAX(language.id);
         } catch (error) {
             dispatch(updateLanguageDisplay([...languages, language]))

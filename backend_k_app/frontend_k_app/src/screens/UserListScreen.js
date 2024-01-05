@@ -13,9 +13,9 @@ const UserListScreen = () => {
     const navigate = useNavigate();
 
     const userList = useSelector(state => state.userList);
-    console.log('userList = ', userList)
+    // console.log('userList = ', userList)
     const { loading, error, users } = userList;
-    console.log(users);
+    // console.log(users);
 
     useEffect(() => {
 

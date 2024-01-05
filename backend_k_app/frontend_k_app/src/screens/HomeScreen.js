@@ -9,11 +9,12 @@ import { listWords, listWordsLanguage, randomWord } from '../actions/wordActions
 import { listLanguages } from '../actions/languageActions'
 
 // COMPONENTS
-import LanguageList from '../components/LanguageList'
-import Word from '../components/Word'
-import SubHero from '../components/SubHero'
+import LanguageList from '../components/LanguageList';
+import Word from '../components/Word';
+import SubHero from '../components/SubHero';
 
 import Map from '../components/worldMap/Map';
+import DebugForm from '../components/forms/DebugForm';
 import DeepZoom from '../components/worldMap/DeepZoom';
 
 import { WORD_LIST_RESET } from '../constants/wordConstants'
@@ -29,7 +30,10 @@ function HomeScreen() {
   const dispatch = useDispatch()
   const wordList = useSelector(state => state.wordList);
   const { error, loading, words } = wordList;
-  console.log(words)
+  // console.log(words)
+
+  const userLogin = useSelector(state => state.userLogin);
+  const { userInfo } = userLogin;
 
   const wordsLanguage = useSelector(state => state.wordsLanguage);
   const { error:wordsLangError, loading:wordsLangLoading, wordsLang } = wordsLanguage
@@ -41,6 +45,7 @@ function HomeScreen() {
   // const [random, setRandom] = useState('')
 
   const [language, setLanguage] = useState('');
+  const [showDebugModal, setShowDebugModal] = useState(false);
 
   useEffect(() => {
 
@@ -69,35 +74,37 @@ function HomeScreen() {
   // console.log('random word ', random_word)
 
   return (
-    
-    <div>
-
-      <h1 className='mb-5 mt-3 text-center'>Choose a Language</h1>
-
-
-      <Map />
-
-      {/* <LanguageList /> */}
-
-{/* REMOVED THE WORD LIST FROM THE HOME PAGE!! UPDATING THE URLS TO BE LANGUAGE BASED AND WILL LIKELY NOT USE ALL WORDS FROM DB FOR ANYTIHNG... */}
-      {/* <div>{ words.map(word => word.word) }</div> */}
-      {/* <h1 className='mb-5 mt-5'>Top 10 Words</h1>
+  
+    <>    
       <Container>
-      <Row className='mt-5 d-flex justify-items-center'>
-        {words.map(word => (
-          <Col key={ word.id } sm={12} lg={6} xl={4} className={`my-3 ${word.id}`}>
-            
-            <Word word={word} />
-            
-          </Col>
-        ))} */}
-        {/* NOTE: adding a semicolon to the end of this function will add it to the screen! */}
-      {/* </Row>
+        {/* className='d-flex flex-column' style={{ height: '80vh' }} , maxWidth: '100vw'  */}
+
+        <h1 className='mb-5 mt-3 text-center'>Choose a Language</h1>
+
+
+        <Map />
+        {/* <LanguageList /> */}
+
+  {/* REMOVED THE WORD LIST FROM THE HOME PAGE!! UPDATING THE URLS TO BE LANGUAGE BASED AND WILL LIKELY NOT USE ALL WORDS FROM DB FOR ANYTIHNG... */}
+        {/* <div>{ words.map(word => word.word) }</div> */}
+        {/* <h1 className='mb-5 mt-5'>Top 10 Words</h1>
+        <Container>
+        <Row className='mt-5 d-flex justify-items-center'>
+          {words.map(word => (
+            <Col key={ word.id } sm={12} lg={6} xl={4} className={`my-3 ${word.id}`}>
+              
+              <Word word={word} />
+              
+            </Col>
+          ))} */}
+          {/* NOTE: adding a semicolon to the end of this function will add it to the screen! */}
+        {/* </Row>
+        </Container>
+
+        <SubHero word={ random_word } /> */}
+
       </Container>
-
-      <SubHero word={ random_word } /> */}
-
-    </div>
+    </>
   )
 }
 

@@ -24,7 +24,7 @@ function Word({ word, onStateChange }) {
 
 
   function handleClick() {
-    console.log('flipping the card on click')
+    // console.log('flipping the card on click')
 
 
     

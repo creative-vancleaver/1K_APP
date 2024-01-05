@@ -361,3 +361,19 @@ ul.nav-tabs li:last-child {
 .move-word-btn {
   cursor: pointer;
 }
+
+/* FOOTER */
+footer {
+  opacity: 50%;
+}
+
+.copyright {
+  font-size: 12px;
+}
+
+.bug-btn {
+  cursor: pointer;
+  /* font-size: 12px; */
+  /* color: green; */
+  /* opacity: 50%; */
+}

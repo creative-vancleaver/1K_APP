@@ -12,7 +12,7 @@ export const getWorld = () => async(dispatch) => {
     dispatch({ type: WORLD_REQUEST });
 
     const { data } = await axios.get('get_geojson/');
-    console.log('world map resposne data ', data);
+    // console.log('world map resposne data ', data);
 
     dispatch({ type: WORLD_SUCCESS, payload: data });
 

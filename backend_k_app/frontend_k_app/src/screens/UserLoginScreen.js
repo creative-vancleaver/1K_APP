@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Form, Row, Col, Button } from 'react-bootstrap';
+import { Form, Row, Col, Button, Container } from 'react-bootstrap';
 
 import FormContainer from '../components/FormContainer';
 import Message from '../components/Message';
@@ -36,6 +36,7 @@ const UserLoginScreen = () => {
 
   return (
 
+    <Container className='' style={{ minHeight: '80vh' }}>
     <FormContainer>
 
         <h1>Sign In</h1>
@@ -80,6 +81,7 @@ const UserLoginScreen = () => {
                 <Link
                     // to={ redirect ? `/register?redirect${ redirect }` : 'register'}
                     to={'/register/'}
+                    className='ms-1'
                 >
                     Register
                 </Link>
@@ -87,6 +89,7 @@ const UserLoginScreen = () => {
         </Row>
 
     </FormContainer>
+    </Container>
 
   )
 }

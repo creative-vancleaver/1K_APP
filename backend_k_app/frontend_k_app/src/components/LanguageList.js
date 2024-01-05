@@ -24,7 +24,7 @@ function LanguageList() {
     if (lang.language !== 'english') {
       acc.push(lang);
     }
-    console.log('langArray LIST ', acc)
+    // console.log('langArray LIST ', acc)
     return acc;
   }, [])
 

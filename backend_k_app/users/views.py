@@ -5,6 +5,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.html import strip_tags
 from django.utils.encoding import force_bytes, force_str 
 
 import urllib
@@ -13,12 +14,13 @@ import logging
 
 from collections import defaultdict
 from datetime import datetime, timedelta
+from decouple import config
 
 # DJANGO REST FRAMEWORK
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 
 # SPECIFIC EXCEPTION CATCHES
@@ -37,6 +39,11 @@ from base.serializers import WordSerializer
 from base.models import Language, Word
 
 # Create your views here.
+
+BugSubmissionIssues = [
+    'Error', 'Bug', 'Spelling', 'Feature Suggestion'
+]
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     # @classmethod
@@ -59,7 +66,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         # data['username'] = self.user.username
         # data['email'] = self.user.email
         serializer = UserSerializerWithToken(self.user).data
-        print(serializer)
+        # print(serializer)
 
         for key, value in serializer.items():
             data[key] = value
@@ -92,7 +99,7 @@ logger = logging.getLogger(__name__)
 @permission_classes([])
 def registerUser(request):
     data = request.data
-    # print(data['native_language']['value'].lower())
+    # # print(data['native_language']['value'].lower())
 
     try:
         language = Language.objects.get(language=data['native_language']['value'].lower())
@@ -108,9 +115,9 @@ def registerUser(request):
         )
         user.is_active = True
         user.save()
-        print(user)
+        # print(user)
         serializer = UserSerializerWithToken(user, many=False)
-        print(serializer.data)
+        # print(serializer.data)
         return Response(serializer.data)
         # return Response({ 'detail': 'success' })
     
@@ -124,7 +131,7 @@ def registerUser(request):
 def add_user(request):
     
     data = request.data
-    print(data)
+    # print(data)
     
     try:
         # language = Language.objects.get
@@ -148,13 +155,13 @@ def add_user(request):
             'exp': datetime.utcnow() + timedelta(hours=24)
         }, settings.SECRET_KEY, algorithm='HS256')
         
-        print('token = ', token)
+        # print('token = ', token)
         
         # CONSTRUCT ACTIVATION URL (ADJUST DOMAIN AS NECESSARY)
         # activation_url = f'https://1k_words.pro/activate/{ uid }/{ token }'
         activation_link = f"{ request.build_absolute_uri('/activate/')}{ urllib.parse.quote(token) }"
         
-        print('activation link = ', activation_link)
+        # print('activation link = ', activation_link)
         
         # SEND EMAIL WITH ACTIVATION LINK
         send_mail(
@@ -169,7 +176,7 @@ def add_user(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     except Exception as e:
-        print(e)
+        # print(e)
         return Response({ 'error': str(e) }, status=status.HTTP_400_BAD_REQUEST)
  
     # except IntegrityError:
@@ -185,7 +192,7 @@ def get_user_data_from_token(request, token):
         
         serializer = UserSerializer(user, many=False)
         
-        print(serializer.data)
+        # print(serializer.data)
         
         return Response(serializer.data)
     
@@ -199,8 +206,8 @@ def get_user_data_from_token(request, token):
 @api_view(['POST'])
 def activate_user(request, token):
     
-    print('activate_user')
-    data = request.data
+    # print('activate_user')
+    # data = request.data
     
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
@@ -208,7 +215,7 @@ def activate_user(request, token):
         user.is_active = True
         user.password = make_password(data['password'])
         user.save()
-        print(user)
+        # print(user)
         
         # GENERATE JWT TOKEN ON ACTIVATION
         refresh = RefreshToken.for_user(user)
@@ -218,7 +225,7 @@ def activate_user(request, token):
         user_data = UserSerializerWithToken(user).data
         data.update(user_data)
         
-        print('data ', data)
+        # print('data ', data)
         
         return Response(data, status=status.HTTP_200_OK)
     
@@ -288,12 +295,12 @@ def remove_duplicates(user_word_objects):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def addLanguageToUser(request, pk):
-    print('ADDLANGUAGETOUSER ', request.data)
+    # print('ADDLANGUAGETOUSER ', request.data)
     # existing_country = Country.objects.filter(name=country_name).first()
     # user = request.user
     user = User.objects.get(id=pk)
     data = request.data
-    print('data ', data)
+    # print('data ', data)
 
     # existing_lang = User.languages.all()
     # for l in existing_lang:
@@ -304,7 +311,7 @@ def addLanguageToUser(request, pk):
         new_language = Language.objects.get(language=data['language'])
         user.languages.add(new_language)
 
-        print(new_language.word_set.count())
+        # print(new_language.word_set.count())
         words = new_language.word_set.all()
         user_word_objects = []
 
@@ -320,14 +327,14 @@ def addLanguageToUser(request, pk):
         #     UserWord.objects.create(user=user, user_word=user_word)
 
         user.save()
-        print('updated user ', user)
+        # print('updated user ', user)
 
     
     else:
         
-        print(f'language already associated with this user')
+        # print(f'language already associated with this user')
         language = Language.objects.get(language=data['language'])
-        print(language.word_set.count())
+        # print(language.word_set.count())
 
     serializer = UserSerializerWithToken(user, many=False)
 
@@ -338,7 +345,7 @@ def addLanguageToUser(request, pk):
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def getUsers(request):
-    # print('user = ', request.user)
+    # # print('user = ', request.user)
     users = User.objects.all().order_by('id')
     serializer = UserSerializer(users, many=True)
 
@@ -356,9 +363,9 @@ def getUserById(request, pk):
 @permission_classes([IsAdminUser])
 def updateUser(request, pk):
     user = User.objects.get(id=pk)
-    # print(user)
+    # # print(user)
     data = request.data
-    print(data)
+    # print(data)
 
     user.first_name = data['first_name']
     user.email = data['email']
@@ -375,7 +382,7 @@ def updateUser(request, pk):
 def deleteUser(request, pk):
     userForDeletion = User.objects.get(id=pk)
     # serializer = UserSerializer(userForDeletion, many=False)
-    # print(userForDeletion)
+    # # print(userForDeletion)
     userForDeletion.delete()
 
     return Response('User was deleted')
@@ -384,15 +391,15 @@ def deleteUser(request, pk):
 @permission_classes([IsAuthenticated])
 def getUserProfile(request):
     user = request.user
-    # print(user)
+    # # print(user)
     serializer = UserSerializer(user, many=False)
     # VV RETURNS INDEX 0 OF USER.LANGUAGES QUERYDICT
-    # print(user.languages.all()[0])
+    # # print(user.languages.all()[0])
     # language = user.languages.all()[0]
     # words = Word.objects.filter(language=language)[10:]
-    # print(words)
+    # # print(words)
     # mastered_words = Word.objects.filter(language=language, score=1)
-    # print(mastered_words)
+    # # print(mastered_words)
     # serializer = UserProfileSerializer({ 'user': user, 'words': mastered_words })
     # serializer = UserProfileSerializer(context={'user': user})
     return Response(serializer.data)
@@ -421,12 +428,12 @@ def getUserProfile(request):
 @permission_classes([IsAuthenticated])
 def getUserStats(request, pk):
     # data = request.data
-    # print('data ', request.GET)
+    # # print('data ', request.GET)
     # page_number = data['pageNumber']
     # language = data['language']
-    # print('data ', page_number, language)
-    # print(data)
-    # print(request.GET.get('pageNumber'))
+    # # print('data ', page_number, language)
+    # # print(data)
+    # # print(request.GET.get('pageNumber'))
 
     user = User.objects.get(id=pk)
     
@@ -437,8 +444,8 @@ def getUserStats(request, pk):
     # default_language = user.languages.all()[0]
     # # language = data['language']
     # language = request.GET.get('language')
-    # print('page no ,', default_page_number, page_number)
-    # print('lang ,', default_language, language)
+    # # print('page no ,', default_page_number, page_number)
+    # # print('lang ,', default_language, language)
     
     # if (language is None):
     #     words = UserWord.objects.filter(user=user, user_word__language=default_language).order_by('id')
@@ -450,7 +457,7 @@ def getUserStats(request, pk):
     words = UserWord.objects.filter(user=user).order_by('id')
     
     # words = UserWord.objects.filter(user=user, user_word__language__language='spanish').order_by('id')
-    # print('userStats word count ', words.count())
+    # # print('userStats word count ', words.count())
     
     organized_data = defaultdict(list)
     
@@ -470,7 +477,7 @@ def getUserStats(request, pk):
     
     # if organized_data_serializer.is_valid():
     #     serializer_data = organized_data_serializer.data
-    #     print(serializer_data)
+    #     # print(serializer_data)
     #     return Response(serializer_data)
         
     # else:
@@ -484,12 +491,12 @@ def getUserStats(request, pk):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getUserWordsByLanguage(request, pk, language):
-    # print('data from getUserWordsByLanguage', request.GET)
-    # print('request.user = ', request.user.pk, pk)
+    # # print('data from getUserWordsByLanguage', request.GET)
+    # # print('request.user = ', request.user.pk, pk)
     user = User.objects.get(id=pk)
     # page_number = request.GET.get('page')
     # language = request.GET.get('language')
-    # print('User ID: ', user.id)
+    # # print('User ID: ', user.id)
     
     if language == 'undefined':
         language_id = user.languages.all()[0].id
@@ -519,7 +526,7 @@ def getUserWordsByLanguage(request, pk, language):
     #     # not_mastered_words = UserWord.objects.fitler(user=user, isMastered=False, user_word__language=default_language).order_by('id')
     # else:
     words = UserWord.objects.filter(user=user, user_word__language=language_id).order_by('id')
-        # print('words ', words[:10])
+        # # print('words ', words[:10])
         # mastered_words = UserWord.objects.fitler(user=user, isMastered=True, user_word__language=default_language).order_by('id')
         # not_mastered_words = UserWord.objects.filter(user=user, isMastered=False, user_word__language=language).order_by('id')
         
@@ -529,8 +536,8 @@ def getUserWordsByLanguage(request, pk, language):
     # paginator = PageNumberPagination()
     # paginated_words = paginator.paginate_queryset(words, request)
     # user_words = UserWord.objects.filter(user=user).order_by('id')
-    # print('UserWords filtered by USER ONLY ', user_words)
-    # print('Filtered Words: ', words)
+    # # print('UserWords filtered by USER ONLY ', user_words)
+    # # print('Filtered Words: ', words)
     
     limit = request.GET.get('limit', None)
     offset = request.GET.get('offset', None)
@@ -585,7 +592,7 @@ def getMasteredWords(request, pk, language):
     
     mastered_words = UserWord.objects.filter(user=user, isMastered=True, user_word__language=language_id).order_by('id')
     # total_count = UserWord.objects.all().count()
-    # print('total_count ', total_count)
+    # # print('total_count ', total_count)
     paginated_mastered = pagination.paginate_queryset(mastered_words, request)
     mastered_serializer = UserWordSerializer(paginated_mastered, many=True)
     
@@ -615,14 +622,14 @@ def getNotMasteredWords(request, pk, language):
     pagination.default_limit = int(limit)
     pagination.offset = int(offset)
     
-    print('limit = ', limit, 'offst = ', offset, 'pagination_offset = ', pagination.offset, 'language_id = ', language_id, 'language = ', language_name)
+    # print('limit = ', limit, 'offst = ', offset, 'pagination_offset = ', pagination.offset, 'language_id = ', language_id, 'language = ', language_name)
     
     not_mastered_words = UserWord.objects.filter(user=user, isMastered=False, user_word__language=language_id).order_by('id')
-    print(not_mastered_words[34:64])
+    # print(not_mastered_words[34:64])
     paginated_not_mastered = pagination.paginate_queryset(not_mastered_words, request)
-    print(paginated_not_mastered)
+    # print(paginated_not_mastered)
     not_mastered_serializer = UserWordSerializer(paginated_not_mastered, many=True)
-    # print(not_mastered_serializer.data)
+    # # print(not_mastered_serializer.data)
     
     return pagination.get_paginated_response(not_mastered_serializer.data)
 
@@ -631,8 +638,8 @@ def getNotMasteredWords(request, pk, language):
 @permission_classes([IsAuthenticated])
 def update_word_status(request, user_pk, word_pk):
     
-    print(request.user.id, user_pk)
-    print(word_pk)
+    # print(request.user.id, user_pk)
+    # print(word_pk)
     
     if request.user.id != int(user_pk):
         return Response({ 'error': 'Unauthorized' }, status=status.HTTP_403_FORBIDDEN)
@@ -653,13 +660,93 @@ def update_word_status(request, user_pk, word_pk):
             
         user_word.save()
         
-        print(user_word, user_word.isMastered, user_word.count)
+        # print(user_word, user_word.isMastered, user_word.count)
         
         serializer = UserWordSerializer(user_word)
         return Response(serializer.data)
     
     except UserWord.DoesNotExist:
         return Response({ 'message': 'Word not found' }, status=status.HTTP_404_NOT_FOUND)
+    
+class DebugFormSerializer(serializers.Serializer):
+    first_name = serializers.CharField(max_length=100)
+    email = serializers.EmailField()
+    issue = serializers.ChoiceField(choices=BugSubmissionIssues)
+    description = serializers.CharField(max_length=1000)
+    location = serializers.CharField(max_length=200)
+    
+    def save(self):
+        data = self.validated_data
+        send_debug_email(data)
+        
+def send_debug_email(data):
+    
+    try:
+        user_name = data['first_name']
+        user_email = data['email']
+        bug_type = data['issue']
+        bug_description = data['description']
+        bug_location = data['location']
+        
+        subject = f'Debug Form Submitted: { bug_type }'
+        message = f'{ user_name } ({ user_email }), submitted the following bug report. \nDescription: { bug_description } \nLocation: { bug_location}'
+        send_mail(subject, message, config('EMAIL_HOST_USER'), [config('EMAIL_HOST_USER')])
+        
+        # return Response({ 'message': 'Bug form submitted successfully.' }, status=status.HTTP_202_ACCEPTED)
+        return True
+    except Exception as e:
+        # return Response({ 'error': str(e) }, status=status.HTTP_400_BAD_REQUEST)    
+        return False
+    
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def debug_form_submission(request):
+    
+    data = request.data
+    # print(data)
+    
+    serializer = DebugFormSerializer(data=data)
+    if serializer.is_valid():
+        if send_debug_email(serializer.validated_data):
+            return Response({ 'message': 'Bug form submitted successfully.' }, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({ 'error': 'Failed to send bug report.' }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def confirm_rules(request):
+    
+    user = request.user
+    # print(user.confirm_rules)
+    user.confirm_rules = True
+    user.save()
+    # print('user = ', user, user.confirm_rules)
+    
+    serializer = UserSerializerWithToken(user, many=False)
+    
+    return Response(serializer.data)
+    
+    # if request.user.is_authenticated:
+    #     user = User.objects.get(id=request.user_id)
+    #     user.confirm_rules = True
+    #     # user.save()
+    #     # print('user confirmed rules!!')
+    # else:
+    #     return Response({ 'error': 'You do not have permission to access this page.' }, status=status.HTTP_401_UNAUTHORIZED)
+    
+    # serializer = UserSerializer(user, many=False)
+    # return Response({ 'success': 'True' })
+        # try:
+        #     user = User.objects.get(id=request.user.id, confirm_rules=False)
+        #     user.confirm_rules = True
+        #     user.save()
+        # except User.DoesNotExist:
+        #     return Response
+        
+        
+                
     
 
 

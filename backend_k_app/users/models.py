@@ -16,6 +16,7 @@ class User(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
     native_language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, blank=True, related_name='native_users')
     languages = models.ManyToManyField(Language, blank=True)
+    confirm_rules = models.BooleanField(default=False,  null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

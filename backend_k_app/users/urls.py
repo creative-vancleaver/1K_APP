@@ -33,6 +33,9 @@ urlpatterns = [
     path('profile/', views.getUserProfile, name='user_profile'),
     path('profile/update/<str:pk>/', views.updateUserProfile, name='update_user_profile'),
     path('all/', views.getUsers, name='list_users'),
+    
+    path('bug_form/', views.debug_form_submission, name='bug_form'),
+    path('confirm_rules/', views.confirm_rules, name='confirm_rules'),
     # path('<str:pk>/', views.getUserById, name='use_by_id'),
 
 ]

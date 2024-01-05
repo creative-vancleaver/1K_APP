@@ -75,6 +75,14 @@ import {
 
     UPDATE_USER_LIST,
 
+    SUBMIT_BUG_REPORT_REQUEST,
+    SUBMIT_BUG_REPORT_SUCCESS,
+    SUBMIT_BUG_REPORT_FAIL,
+
+    UPDATE_CONFIRM_RULES_REQUEST,
+    UPDATE_CONFIRM_RULES_SUCCESS,
+    UPDATE_CONFIRM_RULES_FAIL,
+
 } from '../constants/userConstants';
 import jquery from 'jquery';
 
@@ -145,7 +153,7 @@ export const login = (email, password) => async (dispatch) => {
             type: USER_LOGIN_REQUEST
         })
 
-        console.log(email, password)
+        // // console.log(email, password)
 
         const config = {
             headers: {
@@ -184,7 +192,7 @@ export const logout = () => (dispatch) => {
 
     localStorage.removeItem('userInfo');
     dispatch({ type: USER_LOGOUT });
-    console.log('dis', dispatch);
+    // console.log('dis', dispatch);
 }
 
 // first_name, last_name
@@ -201,13 +209,13 @@ export const register = (first_name, email, password, native_language) => async 
                 'Content-type': 'application/json'
             }
         }
-        console.log('register ', config);
+        // console.log('register ', config);
         const { data } = await axios.post(
             '/api/users/register/',
             { 'first_name': first_name, 'email': email, 'password': password, 'native_language': native_language },
             config
         )
-        console.log('register ', data, config);
+        // console.log('register ', data, config);
         dispatch({
             type: USER_REGISTER_SUCCESS,
             payload: data
@@ -221,7 +229,7 @@ export const register = (first_name, email, password, native_language) => async 
         localStorage.setItem('userInfo', JSON.stringify(data))
 
     } catch(error) {
-        console.log(error);
+        // console.log(error);
         dispatch({
             type: USER_REGISTER_FAIL,
             payload: error.message && error.response.data.detail
@@ -351,7 +359,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
         const {
             userLogin: { userInfo },
         } = getState()
-        console.log('userLogin from updateUserProfile action');
+        // console.log('userLogin from updateUserProfile action');
 
         const config = {
             headers: {
@@ -401,7 +409,7 @@ export const addUserLanguage = (user) => async (dispatch, getState) => {
         const {
             userLogin: { userInfo },
         } = getState()
-        console.log('userinfo addUserLang ', userInfo.token)
+        // console.log('userinfo addUserLang ', userInfo.token)
 
         const config = {
             headers: {
@@ -486,7 +494,7 @@ export const addUserLanguage = (user) => async (dispatch, getState) => {
 // }
 
 export const getUserStats = () => async (dispatch, getState) => {
-    console.log('stats action');
+    // console.log('stats action');
 
     try {
 
@@ -513,7 +521,7 @@ export const getUserStats = () => async (dispatch, getState) => {
             config,
             // params
         )
-        console.log('userStats Redcuer data ', data)
+        // console.log('userStats Redcuer data ', data)
 
         dispatch({
             type: USER_STATS_SUCCESS,
@@ -522,7 +530,7 @@ export const getUserStats = () => async (dispatch, getState) => {
 
     } catch (error) {
 
-        console.log('errror = ', error);
+        // console.log('errror = ', error);
 
         dispatch({
             type: USER_STATS_FAIL,
@@ -585,7 +593,7 @@ export const getNotMasteredWords = (language, offset = 0 , limit = 20) => async(
 
     try {
 
-        console.log('getNOTmasteredWords action ', offset, limit);
+        // console.log('getNOTmasteredWords action ', offset, limit);
 
         dispatch({ type: NOT_MASTERED_WORDS_REQUEST })
 
@@ -600,14 +608,14 @@ export const getNotMasteredWords = (language, offset = 0 , limit = 20) => async(
             }
         }
 
-        console.log('GETNOTMASTEREDWORDS ACTION == ', limit, offset);
+        // console.log('GETNOTMASTEREDWORDS ACTION == ', limit, offset);
 
         const { data } = await axios.get(
             `/api/users/${ userInfo.id }/not_mastered/${ language }/?limit=${ limit }&offset=${ offset }`,
             config
         )
 
-        console.log(data)
+        // console.log(data)
 
         dispatch({
             type: NOT_MASTERED_WORDS_SUCCESS,
@@ -661,7 +669,7 @@ export const getUserWordsByLanguage = (language,  offset = 0, limit = 20) => asy
             config
         )
 
-        console.log('RESPONSE DATA ++_ ', data);
+        // console.log('RESPONSE DATA ++_ ', data);
 
         dispatch({
             type: USER_WORDS_LANGUAGE_SUCCESS,
@@ -702,7 +710,7 @@ export const listUsers = () => async (dispatch, getState) => {
         }
 
         const { data } =  await axios.get('/api/users/', config);
-        console.log('data ', data);
+        // console.log('data ', data);
 
         dispatch({ 
             type: USER_LIST_SUCCESS,
@@ -731,7 +739,7 @@ export const deleteUser = (id) => async (dispatch, getState) => {
         const {
             userLogin: { userInfo },
         } = getState()
-        console.log('user login ', userInfo)
+        // console.log('user login ', userInfo)
 
         const csrfToken = getCookie('csrftoken');
 
@@ -821,4 +829,117 @@ export const deleteUserSuccess = (user_id) => ({
     type: USER_DELETE_SUCCESS,
     payload: user_id
 });
+
+
+
+export const submitBugReport = (formData) => async(dispatch, getState) => {
+
+    try {
+
+        dispatch({
+            type: SUBMIT_BUG_REPORT_REQUEST
+        });
+
+        const {
+            userLogin: { userInfo }
+        } = getState();
+
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${ userInfo.token }`
+            }
+        }
+
+        const { data } = await axios.post(
+            `/api/users/bug_form/`,
+            formData,
+            config
+        )
+
+        dispatch({
+            type: SUBMIT_BUG_REPORT_SUCCESS,
+            payload: data
+        });
+
+    } catch (error) {
+
+        dispatch({
+            type: SUBMIT_BUG_REPORT_FAIL,
+            payload: error.message && error.response.data.detail
+                ? error.response.data.detail
+                 : error.message
+        })
+
+    }
+}
+
+
+export const updateConfirmedRules = (user_id) => async (dispatch, getState) => {
+
+    try {
+
+        dispatch({
+            type: UPDATE_CONFIRM_RULES_REQUEST,
+        });
+
+        const {
+            userLogin: { userInfo }
+        } = getState();
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${ userInfo.token }`
+            }
+        }
+
+        const { data } = await axios.post(
+            `/api/users/confirm_rules/`,
+            null,
+            config
+        )
+
+        dispatch({
+            type: UPDATE_CONFIRM_RULES_SUCCESS,
+            payload: data
+        });
+
+        localStorage.setItem('userInfo', JSON.stringify(data));
+        
+    } catch (error) {
+
+        let errorPayload;
+
+        if (error.response && error.response.data && error.response.data.detail) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx, and specific detail is provided
+            errorPayload = error.response.data.detail;
+        } else if (error.response && error.response.data) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx, no specific detail
+            errorPayload = error.response.data.message || 'Error occurred';
+        } else if (error.request) {
+            // The request was made but no response was received
+            errorPayload = 'No response received';
+        } else {
+            // Something happened in setting up the request that triggered an error
+            errorPayload = error.message || 'Error occurred';
+        }
+    
+        dispatch({
+            type: UPDATE_CONFIRM_RULES_FAIL,
+            payload: errorPayload
+        });
+
+        // dispatch({
+        //     type: UPDATE_CONFIRM_RULES_FAIL,
+        //     payload: error.message && error.response.data.detail
+        //         ? error.response.data.detail
+        //             : error.message
+        // })
+    }
+    // type: UPDATE_CONFIRM_RULES_SUCCESS,
+    // payload: updatedState
+}
 

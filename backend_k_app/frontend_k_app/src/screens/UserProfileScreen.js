@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Button, Row, Col, Form, Modal, Tab, Tabs } from 'react-bootstrap';
+import { Button, Row, Col, Form, Modal, Tab, Tabs, Container } from 'react-bootstrap';
 
 // ACTIONS
 import { getUserDetails, getUserStats, updateUserProfile, getUserWordsByLanguage, getMasteredWords, getNotMasteredWords, resetMasteredWords, resetNotMasteredWords } from '../actions/userActions';
@@ -48,7 +48,7 @@ const UserProfileScreen = () => {
 
     const userDetails = useSelector(state => state.userDetails);
     const { error, loading, user, success: detailsSuccess } = userDetails;
-    console.log('userDetails', user)
+    // console.log('userDetails', user)
 
     const userLogin = useSelector(state => state.userLogin);
     const { userInfo } = userLogin;
@@ -61,7 +61,7 @@ const UserProfileScreen = () => {
 
     const userStats = useSelector(state => state.userStats);
     const { error: statsError, loading: statsLoading, success: statsSuccess, stats } = userStats;
-    console.log('stats ', userStats, stats)
+    // console.log('stats ', userStats, stats)
 
     const userWordsByLanguage = useSelector(state => state.userWordsByLanguage);
     const { error: userWordsError, loading: userWordsLoading, success: userWordsSuccess, userWords } = userWordsByLanguage;
@@ -81,6 +81,8 @@ const UserProfileScreen = () => {
 
             // dispatch({ type: USER_UPDATE_PROFILE_RESET });
             dispatch(getUserDetails(userInfo.id));
+            // dispatch(resetMasteredWords);
+            // dispatch(resetNotMasteredWords);
 
         }
         
@@ -126,7 +128,7 @@ const UserProfileScreen = () => {
     // }, [user])
 
     const handleClick = () => {
-        console.log('update profile clicked ', user.id);
+        // console.log('update profile clicked ', user.id);
         setUpdateProfile(!updateProfile);
     }
 
@@ -148,7 +150,7 @@ const UserProfileScreen = () => {
         if (password !== confirmPassword) {
             setMessage('Passwords do not match');
         } else {
-            console.log('Updating profile ', user.id);
+            // console.log('Updating profile ', user.id);
             dispatch(updateUserProfile({
                 'id': user.id,
                 // 'name': name,
@@ -175,13 +177,14 @@ const UserProfileScreen = () => {
 
         // dispatch(getMasteredWords(key));
         // dispatch(getNotMasteredWords(key));
+        // console.log('TAB SELECT KEY ', key);
 
 
         if (key !== 'addLanguage') {
 
             dispatch(getUserWordsByLanguage(key));
-            // dispatch(getMasteredWords(key));
-            // dispatch(getNotMasteredWords(key));
+            dispatch(getMasteredWords(key));
+            dispatch(getNotMasteredWords(key));
             
             setSelectedLanguage(key);
 
@@ -189,18 +192,22 @@ const UserProfileScreen = () => {
     }
 
     const handlePageChange = (newPage, language) => {
-        console.log('currentPage ', currentPage, 'new page = ', newPage, 'language id ', language);
+        // console.log('currentPage ', currentPage, 'new page = ', newPage, 'language id ', language);
         setCurrentPage(newPage);
         setSelectedLanguage(language);
     }
 
-    // useEffect(() => {
-    //     console.log('KEY == ', key);
-    //     if (key !== 'undefined') {
-    //         dispatch(getNotMasteredWords(key));
-    //         dispatch(getMasteredWords(key));
-    //     }
-    // }, [key]);
+    useEffect(() => {
+        dispatch(resetMasteredWords());
+        dispatch(resetNotMasteredWords());
+
+        // console.log('KEY == ', key);
+        if (key !== undefined) {
+            // console.log('key = undefined');
+            dispatch(getNotMasteredWords(key));
+            dispatch(getMasteredWords(key));
+        }
+    }, [key]);
 
 
 
@@ -211,10 +218,7 @@ const UserProfileScreen = () => {
     { loading ? (
     <Spinner />
         ) : (
-        <>
-        <Row>
-
-
+        <div style={{ minHeight: '80vh' }}>
 
                 <Row style={{ marginBottom: '2rem' }}>
 
@@ -313,67 +317,66 @@ const UserProfileScreen = () => {
 
                 {/* </Col> */}
                 </Row>
-        </Row>
 
 
 
-        <Row>
+                <Row>
 
-            {/* { userWordsLoading ? (
-                // masteredWordsLoading || notMasteredWordsLoading
+                    {/* { userWordsLoading ? (
+                        // masteredWordsLoading || notMasteredWordsLoading
 
-                <Spinner />
+                        <Spinner />
 
-            ) : (        */}
+                    ) : (        */}
 
-                <>
+                        <>
 
-                    <h2>Stats</h2>
-                    {/* 
-                    { languageMessage && <Message variant='danger'>{ languageMessage }</Message> } */}
+                            <h2>Stats</h2>
+                            {/* 
+                            { languageMessage && <Message variant='danger'>{ languageMessage }</Message> } */}
 
-                    <Tabs
-                        id="userStatsTabs"
-                        activeKey={ key }
-                        // onSelect={(k) => setKey(k) }
-                        onSelect={ handleTabSelect }
-                    >
+                            <Tabs
+                                id="userStatsTabs"
+                                activeKey={ key }
+                                // onSelect={(k) => setKey(k) }
+                                onSelect={ handleTabSelect }
+                            >
 
-                        { languagesLearning.map((language) => (
+                                { languagesLearning.map((language) => (
 
-                            <Tab key={ language.id } eventKey={ language.id } title={ language.language.charAt(0).toUpperCase() + language.language.slice(1) }>
+                                    <Tab key={ language.id } eventKey={ language.id } title={ language.language.charAt(0).toUpperCase() + language.language.slice(1) }>
 
-                                <div className='d-flex justify-content-center mt-3'>
+                                        <div className='d-flex justify-content-center mt-3'>
 
-                                </div>
+                                        </div>
 
-                                {/* ADD OTHER DATA HERE */}
+                                        {/* ADD OTHER DATA HERE */}
 
-                                { languagesLearning.length > 0 && (
+                                        { languagesLearning.length > 0 && (
 
-                                    <UserWordsPaginate language={ language } userInfo={ userInfo } langaugesLearning={ languagesLearning } handlePageChange={ handlePageChange } currentPage={ currentPage } />
+                                            <UserWordsPaginate language={ language } userInfo={ userInfo } langaugesLearning={ languagesLearning } handlePageChange={ handlePageChange } currentPage={ currentPage } />
 
-                                )}
+                                        )}
 
-                            </Tab>
+                                    </Tab>
 
-                        ))}
+                                ))}
 
-                        <Tab eventKey="addLanguage" title="+ Language" className="add-lang-tab" id='addLangTab'>
-                            <Col md={12} className="d-flex justify-content-center" style={{ marginTop: '3rem' }}>
-                                {/* <h4>Add Language</h4> */}
-                                {/* <Button onClick={ handleShow }>Learn a New Language</Button> */}
-                                <LanguageForm show={ show } handleClose={ handleClose } onFormSubmit={ languageFormSubmit }></LanguageForm>
-                            </Col>
-                        </Tab>
+                                <Tab eventKey="addLanguage" title="+ Language" className="add-lang-tab" id='addLangTab'>
+                                    <Col md={12} className="d-flex justify-content-center" style={{ marginTop: '3rem' }}>
+                                        {/* <h4>Add Language</h4> */}
+                                        {/* <Button onClick={ handleShow }>Learn a New Language</Button> */}
+                                        <LanguageForm show={ show } handleClose={ handleClose } onFormSubmit={ languageFormSubmit }></LanguageForm>
+                                    </Col>
+                                </Tab>
 
-                    </Tabs>
-                </>
-            
-            {/* )} */}
+                            </Tabs>
+                        </>
+                    
+                    {/* )} */}
 
-        </Row>
-        </>
+                </Row>
+        </div>
     )}
 
 

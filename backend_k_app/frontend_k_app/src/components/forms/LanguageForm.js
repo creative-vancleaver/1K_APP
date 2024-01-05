@@ -17,7 +17,7 @@ const LanguageForm = ({ show, handleClose, onFormSubmit }) => {
 
     const userLogin = useSelector(state => state.userLogin);
     const { userInfo } = userLogin;
-    console.log('userInfo languageForm ', userInfo)
+    // console.log('userInfo languageForm ', userInfo)
 
     const userDetails = useSelector(state => state.userDetails);
     const { user } = userDetails;
@@ -33,24 +33,24 @@ const LanguageForm = ({ show, handleClose, onFormSubmit }) => {
 
     const submitHandler = (e) => {
         e.preventDefault();
-        console.log(languageSelection);
+        // console.log(languageSelection);
 
         const existingLang = checkLanguage(languageSelection)
-        console.log('existing language ', user.languages, 'current selection ', languageSelection, existingLang);
+        // console.log('existing language ', user.languages, 'current selection ', languageSelection, existingLang);
 
         if (existingLang == false) {
-            console.log('false');
+            // console.log('false');
             dispatch(addUserLanguage({
                 'id': user.id,
                 'language': languageSelection
             }));
             // dispatch(getUserDetails(user.id));
             handleClose();
-            console.log('user from form ', user);
+            // console.log('user from form ', user);
             onFormSubmit();
             // dispatch(getUserDetails(user.id))
         } else {
-            console.log('You are already learning this language');
+            // console.log('You are already learning this language');
         }
     }
 

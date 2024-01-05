@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Form, Button, Row, Col, Container } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Select from 'react-select';
@@ -34,7 +34,7 @@ const UserRegisterScreen = () => {
 
     const userRegister = useSelector(state => state.userRegister);
     const { loading, error, userInfo } = userRegister;
-    console.log(userInfo);
+    // console.log(userInfo);
 
     const languageList = useSelector(state => state.languageList);
     const { languages, success: languageSuccess } = languageList;
@@ -65,7 +65,7 @@ const UserRegisterScreen = () => {
             label: l.language.charAt(0).toUpperCase() + l.language.slice(1),
             value: l.language.charAt(0).toUpperCase() + l.language.slice(1)
         }));
-        console.log('langaugeNames = ', languageNames);
+        // console.log('langaugeNames = ', languageNames);
         return languageNames;
     }
 
@@ -97,7 +97,7 @@ const UserRegisterScreen = () => {
 
     const submitHandler = (e) => {
         e.preventDefault();
-        console.log('submitted ', email, first_name);
+        // console.log('submitted ', email, first_name);
         // if (password != confirmPassword) {
         //     setMessage('Passwords do not match')
         // } else {
@@ -120,7 +120,7 @@ const UserRegisterScreen = () => {
         const newErrors = findFormErrors()
 
         if ( Object.keys(newErrors).length > 0 ) {
-            console.log('INVALID ', newErrors); 
+            // console.log('INVALID ', newErrors); 
             setErrors(newErrors);
         } else {
             // alert('VALID')
@@ -132,6 +132,8 @@ const UserRegisterScreen = () => {
     }
 
   return (
+
+    <Container style={{ minHeight: '80vh' }}>
 
     <FormContainer>
 
@@ -253,7 +255,7 @@ const UserRegisterScreen = () => {
             </Col>
         </Row>
     </FormContainer>
-
+    </Container>
   )
 }
 

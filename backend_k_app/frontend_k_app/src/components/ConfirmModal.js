@@ -1,12 +1,12 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
-const ConfirmModal = ({ show, handleClose, handleConfirm, message, action }) => {
+const ConfirmModal = ({ show, handleClose, handleConfirm, message, action, type }) => {
 
   return (
 
-    <Modal show={ show } onHide={ handleClose }>
-        <Modal.Header closeButton>
+    <Modal show={ show } onHide={ handleClose } backdrop='static'>
+        <Modal.Header closeButton={ type !== 'rules' }>
             <Modal.Title>Confirm { action }</Modal.Title>
         </Modal.Header>
 
@@ -16,7 +16,9 @@ const ConfirmModal = ({ show, handleClose, handleConfirm, message, action }) => 
 
         <Modal.Footer>
 
-            <Button variant='secondary' onClick={ handleClose }>Cancel</Button>
+            { type != 'rules' && (
+              <Button variant='secondary' onClick={ handleClose }>Cancel</Button>
+            )}
             <Button variant='danger' onClick={ handleConfirm }>Confirm</Button>
 
         </Modal.Footer>

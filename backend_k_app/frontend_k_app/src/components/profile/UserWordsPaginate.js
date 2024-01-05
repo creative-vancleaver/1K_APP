@@ -11,7 +11,7 @@ import WordListItem from './WordListItem';
 
 const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageChange, currentPage }) => {
 
-    console.log('language.id = ', language.id);
+    // console.log('language.id = ', language.id);
 
     const dispatch = useDispatch();
 
@@ -27,15 +27,15 @@ const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageCh
 
     const masteredWordsStore = useSelector(state => state.masteredWords);
     const { masteredWords, loading: masteredWordsLoading } = masteredWordsStore;
-    console.log('usreMasteredWords from store = ', masteredWords);
+    // console.log('usreMasteredWords from store = ', masteredWords);
 
     const notMasteredWordsStore = useSelector(state => state.notMasteredWords);
     const { notMasteredWords, loading: notMasteredWordsLoading } = notMasteredWordsStore;
 
     useEffect(() => {
-        console.log('FIRST DISPATCH OF GET USER WORDS');
-        dispatch(getMasteredWords(language.id));
-        dispatch(getNotMasteredWords(language.id));
+        // console.log('FIRST DISPATCH OF GET USER WORDS ', language.id);
+        // dispatch(getMasteredWords(language.id));
+        // dispatch(getNotMasteredWords(language.id));
     }, [language.id, dispatch]);
 
     useEffect(() => {
@@ -51,7 +51,7 @@ const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageCh
             },
         };
 
-        console.log('config ', config);
+        // console.log('config ', config);
         
         try {
 
@@ -81,10 +81,10 @@ const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageCh
             dispatch(updateMasteredWords(updatedMasteredWords));
 
             // IF NEW updated ARRAY (with word removed) IS LESS THAN 20
-            if (updatedNotMasteredWords.length <= 20) {
+            if (updatedNotMasteredWords.length < 20) {
                 // DO I WANT TO FETCH FROM THE NEW ARRAY LENGTH?? OR OLD ARRAY LENGTH?
                 // i think old? because the words will have been loaded, but MOVED...
-                console.log('SECOND DISPATCH OF GET USER WORDS');
+                // console.log('SECOND DISPATCH OF GET USER WORDS');
                 dispatch(getNotMasteredWords(language.id, notMasteredWords.results.length, limit));
             }
 
@@ -95,14 +95,15 @@ const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageCh
             dispatch(updateMasteredWords(updatedMasteredWords));
             dispatch(updateNotMasteredWords(updatedNotMasteredWords));
 
-            if (updatedMasteredWords.length <= 20) {
+            if (updatedMasteredWords.length < 20) {
+                // && updatedMasteredWords.length !== masteredWords.count
                 dispatch(getMasteredWords(language.id, masteredWords.results.length, limit));
             }
 
         }
 
         toggleWordStatus(wordId).catch(error => {
-            console.log('Failed to update word status: ', error);
+            // console.log('Failed to update word status: ', error);
 
             if (updatedWord.isMastered) {
 

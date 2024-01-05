@@ -40,7 +40,7 @@ const AddLanguage = ({ show, handleClose }) => {
             label: c.name,
             value: c.name
         }))
-        console.log('countryNames ', countryNames);
+        // console.log('countryNames ', countryNames);
         // setCountry_Names(countryNames);
         return countryNames
 
@@ -60,7 +60,7 @@ const AddLanguage = ({ show, handleClose }) => {
 
     const submitHandler = (e) => {
         e.preventDefault();
-        console.log('adding language ', language_name, language_url, selectedCountries, img);
+        // console.log('adding language ', language_name, language_url, selectedCountries, img);
         // if (language_url) {
         //     const url = language_url
         // } else {

@@ -143,7 +143,7 @@ def getRoutes(request):
 #     file_path='/Users/jvc/Desktop/EVERYTHING/k_app/backend_k_app/static/geojson_data/geojson_data.geojson'
 #     with open(file_path, 'r') as file:
 #       geojson_data = json.load(file)
-#       # print(geojson_data)
+#       # # print(geojson_data)
 #     # return JsonResponse(geojson_data)
 #     return geojson_data
 
@@ -151,7 +151,7 @@ def getRoutes(request):
 def uploadCountryNames(request):
    url = 'https://www.britannica.com/topic/list-of-countries-1993160'
 
-   print(requests.get(url))
+   # print(requests.get(url))
    pages = requests.get(url)
 
    if pages.status_code == 200:
@@ -181,7 +181,7 @@ def get1000WordsFromHTMLTable(request):
 #    url = 'https://strommeninc.com/1000-most-common-spanish-words-frequency-vocabulary/'
 #    url = 'https://strommeninc.com/1000-most-common-french-words-frequency-vocabulary/'
 #    requests.get(url)
-#    print(requests.get(url)) # RESPONSE === 200
+#    # print(requests.get(url)) # RESPONSE === 200
 
 #    data = request.data
 #    # files = request.FILES
@@ -303,7 +303,7 @@ def get1000WordsFromHTMLTable(request):
    
    if data['url']:
       url = data['url']
-      print('add1000Words URL === ', url)
+      # print('add1000Words URL === ', url)
       pages = requests.get(url)
       soup = BeautifulSoup(pages.text, 'lxml')
 
@@ -385,7 +385,7 @@ def update_language(request, language):
       return Response({ 'detail': 'You do not have permission to perform this action'}, status=403)
    
    data = request.data
-   print(data)
+   # print(data)
    
    language = Language.objects.get(language=language)
    
@@ -458,7 +458,7 @@ def getWords(request):
 
 @api_view(['GET'])
 def getWordsByLanguage(request, language):
-  print(language)
+  # print(language)
   # # if language == 'undefined':
   # #     context = {'detail': 'This language has no words yet.'}
   # #     return Response(context, status=status.HTTP_400_BAD_REQUEST)
@@ -505,8 +505,8 @@ def getUserWordsByLanguage(request, language):
 def getWordByLanguage(request, language, pk):
 #    word = Word.objects.get(pk=pk, language=language)
 #    serializer = WordSerializer(word, many=False)
-    print(language)
-    print(pk)
+    # print(language)
+    # print(pk)
     word = Word.objects.get(pk=pk)
     serializer = WordSerializer(word, many=False)
 
@@ -530,41 +530,41 @@ def getWord(request, pk):
 
 @api_view(['GET', 'PUT'])
 def wordScore(request, pk, language):
-   print('wordScore request pk language ', request.data, pk, language)
-   print(request.user)
+   # print('wordScore request pk language ', request.data, pk, language)
+   # print(request.user)
 
    # user_word = UserWord.objects.get(user__email=request.user, user_word__pk=pk)
    user_word = UserWord.objects.get(id=pk)
-   print(user_word)
+   # print(user_word)
    # serializer = UserWordSerializer(user_word, many=False)
    # oldScore = serializer.data['score']
    data = request.data
    answer = data['value']
-   print(user_word, 'answer ', answer)
+   # print(user_word, 'answer ', answer)
    # context = None
    
    # if request.method == 'GET'
    if request.method == 'PUT':
       if answer == 'correct':
-         # print('old score ', user_word.score)
-         print('old count ', user_word.count)
+         # # print('old score ', user_word.score)
+         # print('old count ', user_word.count)
          # user_word.score += 1
          user_word.count -= 1
          user_word.save()
-         print('new count ', user_word.count)
+         # print('new count ', user_word.count)
          
          if user_word.count == 0:
             user_word.isMastered = True
             user_word.save()
             
       if answer == 'incorrect':
-         print('old count ', user_word.count)
+         # print('old count ', user_word.count)
          user_word.count += 1
          user_word.save()
-         print('new count ', user_word.count)
+         # print('new count ', user_word.count)
          
       serializer = UserWordSerializer(user_word, many=False)
-      print('NEW WORD WITH COUNT === ', serializer.data)
+      # print('NEW WORD WITH COUNT === ', serializer.data)
          # context = 
 
       return Response(serializer.data)
@@ -626,21 +626,21 @@ def getRandomWord(request):
     word = random.choice(words)
     pk = word.pk
     serializer = WordSerializer(word, many=False)
-    print('randomword ', word)
+    # print('randomword ', word)
 
     return Response(serializer.data)
 
 @api_view(['GET'])
 def getRandomWordLanguage(request, language):
-   # print('request.user = ', request.user)
-   # print('requst.data = ', request.data)
+   # # print('request.user = ', request.user)
+   # # print('requst.data = ', request.data)
    language = Language.objects.get(language=language)
 
    if request.user != 'AnonymousUser':
       user = User.objects.get(email=request.user)
       user_words = UserWord.objects.filter(user=user, user_word__language=language).exclude(isMastered=True)
       user_words_total = UserWord.objects.filter(user=user, user_word__language=language).count()
-      print('getRandomWordLanguage counts ', user_words.count(), user_words_total)
+      # print('getRandomWordLanguage counts ', user_words.count(), user_words_total)
       
       if user_words.exists():
          user_word = random.choice(user_words)
@@ -664,14 +664,14 @@ def getRandomWordLanguage(request, language):
 
 
    # return Response(serializer.data)
-#   print(language)
+#   # print(language)
 #   lang = Language.objects.get(language=language)
 
 #   if language == 'spanish':
 #     # words = Spanish.objects.all()
 #     # DOH - I DELETED ALL THE WORDS IN THE SPANISH MODEL...
 #     words = Word.objects.filter(language=lang)
-#     # print(words)
+#     # # print(words)
 #     word = random.choice(words)
 #     serializer = WordSerializer(word, many=False)
 #     return Response(serializer.data)
@@ -684,26 +684,26 @@ def updateWordScore(request, pk):
     word = Word.objects.get(pk=pk)
     data = request.data
         # answer = request.POST
-    # print(answer)
-    print(data)
+    # # print(answer)
+    # print(data)
 
     answer = data['value']
-    print(answer)
+    # print(answer)
 
     # word = data['word']['word']
-    # print(word)
+    # # print(word)
 
     if answer == 'correct':
         word.score += 1
-    print(word.score)
+    # print(word.score)
     word.save()
-    print(word.score)
+    # print(word.score)
     
     # query_dict = literal_eval(data)
     # qd = QueryDict(mutable=True)
     # for item in query_dict:
     #     qd.update(item)
 
-    # print(qd)
+    # # print(qd)
 
     return Response('Word score has been updated')

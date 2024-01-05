@@ -14,13 +14,13 @@ const RecallScore = ({ value, color, isCorrect }) => {
   // }, []);
 
   useEffect(() => {
-    console.log('value change!! stars array change!!');
+    // console.log('value change!! stars array change!!');
     setStarsArray(Array.from({ length: value }, (_, index) => index + 1));
   }, [value]);
 
   useEffect(() => {
     if (isCorrect) {
-      console.log('CORECT');
+      // console.log('CORECT');
       const currentAnimatedIndex = value - 1;
       setAnimatedStarIndex(currentAnimatedIndex);
       setAnimate(true);

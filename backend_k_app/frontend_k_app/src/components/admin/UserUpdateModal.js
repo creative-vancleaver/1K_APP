@@ -28,7 +28,7 @@ const UserUpdateModal = ({ show, handleClose, selectedUser }) => {
 
     const userDetails = useSelector(state => state.userDetails);
     const { error, loading, user } = userDetails;
-    console.log('user from user modal ', userDetails);
+    // console.log('user from user modal ', userDetails);
 
     const userUpdate = useSelector(state => state.userUpdate);
     const { error: errorUpdate, loading: loadingUpdate, success: successUpdate } = userUpdate;

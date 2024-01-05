@@ -11,7 +11,7 @@ function Answers({ word, language, correct }) {
   const dispatch = useDispatch()
 
   // const { language } = useParams();
-  console.log('Answer props language = ', language, word);
+  // console.log('Answer props language = ', language, word);
 
   // useEffect(() => {
 
@@ -21,7 +21,7 @@ function Answers({ word, language, correct }) {
   const [flip, setFlip] = useState(false);
 
   function answerSubmitHandler(e, value) {
-    console.log('submithandler ', word);
+    // console.log('submithandler ', word);
     e.preventDefault();
 
     if (value === 'correct') {

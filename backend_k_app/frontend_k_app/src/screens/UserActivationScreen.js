@@ -38,8 +38,8 @@ const UserActivationScreen = () => {
         }
                 
         if (token) {
-            console.log('activation token ', token);
-            // console.log('decodedToke = ', decodedToken);
+            // console.log('activation token ', token);
+            // // console.log('decodedToke = ', decodedToken);
             // dispatch(activateUser(token));
             dispatch(getUserFromToken(token));
             setIsActivated(true);
@@ -59,7 +59,7 @@ const UserActivationScreen = () => {
     // useEffect(() => {
 
     //     if (successActivation) {
-    //         console.log('USER EMAIL = ', userActivation.userInfo.email);
+    //         // console.log('USER EMAIL = ', userActivation.userInfo.email);
 
     //         setIsActivated(true);
     //         setFirst_Name(userActivation.userInfo.first_name);
@@ -81,7 +81,7 @@ const UserActivationScreen = () => {
             setMessage('Passwords do not match');
         } else {
             // dispatch(login())
-            console.log('LOGIN');
+            // console.log('LOGIN');
 
             dispatch(activateUser(token, password));
             setMessage('Please wait while your account is activated');
@@ -92,7 +92,7 @@ const UserActivationScreen = () => {
     useEffect(() => {
 
         if (successActivation) {
-            console.log('ACTIVATE!!');
+            // console.log('ACTIVATE!!');
             dispatch(login(email, password));
             navigate('/');
         }
