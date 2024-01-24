@@ -9,7 +9,7 @@ import {
   updateWordScoreReducer,
   wordsLanguageReducer,
   wordRandomLanguageReducer,
-} from './reducers/wordReducers'
+} from './reducers/wordReducers';
 
 import { 
   languageListReducer,
@@ -17,7 +17,14 @@ import {
   addLanguageReducer,
   getCountryListReducer,
   // updateLanguageReducer,
-} from './reducers/languageReducers'
+} from './reducers/languageReducers';
+
+import {
+  addAlphabetReducer,
+  characterReducer,
+  notMasteredCharsReducer,
+  masteredCharsReducer
+} from './reducers/alphabetReducers';
 
 import {
   getWorldReducer,
@@ -53,7 +60,11 @@ const reducer = combineReducers({
   addLanguage: addLanguageReducer,
   countryList: getCountryListReducer,
   // updateLanguage: updateLanguageReducer,
-  bugReport: submitBugReportReducer,
+
+  alphabetList: addAlphabetReducer,
+  characterList: characterReducer,
+  notMasteredChars: notMasteredCharsReducer,
+  masteredChars: masteredCharsReducer,
 
   world: getWorldReducer,
 
@@ -71,6 +82,8 @@ const reducer = combineReducers({
   notMasteredWords: notMasteredWordsReducer,
   activateUser: activateUserReducer,
   userFromToken: getUserFromTokenReducer,
+
+  bugReport: submitBugReportReducer,
 
 })
 

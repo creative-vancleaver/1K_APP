@@ -67,7 +67,8 @@ function Header() {
               </Nav.Link> */}
               {/* <Nav.Link href='#'>Link 1</Nav.Link> */}
 
-              { userInfo ? (
+{/* NOTE: NEEDED TO ADD ADDITIONAL CHECK FOR 'FRIST_NAME' TO WORK IN CHROME... */}
+              { userInfo && userInfo.first_name ? (
                 <NavDropdown
                   // title={ userInfo.name.charAt(0).toUpperCase() + userInfo.name.slice(1) } id='first_name'
                   title={ userInfo.first_name.charAt(0).toUpperCase() + userInfo.first_name.slice(1)}

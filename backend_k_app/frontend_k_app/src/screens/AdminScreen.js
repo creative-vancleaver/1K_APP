@@ -20,6 +20,7 @@ import UserList from '../components/admin/UserList';
 import AdminLanguageList from '../components/admin/AdminLanguageList';
 import UpdateLanguage from '../components/admin/UpdateLanguage';
 import AddUser from '../components/admin/AddUser';
+import AddAlphabet from '../components/admin/AddAlphabet';
 
 const AdminScreen = () => {
 
@@ -31,7 +32,8 @@ const AdminScreen = () => {
     const [showUpdateUser, setShowUpdateUser] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
 
-    const [showLanguageForm, setShowLanguageForm] = useState(false)
+    const [showLanguageForm, setShowLanguageForm] = useState(false);
+    const [showAlphabetForm, setShowAlphabetForm] = useState(false);
 
     const [showUpdateLanguage, setShowUpdateLanguage] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState(null);
@@ -69,9 +71,9 @@ const AdminScreen = () => {
     useEffect(() => {
 
         if (userInfo && userInfo.isAdmin) {
-            dispatch(listUsers())
-            dispatch(listLanguages())
-            dispatch(listCountries())
+            dispatch(listUsers());
+            dispatch(listLanguages());
+            dispatch(listCountries());
         } else {
             navigate('/login/')
         }
@@ -102,6 +104,13 @@ const AdminScreen = () => {
         setShowUpdateLanguage(true);
     }
     const handleCloseUpdateLanguage = () => setShowUpdateLanguage(false);
+
+    const handleShowAddAlphabetForm = (language) => {
+        setSelectedLanguage(language)
+        setShowAlphabetForm(true);
+    }
+
+    const handleAlphabetFormClose = () => setShowAlphabetForm(false);
 
     const deleteHandler = (id) => {
         // console.log('delete user id ', id);
@@ -234,8 +243,16 @@ const AdminScreen = () => {
         <AddLanguage show={ showLanguageForm } handleClose={ handleLanguageFormClose } />
 
         { selectedLanguage && (
-            <UpdateLanguage show={ showUpdateLanguage } handleClose={ handleCloseUpdateLanguage } selectedLanguage={ selectedLanguage } />
+            <>
+
+                <UpdateLanguage show={ showUpdateLanguage } handleClose={ handleCloseUpdateLanguage } selectedLanguage={ selectedLanguage } />
+
+                <AddAlphabet show={ showAlphabetForm } handleClose={ handleAlphabetFormClose } language={ selectedLanguage } />
+
+            </>
         )}
+        
+
 
         <ConfirmModal show={ showConfirmModal } handleClose={() => setShowConfirmModal(false) } handleConfirm={ confirmAction } message={ confirmData } />
 
@@ -247,7 +264,7 @@ const AdminScreen = () => {
                 { languageListLoading ? (
                     <Spinner />
                 ) : (
-                    <AdminLanguageList languages={ languages } addLanguageForm={ handleShowAddLanguageForm } updateLanguage={ handleShowUpdateLanguage } deleteLanguage={ deleteLanguageHandler } />
+                    <AdminLanguageList languages={ languages } addLanguageForm={ handleShowAddLanguageForm } updateLanguage={ handleShowUpdateLanguage } deleteLanguage={ deleteLanguageHandler } addAlphabet={ handleShowAddAlphabetForm } />
                 )}
 
 

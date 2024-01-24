@@ -28,6 +28,9 @@ urlpatterns = [
 
     path('<str:pk>/add_lang/', views.addLanguageToUser, name='add_lang_to_user'),
     # path('add_lang/', views.addLanguageToUser, name='add_lang_to_user'),
+    
+    path('<str:pk>/mastered_characters/<str:language>/', views.getMasteredCharacters, name='get_mastered_characters'),
+    path('<str:pk>/not_mastered_characters/<str:language>/', views.getNotMasteredCharacters, name='get_not_mastered_characters'),
 
     path('register/', views.registerUser, name='register'),
     path('profile/', views.getUserProfile, name='user_profile'),

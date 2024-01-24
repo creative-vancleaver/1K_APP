@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useResolvedPath } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Row, Col, ListGroup, Card, Button, Form, Container } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
@@ -7,11 +7,13 @@ import { Link } from 'react-router-dom'
 import { listWordsLanguage } from '../actions/wordActions'
 import { addUserLanguage } from '../actions/userActions';
 import { listLanguages } from '../actions/languageActions';
+import { getAllAlphabetsLanguage } from '../actions/alphabetActions'
 
 import { USER_LOGIN_SUCCESS } from '../constants/userConstants';
 
-import Word from '../components/Word'
-import Message from '../components/Message'
+import CharacterCard from '../components/alphabet/CharacterCard';
+import Word from '../components/Word';
+import Message from '../components/Message';
 import Spinner from '../components/spinner/Spinner';
 import DebugForm from '../components/forms/DebugForm';
 
@@ -43,6 +45,10 @@ function LanguageScreen() {
 
   const addLanguageToUser = useSelector(state => state.addLanguageToUser);
   const { success: languageAddSuccess, loading: languageAddLoading } = addLanguageToUser;
+
+  const alphabetList = useSelector(state => state.alphabetList);
+  const { success: alphabetListSuccess, loading: alphabetListeLoading, alphabetList: alphabets } = alphabetList;
+  console.log('alphabets = ', alphabetList);
   // // console.log(error)
 
   // const availLanguages = languages.map(language => language.language)
@@ -57,6 +63,7 @@ function LanguageScreen() {
     dispatch(listLanguages());
     if (language !== 'english') {
       dispatch(listWordsLanguage(language))
+      dispatch(getAllAlphabetsLanguage(language))
     }
 
     if (languageAddSuccess) {
@@ -113,7 +120,7 @@ function LanguageScreen() {
   }
 
   const checkLanguageExists = (language) => {
-    if (userInfo) {
+    if (userInfo && userInfo.languages) {
       return userInfo.languages.some(lang => lang.language === language);
     } else {
       return null
@@ -147,11 +154,71 @@ function LanguageScreen() {
         error ? ( <Message variant='danger'>{ error }</Message> )
           : language !== 'english' ? (
 
-            <div className=''>
-              <Row className='mt-5 d-flex justify-items-center'>
+            <>
+
+            <div className="text-center mb-2">
+
+              {/* <h5>Alphabet</h5>
+
+              <Row className='mt-5 text-start'>
+                <Col sm={ 8 } lg={ 6 } xl={ 4 } className='my-3'>
+
+                  { Object.entries(alphabetList.alphabets).map(([aName, types]) => (
+                    <div key={ aName }>
+                      <h3>{ aName }</h3>
+                      <ul>
+                        { types.map((type, index) => (
+                          <li key={ index }>{ type }</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))} */}
+                                    
+                {/* { alphabetList.alphabets.map((alphabet) => (
+                    // console.log(alphabet);
+                    <Col key={ alphabet.id }>
+                      { alphabet.name }
+                      { alphabet.alphabet_type }
+                    </Col>
+                  )) }
+                   */}
+                {/* </Col>
+              </Row>
+
+              <Row className="mt-5 d-flex justify-items-center">
+                <Col sm={12} lg={6} xl={4} className='my-3 card-container'>
+
+
+
+                 <CharacterCard />
+
+                </Col>
+              </Row> */}
+
+              <Row className="justify-content-center">
+                <Col xs={ 6 }>
+
+                  {/* {!userInfo ? (
+                    <Button className='w-100'>Sign Up</Button>
+                  ) : !loading && languageExists ? (
+                    <Button className='w-100'>
+                      Start Learning
+                    </Button>
+                  ) : (
+                    <Button className='w-100'>Start Learning</Button>
+                  )} */}
+
+                </Col>
+              </Row>
+            </div>
+
+            <div className='text-center'>
+              {/* <h5>Words</h5> */}
+              <Row className='mt-3 d-flex justify-items-center'>
                 { words.slice(0, 12).map(word => (
-                  <Col key={ word.id } sm={12} lg={6} xl={4} className={`my-3 ${word.id} card-container`}>
-                    <Word word={ word } onStateChange={ handleChildFlipStateChange }/>
+                  <Col key={ word.id } sm={12} lg={6} xl={4} className={`my-5 ${word.id} card-container`}>
+                    <Word word={ word } />
+                    {/* onStateChange={ handleChildFlipStateChange } */}
                   </Col>
                 ))}
               </Row>
@@ -184,6 +251,7 @@ function LanguageScreen() {
               </Row>
 
             </div>
+            </>
 
           ) : (
 

@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import User, UserWord
-from base.models import Word
+from .models import User, UserWord, UserCharacter
+from base.models import Word, Character
 
-from base.serializers import LanguageSerializer, WordSerializer
+from base.serializers import LanguageSerializer, WordSerializer, CharacterSerializer
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -47,20 +47,44 @@ class UserWordSerializer(serializers.ModelSerializer):
     # user_word = WordSerializer()
     user_word = serializers.CharField(source='user_word.word')
     translation = serializers.CharField(source='user_word.translation')
+    pronunciation = serializers.CharField(source='user_word.pronunciation')
+    characters = serializers.SerializerMethodField()
     language = serializers.SerializerMethodField()
+    ### alphabet = serializers.SerializerMethodField()
+    alphabet = serializers.CharField(source='user_word.alphabet', default=None)
     # language = LanguageSerializer(source='user_word.language', read_only=True)
     # word = serializers.SerializerMethodField()
     class Meta:
         model = UserWord
-        fields = ['user_word', 'translation', 'score', 'isMastered', 'language', 'user', 'id', 'count']
+        fields = ['user_word', 'translation', 'characters', 'alphabet', 'pronunciation', 'score', 'isMastered', 'language', 'user', 'id', 'count']
         
     def get_language(self, obj):
         return obj.user_word.language.language if obj.user_word and obj.user_word.language else None
+    
+    def get_characters(self, obj):
+        word = obj.user_word
+        characters = Character.objects.filter(words__id=word.id)
+        return CharacterSerializer(characters, many=True).data if characters else None
 
     # def get_word(self, obj):
     #     word = obj.word.word
     #     # score = obj.word.score
     #     return word
+    
+class UserCharacterSerializer(serializers.ModelSerializer):
+    
+    user_character = serializers.CharField(source='user_character.character')
+    pronunciation = serializers.CharField(source='user_character.pronunciation')
+    # language = serializers.CharField(source='user_character.alphabet.language.language')
+    alphabet = serializers.CharField(source='user_character.alphabet')
+    language = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = UserCharacter
+        fields = ['user_character', 'pronunciation', 'alphabet', 'language', 'id', 'count', 'isMastered']
+        
+    def get_language(self, obj):
+        return obj.user_character.alphabet.language.language if obj.user_character and obj.user_character.alphabet.langauge else None
     
 class OrganizedDataSerializer(serializers.Serializer):
     # organized_data_dict = UserWordSerializer(many=True, read_only=True)

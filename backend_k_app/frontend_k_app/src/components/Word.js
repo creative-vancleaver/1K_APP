@@ -27,18 +27,25 @@ function Word({ word, onStateChange }) {
     // console.log('flipping the card on click')
 
 
-    
-    setFlip(!flip)
-    if(location.pathname != '/') {
-      // FOR SOME REASON THE OR (||) OPERATOR WAS NOT WORKING HERE
-      if(location.pathname != `/${ language }`) {
-        onStateChange(!flip);
-        // setFlip(!flip)
-      }
-    }
+    setFlip(flip => !flip);
+    // setFlip(!flip);
+    // onStateChange(!flip);
+
+// LOOKING AT THE BELOW NOW - I HAVE NO IDEA WHAT THIS IS FOR...
+    // if(location.pathname != '/') {
+    //   // FOR SOME REASON THE OR (||) OPERATOR WAS NOT WORKING HERE
+    //   if(location.pathname != `/${ language }`) {
+    //     onStateChange(!flip);
+    //     // setFlip(!flip)
+    //   }
+    // }
     // setFlip(!flip)
     // console.log('will need to rest setFlip')
   }
+
+  // useEffect(() => {
+  //   onStateChange(flip);
+  // }, [flip]);
 
   useEffect(() => {
     if (updateWordSuccess) {
@@ -53,25 +60,24 @@ function Word({ word, onStateChange }) {
       <div className={` `}>
         {/* card-container */}
 
-      <Card id='word_card' className={`cards ${ flip ? "flip" : ""} `}>
+      <Card id='word_card' className={ `cards ${ flip ? "flip" : ""}` }>
 
         <div 
           className={`front`}
           // onClick={ () => (setFlip(!flip) )}
           onClick={ handleClick }
+          onTouchEnd={ handleClick }
         >
-          { word.user_word ? ( word.user_word ) : ( word.word ) }
-          {/* { word.word ? ( word.word ) : word.user_word.word ? ( word.user_word.word ) : ('') } */}
-          {/* { word.user_word.word } */}
-          <div>
-            {/* <Score value={ word.score } color='#f8e825' text={ word.score } /> */}
-          </div>
+          <span style={{ fontSize: '18px' }}>{ word.user_word ? ( word.user_word ) : ( word.word ) }</span>
+          <span className='mt-1 pronunciation-text'>{ word.pronunciation && ( word.pronunciation ) }</span>
+
         </div>
 
         <div 
           className={`back`}
           // onClick={ () => setFlip(!flip)}
           onClick={ handleClick }
+          onTouchEnd={ handleClick }
         >
           { word.user_word ? ( word.translation ) : ( word.translation ) }
           {/* { word.user_word.translation } */}

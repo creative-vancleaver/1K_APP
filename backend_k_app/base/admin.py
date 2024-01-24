@@ -12,7 +12,7 @@ from django.http.request import HttpRequest
 
 from users.forms import CustomUserCreationForm, CustomUserChangeForm
 from users.models import User, UserWord
-from .models import Language, Word, Country
+from .models import Language, Word, Country, Alphabet, Character
 
 # Register your models here.
 # class UserWordInlineFormSet(BaseInlineFormSet):
@@ -220,3 +220,27 @@ admin.site.register(Country, CountryAdmin)
 # admin.site.register(Translation)
 
 # admin.site.register(Spanish)
+
+class AlphabetAdmin(admin.ModelAdmin):
+    
+    list_display = ('id', 'name', 'alphabet_type', 'language', 'character_count')
+    search_fields = ('id', 'name', 'alphabet_type', 'language')
+    ordering = ('id', 'name', 'alphabet_type', 'language')
+    
+    def character_count(self, obj):
+        return Character.objects.filter(alphabet=obj).count()
+    character_count.short_description = 'Number of Characters'
+
+admin.site.register(Alphabet, AlphabetAdmin)
+
+class CharacterAdmin(admin.ModelAdmin):
+    
+    list_display = ('id', 'character', 'get_language', 'alphabet', 'pronunciation')
+    search_fields = ('id', 'character', 'alphabet', 'get_language', 'pronunciation')
+    ordering = ('id', 'alphabet', 'pronunciation')
+    
+    def get_language(self, obj):
+        return obj.alphabet.language.language
+    get_language.short_description = 'Language'
+
+admin.site.register(Character, CharacterAdmin)

@@ -1,6 +1,8 @@
 import os
 import random
 import json
+import csv
+# import pykakasi
 
 from django.conf import settings
 # import pyvips
@@ -22,16 +24,22 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework import status
 
-from .serializers import WordSerializer, LanguageSerializer, CountrySerializer
+from .serializers import WordSerializer, LanguageSerializer, CountrySerializer, AlphabetSerializer, CharacterSerializer
 from users.serializers import UserWordSerializer
 
-from .models import Language, Translation, Word, Spanish, Country
-from users.models import User, UserWord
+from .models import Language, Translation, Word, Spanish, Country, Alphabet, Character
+from users.models import User, UserWord, UserCharacter
 
 # from .words import words
 
 from bs4 import BeautifulSoup
 import requests
+
+# from selenium import webdriver
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.common.keys import Keys
+import time
+import pandas as pd
 
 # Create your views here.
 
@@ -357,9 +365,77 @@ def get1000WordsFromHTMLTable(request):
             if existing_word is None:
                new_word = Word.objects.create(language=language, word=word, translation=translation)
                new_word.save()
-
+               
+   # if language.language == 'japanese':
+   #    current_dir = os.path.dirname(os.path.realpath(__file__))
+   #    file = os.path.join(current_dir, '1000_japanese_words_w_pronunciation.csv')
+   #    df = pd.read_csv(file)
+      
+   #    for index, row in df.iterrows():
+         
+   #       print(df.columns)
+         
+   #       word_data  = {
+   #          'language': language,
+   #          'word': row['word'],
+   #          'translation': row['translation'],
+   #          'pronunciation': row['pronunciation']
+   #       }
+         
+   #       if pd.notnull(row['translationII']) and row['translationII'] != '':
+   #          word_data['translationII'] = row['translationII']
+                       
+   #       existing_word = Word.objects.filter(word=row['word'], translation=row['translation']).first()
+   #       if existing_word is None:
+   #          new_word = Word.objects.create(**word_data)
 
    return Response({'message': 'success'})
+
+
+def get_kanji_data(url):
+   
+   driver = webdriver.Safari()
+   
+   driver.get(url)
+   
+   time.sleep(5)
+   
+   data = []
+   
+   parent_elements = driver.find_elements_by_tag_name('p')
+   
+   for p in parent_elements:
+      soup = BeautifulSoup(p.get.attribute('innerHTML'), 'html.parser')
+      
+      font_group = []
+      
+      for element in soup.contents:
+         if element.name == 'font':
+            font_group.append(element.get_text(strip=True))
+         elif element.name == 'br':
+            data.append(' '.join(font_group))
+            font_group = []
+            
+      if font_group:
+         data.append(' '.join(font_group))
+         
+   driver.quit()
+   
+   df = pd.DataFrame(data, columns=['Grouped Font Text'])
+   
+   df.to_csv('test_kanji_data.csv', index=False)
+      
+   #    fonts = soup.find_all('font')
+      
+   #    for font in fonts:
+   #       data.append(font.text.strip())
+         
+   # driver.quit()
+   
+   # df = pd.DataFrame(data, columns=['Font Text'])
+   
+   # df.to_csv('font_data.csv', index=False)
+   
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -455,40 +531,56 @@ def getWords(request):
     words = Word.objects.all()
     serializer = WordSerializer(words, many=True)
     return Response(serializer.data)
+ 
+def parse_japanese_word(word):
+   
+   default_value = " "
+   
+   # characters = list(word)
+   
+   pronunciations = []
+   
+   for char in word:
+      try: 
+         character_obj = Character.objects.get(character=char)
+         pronunciation = {
+            'character': character_obj,
+            'character_pronunication': character_obj.pronunciation,
+            'character alphabet': character_obj.alphabet.name
+         }
+         # print('character ', character_obj, character_obj.alphabet.name)
+         
+         if pronunciation:
+            pronunciations.append(pronunciation)
+         else:
+            pronunciations.append(default_value)
+            
+      except Character.DoesNotExist:
+         pronunciations.append(default_value)
+         
+   # print(pronunciations)
+            
+   return pronunciations
 
 @api_view(['GET'])
 def getWordsByLanguage(request, language):
-  # print(language)
-  # # if language == 'undefined':
-  # #     context = {'detail': 'This language has no words yet.'}
-  # #     return Response(context, status=status.HTTP_400_BAD_REQUEST)
-  # languages = Language.objects.all()
-  # print(languages)
-  # if Language.objects.filter(language=language).exists():
-  #   print('yes')
-     
-  #   if language == 'spanish':
-  #     words = Spanish.objects.all()
-  #     # words = language.objects.all()
-  #     serializer = WordSerializer(words, many=True)
-  #     return Response(serializer.data)
-  #   else:
-  #     words = None
-  #     context = {'detail': 'This language has no words yet.'}
-  #     return Response(context, status=status.HTTP_400_BAD_REQUEST)
-  # else:
-  #    print('no')
-  #    context = {'detail': 'This language is not yet supported.'}
-  #    return Response(context, status=status.HTTP_400_BAD_REQUEST)
-  language = Language.objects.get(language=language)
-  words = Word.objects.filter(language=language)[:12]
 
-  if words.count() != 0:
-     serializer = WordSerializer(words, many=True)
-     return Response(serializer.data)
-  else:
-     context = {'detail': 'This language has no words yet.'}
-     return Response(context, status=status.HTTP_404_NOT_FOUND)
+   print(language)
+   language = Language.objects.get(language=language)
+   
+   # words = Word.objects.filter(language=language).exclude(alphabet__name='kanji')[:12]
+   words = Word.objects.filter(language=language)[:10]  
+   
+   # if language.language == 'japanese':
+   #    all_japanese_words = Word.objects.filter(language=language).exclude(alphabet__name='kanji')
+   #    all_japanese_words.delete()
+   
+   if words.count() != 0:
+      serializer = WordSerializer(words, many=True)
+      return Response(serializer.data)
+   else:
+      context = {'detail': 'This language has no words yet.'}
+      return Response(context, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -638,7 +730,7 @@ def getRandomWordLanguage(request, language):
 
    if request.user != 'AnonymousUser':
       user = User.objects.get(email=request.user)
-      user_words = UserWord.objects.filter(user=user, user_word__language=language).exclude(isMastered=True)
+      user_words = UserWord.objects.filter(user=user, user_word__language=language).exclude(isMastered=True, alphabet__name='kanji')
       user_words_total = UserWord.objects.filter(user=user, user_word__language=language).count()
       # print('getRandomWordLanguage counts ', user_words.count(), user_words_total)
       
@@ -707,3 +799,264 @@ def updateWordScore(request, pk):
     # # print(qd)
 
     return Response('Word score has been updated')
+ 
+ 
+# ALPHABET + CHARACTER VIEWS
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAdminUser])
+def addAlphabet(request, language):
+   
+   data = request.data
+   file = request.FILES.get('csv_file')
+   print(file)
+   
+   if file and file.name.split('.')[-1] != 'csv':
+      return Response({ 'detail': 'This file type is not supported.' }, status=status.HTTP_400_BAD_REQUEST)
+   
+   language = Language.objects.get(language=language)
+   alphabet_name = data['alphabet_name'].lower()
+   if data['alphabet_type']:
+      alphabet_type = data['alphabet_type'].lower()
+   else:
+      alphabet_type = 'basic'
+   print(language, alphabet_name, alphabet_type)
+   
+   alphabet = Alphabet.objects.create(
+      name = alphabet_name,
+      language = language,
+      alphabet_type = alphabet_type
+   )
+   
+   if alphabet.language.language == 'japanese':
+      if alphabet.name.lower() in ['hiragana', 'katakana']:
+         if file:
+            characters = addJapaneseCharacters(alphabet, file)
+            print(characters)
+      if alphabet.name.lower() == 'kanji':
+         print('uploading Kanji characters')
+         addJapaneseKanji(alphabet, file)
+   
+   serializer = AlphabetSerializer(alphabet, many=False)
+   # serializer = CharacterSerializer(characters, many=True)
+   
+   return Response(serializer.data)
+
+def addJapaneseKanji(alphabet, file):
+   
+   characters = []
+   kanji_words = []
+   
+   file_content = file.read().decode('utf-8')
+   reader = csv.DictReader(file_content.splitlines())
+   
+   for row in reader:
+      
+      notes = row.get('notes', '')
+      
+      language = alphabet.language
+      character = row['kanji']
+      onyomi = row['onyomi']
+      kunyomiA = row.get('kunyomiA', '')
+      kunyomiB = row.get('kunyomiB', '')
+      translationI = row.get('translationI', '')
+      translationII = row.get('translationII', '')
+      translationIII = row.get('translationIII', '')
+      
+      pronunciation_data = {
+         "onyomi": [onyomi] if onyomi else []
+      }
+      
+      if kunyomiA:
+         pronunciation_data.setdefault('kunyomi', []).append(kunyomiA)
+      if kunyomiB:
+         pronunciation_data.setdefault('kunyomi', []).append(kunyomiB)
+         
+      # translations = ', '.join(filter(None, [translationI, translationII, translationIII]))
+      
+      new_character = Character.objects.create(
+         alphabet = alphabet,
+         character = character,
+         pronunciation = pronunciation_data
+      )
+      
+      characters.append(new_character)
+      
+      word_data = {
+         'language': language,
+         'alphabet': alphabet,
+         'word': character
+      }
+      
+      if translationI:
+         word_data['translation'] = translationI
+      if translationII:
+         word_data['translationII'] = translationII
+      if translationIII:
+         word_data['translationIII'] = translationIII
+      if onyomi:
+         word_data['pronunciation'] = onyomi
+      if kunyomiA:
+         word_data['pronunciationII'] = kunyomiA
+      if kunyomiB:
+         word_data['pronunciationIII'] = kunyomiB
+      
+      new_kanji_word = Word.objects.create(**word_data)
+      kanji_words.append(new_kanji_word)
+
+def addJapaneseCharacters(alphabet, file):
+   # base_char = None
+   modifier = None
+   modifier_char = ''
+   characters = []
+   
+   # with open(file, 'r', encoding='utf-8') as file:
+   #    reader = csv.DictReader(file)
+   file_content = file.read().decode('utf-8')
+   # reader = csv.reader(file_content.splitlines(), delimiter=',')
+   reader = csv.DictReader(file_content.splitlines())
+   for row in reader:
+      # if row['character']:
+      #    character = row['character']
+      # elif row['Katakana']:
+      # character = row['Katakana']
+      character = row['character']
+      pronunciation = row['pronunciation']
+      # existing_character = Character.objects.filter(character=character, pronunciation=pronunciation)
+      # if not existing_character:
+      base_char = character
+         # if alphabet.name.lower() in ['hiragana', 'katakana']:
+      if '\u3099' in character:
+         # description = 
+         base_char = character.replace('\u3099', '')
+         modifier = 'Dakuten'
+         modifier_char = '\u3099'
+         
+      elif '\u309A' in character:
+         base_char = character.replace('\u309A', '')
+         modifier = 'Handakuten'
+         modifier_char = '\u309A'
+         
+      if any(small_char in character for small_char in ['ゃ', 'ゅ', 'ょ']):
+         base_char = character[0]
+         modifier = 'Yoon small vowel'
+         modifier_char = character[1]
+         
+      description_parts = [f'Character: { character }', f'Base Character: { base_char }']
+      if modifier:
+         description_parts.append(f'Modifier: { modifier }')
+         if modifier_char:
+            description_parts.append(f'({ modifier_char })')
+      description = ', '.join(description_parts) 
+      
+      pronunciation_data = { 'romaji': pronunciation }
+      
+      notes = row.get('notes', '')
+
+      new_character = Character.objects.create(
+         alphabet = alphabet,
+         character = character,
+         # pronunciation = row['romaji'],
+         pronunciation = pronunciation_data,
+         description = description,
+         notes = notes
+      )
+      characters.append(new_character)
+         
+      # elif alphabet.name == 'kanji':
+         
+         
+   return characters
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def getAllAlphabets(request):
+   
+   alphabets = Alphabet.objects.all().order_by('id')
+   
+   serializer = AlphabetSerializer(alphabets, many=True)
+   
+   return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getAllAlphabetsByLanguage(request, language):
+   
+   alphabets = Alphabet.objects.filter(language__language=language)
+   
+   serializer = AlphabetSerializer(alphabets, many=True)
+   
+   return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getAllCharactersLanguage(request, language):
+   
+   characters = Character.objects.filter(alphabet__language__language=language)
+   
+   serializers = CharacterSerializer(characters, many=True)
+   
+   return Response(serializers.data)
+   
+   
+
+# def addCharacters(alphabet, file):
+   
+#    with open(file, 'r', encoding='utf-8') as file:
+#       reader = csv.DictReader(file)
+#       for row in reader:
+   
+
+# # @api_view(['POST'])
+# # @permission_classes([IsAdminUser])
+# def addCharacters(request, alphabet, file):
+   
+#    with open(file, 'r', encoding='utf-8') as file:
+      
+#       reader = csv.DictReader(file)
+#       for row in reader:
+         
+#          if alphabet.language.language == 'japanese':
+
+   
+# def japaneseCharacters(alphabet, row):
+#    if alphabet.alphabet_type == 'Hiragana':
+#       character = Character.objects.create(
+#          character = row['character']
+#          alphabet = alphabet,
+#          pronunciation = row['romaji']
+#       )
+      
+   
+   
+   
+# THIS WILL ACTUALLY NEED TO BE USED IN ADDCHARACTERS!!
+   # csv_file = request.FILES.get('csv_file')
+   # if csv_file:
+      
+   #    with open(csv_file, 'r', encoding='utf-8') as file:
+         
+   #       reader = csv.DictReader(file)
+   #       for row in reader:
+         
+   #          if language_name == 'japanese':
+   #             alphabet_type = determine_japanese_alphabet_type(row['character'])
+         
+      
+def determine_japanese_alphabet_type(character):
+
+   # if '\u3099' in character:
+   #    alphabet_type = 'Dakuten'
+   # elif '\u309A' in character:
+   #    alphabet_type = 'Handakuten'
+   # elif any(small_char in character for small_char in ['ゃ', 'ゅ', 'ょ']):
+   #    alphabet_type = 'Yoon'
+   # else:
+   #    alphabet_type = 'Basic'
+   
+   if '\u3099' in character or '\u309A' in character:
+      return 'Dakuten' if '\u3099' in character else 'Handakuten'
+   elif any(small_char in character for small_char in ['ゃ', 'ゅ', 'ょ']):
+      return 'Yoon'
+   else:
+      return 'Basic'

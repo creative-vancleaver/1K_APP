@@ -33,6 +33,9 @@ yarn-error.log*
 venv/
 venv/*
 
+misc_files/
+misc_files/*
+
 /.vscode
 
 OLD_db.sqlite3

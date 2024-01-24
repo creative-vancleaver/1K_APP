@@ -32,11 +32,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .models import User, UserWord
-from .serializers import UserSerializer, UserSerializerWithToken, UserProfileSerializer, UserWordSerializer, OrganizedDataSerializer
+from .models import User, UserWord, UserCharacter
+from .serializers import UserSerializer, UserSerializerWithToken, UserProfileSerializer, UserWordSerializer, OrganizedDataSerializer, UserCharacterSerializer
 from base.serializers import WordSerializer
 
-from base.models import Language, Word
+from base.models import Language, Word, Character
 
 # Create your views here.
 
@@ -292,6 +292,20 @@ def remove_duplicates(user_word_objects):
 
     return unique_user_word_objects
 
+def remove_duplicate_chars(user_char_objects):
+    unique_combinations = {}
+    
+    unique_user_char_objects = []
+    
+    for user_char in user_char_objects:
+        identifier = (user_char.user.id, user_char.user_character.id)
+        
+        if identifier not in unique_combinations:
+            unique_combinations[identifier] = True
+            unique_user_char_objects.append(user_char)
+            
+    return unique_user_char_objects
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def addLanguageToUser(request, pk):
@@ -321,6 +335,17 @@ def addLanguageToUser(request, pk):
 
         unique_user_word_objects = remove_duplicates(user_word_objects)
         UserWord.objects.bulk_create(unique_user_word_objects)
+        
+        characters = Character.objects.filter(alphabet__language__language=new_language)
+        print('new_characters ', characters)
+        user_character_objects = []
+        
+        for char in characters:
+            user_char = UserCharacter(user=user, user_character=char)
+            user_character_objects.append(user_char)
+            
+        unique_user_char_objects = remove_duplicate_chars(user_character_objects)
+        UserCharacter.objects.bulk_create(unique_user_char_objects)
 
         # for word in new_language.word_set.all().first():
         #     user_word = Word.objects.get(word=word, language=new_language)
@@ -632,6 +657,33 @@ def getNotMasteredWords(request, pk, language):
     # # print(not_mastered_serializer.data)
     
     return pagination.get_paginated_response(not_mastered_serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMasteredCharacters(request, pk, language):
+    
+    user = User.objects.get(id=pk)
+    
+    mastered_characters = UserCharacter.objects.filter(user=user, isMastered=True, user_character__alphabet__language=language)
+    
+    serializer = UserCharacterSerializer(mastered_characters, many=True)
+    
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getNotMasteredCharacters(request, pk, language):
+    
+    user = User.objects.get(id=pk)
+    
+    not_mastered_characters = UserCharacter.objects.filter(user=user, isMastered=False, user_character__alphabet__language=language)
+    
+    print(not_mastered_characters)
+    
+    serializer = UserCharacterSerializer(not_mastered_characters, many=True)
+    
+    return Response(serializer.data)
+    
 
 @api_view(['POST'])
 @csrf_exempt

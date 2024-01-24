@@ -110,6 +110,8 @@ const AddLanguage = ({ show, handleClose }) => {
         // }))
 
         clearForm();
+        handleClose();
+        
     }
 
     useEffect(() => {

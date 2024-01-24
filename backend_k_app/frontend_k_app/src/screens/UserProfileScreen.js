@@ -14,11 +14,13 @@ import LanguageForm from '../components/forms/LanguageForm';
 
 // COMPONENTS
 import UserWordsPaginate from '../components/profile/UserWordsPaginate';
+import UserCharacters from '../components/profile/UserCharacters';
 import Spinner from '../components/spinner/Spinner';
 import Message from '../components/Message';
 import ConfirmModal from '../components/ConfirmModal';
 
 import { defaultFormat } from 'moment';
+import { getMasteredCharacters, resetMasteredChars, getNotMasteredCharacters, resetNotMasteredChars } from '../actions/alphabetActions';
 
 const UserProfileScreen = () => {
 
@@ -38,6 +40,7 @@ const UserProfileScreen = () => {
 
     // const[key, setKey] = useState('languagesLearning'); // SET DEFAULT ACTIVE TAB
     const [key, setKey] = useState(languagesLearning[0]?.id);
+    const [key2, setKey2] = useState(`${ languagesLearning[0?.id] }_words`);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedLanguage, setSelectedLanguage] = useState();
 
@@ -114,6 +117,7 @@ const UserProfileScreen = () => {
             // console.log('default language ', default_language);
             // dispatch(getUserWordsByLanguage(default_language, 0, 10));
             setKey(languagesLearning[0]?.id);
+            setKey2(`${ languagesLearning[0]?.id }_words`);
             dispatch(getUserWordsByLanguage(languagesLearning[0]?.id));
             setLanguageMessage('');
         } else {
@@ -191,6 +195,18 @@ const UserProfileScreen = () => {
         }
     }
 
+    const nestedTabSelect = (key) => {
+
+        dispatch(resetMasteredChars());
+        dispatch(resetNotMasteredChars());
+        setKey2(key);
+
+        const lagnuage_id = key.split('_')[0];
+
+        dispatch(getNotMasteredCharacters(lagnuage_id));
+        dispatch(getMasteredCharacters(lagnuage_id));
+    }
+
     const handlePageChange = (newPage, language) => {
         // console.log('currentPage ', currentPage, 'new page = ', newPage, 'language id ', language);
         setCurrentPage(newPage);
@@ -209,7 +225,17 @@ const UserProfileScreen = () => {
         }
     }, [key]);
 
+    useEffect(() => {
+        dispatch(resetNotMasteredChars());
+        dispatch(resetMasteredChars());
 
+        if (key2 !== undefined) {
+            let language_id = key2.split('_')[0];
+            console.log(key2, language_id);
+            dispatch(getNotMasteredCharacters(language_id));
+            dispatch(getMasteredCharacters(language_id));
+        }
+    }, [key2]);
 
   return (
 
@@ -350,13 +376,40 @@ const UserProfileScreen = () => {
 
                                         </div>
 
-                                        {/* ADD OTHER DATA HERE */}
+                                        <Tabs
+                                            id='languageDataTabs'
+                                            activeKey={ key2 }
+                                            onSelect={ nestedTabSelect }
+                                            className='nested-tabs'
+                                        >
 
+                                            <Tab key={ `${ language.id }_words` } eventKey={ `${ language.id}_words` } title='Words'>
+
+                                                { languagesLearning.length > 0 && (
+
+                                                    <UserWordsPaginate language={ language } userInfo={ userInfo } langaugesLearning={ languagesLearning } handlePageChange={ handlePageChange } currentPage={ currentPage } />
+
+                                                )}
+
+                                            </Tab>
+
+                                            <Tab key={ `${ language.id }_characters` } eventKey={ `${ language.id }_characters` } title='Characters'>
+                                                {/* <p>Characters will go here</p> */}
+                                                { languagesLearning.length > 0 && (
+                                                    <UserCharacters language={ language } userInfo={ userInfo } />
+                                                )}
+                                            </Tab>
+
+
+                                        </Tabs>
+
+                                        {/* ADD OTHER DATA HERE */}
+{/* 
                                         { languagesLearning.length > 0 && (
 
                                             <UserWordsPaginate language={ language } userInfo={ userInfo } langaugesLearning={ languagesLearning } handlePageChange={ handlePageChange } currentPage={ currentPage } />
 
-                                        )}
+                                        )} */}
 
                                     </Tab>
 

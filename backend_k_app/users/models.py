@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
-from base.models import Language, Word
+from base.models import Language, Word, Character
 
 # Create your models here.
 
@@ -37,3 +37,16 @@ class UserWord(models.Model):
 
     def __str__(self):
         return self.user_word.word
+    
+class UserCharacter(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_character = models.ForeignKey(Character, on_delete=models.CASCADE)
+    score = models.IntegerField(blank=True, null=True, default=0)
+    count = models.IntegerField(blank=True,  null=True, default=10)
+    isMastered = models.BooleanField(blank=True, null=True, default=False)
+    
+    class Meta:
+        unique_together = ('user', 'user_character')
+        
+    def __str__(self):
+        return self.user_character.character
