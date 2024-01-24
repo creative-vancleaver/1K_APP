@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "https://1kapp.s3.amazonaws.com/static/css/main.34804e1a.css",
-    "main.js": "https://1kapp.s3.amazonaws.com/static/js/main.9acf40a9.js",
+    "main.css": "https://1kapp.s3.amazonaws.com/static/css/main.c2db7936.css",
+    "main.js": "https://1kapp.s3.amazonaws.com/static/js/main.86d07e70.js",
     "static/js/787.c4fcf21b.chunk.js": "https://1kapp.s3.amazonaws.com/static/js/787.c4fcf21b.chunk.js",
     "static/media/geojson_data.geojson": "https://1kapp.s3.amazonaws.com/static/media/geojson_data.86320047d06f15a89b85.geojson",
     "static/media/logo.svg": "https://1kapp.s3.amazonaws.com/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
     "index.html": "https://1kapp.s3.amazonaws.com/index.html",
-    "main.34804e1a.css.map": "https://1kapp.s3.amazonaws.com/static/css/main.34804e1a.css.map",
-    "main.9acf40a9.js.map": "https://1kapp.s3.amazonaws.com/static/js/main.9acf40a9.js.map",
+    "main.c2db7936.css.map": "https://1kapp.s3.amazonaws.com/static/css/main.c2db7936.css.map",
+    "main.86d07e70.js.map": "https://1kapp.s3.amazonaws.com/static/js/main.86d07e70.js.map",
     "787.c4fcf21b.chunk.js.map": "https://1kapp.s3.amazonaws.com/static/js/787.c4fcf21b.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.34804e1a.css",
-    "static/js/main.9acf40a9.js"
+    "static/css/main.c2db7936.css",
+    "static/js/main.86d07e70.js"
   ]
 }
