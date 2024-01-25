@@ -569,7 +569,7 @@ def getWordsByLanguage(request, language):
    language = Language.objects.get(language=language)
    
    # words = Word.objects.filter(language=language).exclude(alphabet__name='kanji')[:12]
-   words = Word.objects.filter(language=language)[:10]  
+   words = Word.objects.filter(language=language)[:12]  
    
    # if language.language == 'japanese':
    #    all_japanese_words = Word.objects.filter(language=language).exclude(alphabet__name='kanji')
@@ -730,7 +730,9 @@ def getRandomWordLanguage(request, language):
 
    if request.user != 'AnonymousUser':
       user = User.objects.get(email=request.user)
-      user_words = UserWord.objects.filter(user=user, user_word__language=language).exclude(isMastered=True, alphabet__name='kanji')
+      # user_words = UserWord.objects.filter(user=user, user_word__language=language).exclude(isMastered=True, alphabet__name='kanji')
+      user_words = UserWord.objects.filter(user=user, user_word__language=language).exclude(isMastered=True)
+
       user_words_total = UserWord.objects.filter(user=user, user_word__language=language).count()
       # print('getRandomWordLanguage counts ', user_words.count(), user_words_total)
       

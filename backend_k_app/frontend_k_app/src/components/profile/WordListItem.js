@@ -18,7 +18,8 @@ const WordListItem = React.memo(({ word, moveWord, index }) => {
                 <i className="fa-solid fa-arrow-left me-2 move-word-btn" onClick={ () => moveWord(word.id) } />
 
                 <span>
-                    { word.id } | { word.user_word } | { index }
+                    {/* { word.id } | { word.user_word } | { index } */}
+                    { word.user_word }
                 </span>
             </>
 
@@ -27,7 +28,8 @@ const WordListItem = React.memo(({ word, moveWord, index }) => {
             <>
                 <span>
                     {/* <i className="fa-regular fa-circle-xmark me-2" id={ word.id }></i> */}
-                        { word.id } | { word.user_word } | { index }
+                        {/* { word.id } | { word.user_word } | { index } */}
+                        { word.user_word }
                 </span>
                 {/* <button onClick={ () => moveWord(word.id)}> */}
                     <i onClick={ () => moveWord(word.id)} className="fa-solid fa-arrow-right move-word-btn"></i>

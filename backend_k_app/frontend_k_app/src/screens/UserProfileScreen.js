@@ -173,7 +173,7 @@ const UserProfileScreen = () => {
     }
 
     const handleTabSelect = (key) => {
-        
+        console.log('tabSelect key = ', key);
         dispatch(resetMasteredWords());
         dispatch(resetNotMasteredWords());
 
@@ -185,10 +185,11 @@ const UserProfileScreen = () => {
 
 
         if (key !== 'addLanguage') {
+            
 
-            dispatch(getUserWordsByLanguage(key));
-            dispatch(getMasteredWords(key));
-            dispatch(getNotMasteredWords(key));
+            // dispatch(getUserWordsByLanguage(key));
+            // dispatch(getMasteredWords(key));
+            // dispatch(getNotMasteredWords(key));
             
             setSelectedLanguage(key);
 
@@ -203,8 +204,8 @@ const UserProfileScreen = () => {
 
         const lagnuage_id = key.split('_')[0];
 
-        dispatch(getNotMasteredCharacters(lagnuage_id));
-        dispatch(getMasteredCharacters(lagnuage_id));
+        // dispatch(getNotMasteredCharacters(lagnuage_id));
+        // dispatch(getMasteredCharacters(lagnuage_id));
     }
 
     const handlePageChange = (newPage, language) => {
@@ -218,24 +219,24 @@ const UserProfileScreen = () => {
         dispatch(resetNotMasteredWords());
 
         // console.log('KEY == ', key);
-        if (key !== undefined) {
+        if (key !== undefined && key !== 'addLanguage') {
             // console.log('key = undefined');
             dispatch(getNotMasteredWords(key));
             dispatch(getMasteredWords(key));
         }
     }, [key]);
 
-    useEffect(() => {
-        dispatch(resetNotMasteredChars());
-        dispatch(resetMasteredChars());
+    // useEffect(() => {
+    //     dispatch(resetNotMasteredChars());
+    //     dispatch(resetMasteredChars());
 
-        if (key2 !== undefined) {
-            let language_id = key2.split('_')[0];
-            console.log(key2, language_id);
-            dispatch(getNotMasteredCharacters(language_id));
-            dispatch(getMasteredCharacters(language_id));
-        }
-    }, [key2]);
+    //     if (key2 !== undefined) {
+    //         let language_id = key2.split('_')[0];
+    //         console.log(key2, language_id);
+    //         // dispatch(getNotMasteredCharacters(language_id));
+    //         // dispatch(getMasteredCharacters(language_id));
+    //     }
+    // }, [key2]);
 
   return (
 
@@ -376,7 +377,14 @@ const UserProfileScreen = () => {
 
                                         </div>
 
-                                        <Tabs
+                                        { languagesLearning.length > 0 && (
+                                            <UserWordsPaginate
+                                                language={ language }
+                                                userInfo={ userInfo }
+                                            />
+                                        )}
+
+                                        {/* <Tabs
                                             id='languageDataTabs'
                                             activeKey={ key2 }
                                             onSelect={ nestedTabSelect }
@@ -393,15 +401,15 @@ const UserProfileScreen = () => {
 
                                             </Tab>
 
-                                            <Tab key={ `${ language.id }_characters` } eventKey={ `${ language.id }_characters` } title='Characters'>
+                                            <Tab key={ `${ language.id }_characters` } eventKey={ `${ language.id }_characters` } title='Characters'> */}
                                                 {/* <p>Characters will go here</p> */}
-                                                { languagesLearning.length > 0 && (
+                                                {/* { languagesLearning.length > 0 && (
                                                     <UserCharacters language={ language } userInfo={ userInfo } />
                                                 )}
                                             </Tab>
 
 
-                                        </Tabs>
+                                        </Tabs> */}
 
                                         {/* ADD OTHER DATA HERE */}
 {/* 

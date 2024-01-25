@@ -217,8 +217,8 @@ function LanguageScreen() {
               <Row className='mt-3 d-flex justify-items-center'>
                 { words.slice(0, 12).map(word => (
                   <Col key={ word.id } sm={12} lg={6} xl={4} className={`my-5 ${word.id} card-container`}>
-                    <Word word={ word } />
-                    {/* onStateChange={ handleChildFlipStateChange } */}
+                    <Word word={ word } onStateChange={ handleChildFlipStateChange }/>
+                    {/*  */}
                   </Col>
                 ))}
               </Row>

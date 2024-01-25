@@ -23,24 +23,32 @@ function Word({ word, onStateChange }) {
   const { error: updateWordError, success: updateWordSuccess, word: updateWordWord } = updateWordScore
 
 
-  function handleClick() {
+  const handleClick = (event) => {
     // console.log('flipping the card on click')
-
+    event.preventDefault();
 
     setFlip(flip => !flip);
+
     // setFlip(!flip);
     // onStateChange(!flip);
 
 // LOOKING AT THE BELOW NOW - I HAVE NO IDEA WHAT THIS IS FOR...
-    // if(location.pathname != '/') {
-    //   // FOR SOME REASON THE OR (||) OPERATOR WAS NOT WORKING HERE
-    //   if(location.pathname != `/${ language }`) {
-    //     onStateChange(!flip);
-    //     // setFlip(!flip)
-    //   }
-    // }
+// I AM DUMB. THIS IS THE CALLBACK TO UPDATE THE STATE IN THE PARENT WORDSCREEN COMPONENT. 
+// THIS IS WHAT ENABLES THE ANSWER COMPONENT TO DISPLAY.
+    if(location.pathname != '/') {
+      // FOR SOME REASON THE OR (||) OPERATOR WAS NOT WORKING HERE
+      if(location.pathname !== `/${ language }/`) {
+        onStateChange(!flip);
+        // setFlip(!flip)
+      }
+    }
     // setFlip(!flip)
     // console.log('will need to rest setFlip')
+  }
+
+  const handleTouch = (event) => {
+    event.preventDefault();
+    setFlip(flip => !flip);
   }
 
   // useEffect(() => {
@@ -66,7 +74,7 @@ function Word({ word, onStateChange }) {
           className={`front`}
           // onClick={ () => (setFlip(!flip) )}
           onClick={ handleClick }
-          onTouchEnd={ handleClick }
+          // onTouchEnd={ handleTouch }
         >
           <span style={{ fontSize: '18px' }}>{ word.user_word ? ( word.user_word ) : ( word.word ) }</span>
           <span className='mt-1 pronunciation-text'>{ word.pronunciation && ( word.pronunciation ) }</span>
@@ -77,7 +85,7 @@ function Word({ word, onStateChange }) {
           className={`back`}
           // onClick={ () => setFlip(!flip)}
           onClick={ handleClick }
-          onTouchEnd={ handleClick }
+          // onTouchEnd={ handleTouch }
         >
           { word.user_word ? ( word.translation ) : ( word.translation ) }
           {/* { word.user_word.translation } */}

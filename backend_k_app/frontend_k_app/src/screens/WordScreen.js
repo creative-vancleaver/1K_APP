@@ -57,9 +57,9 @@ function WordScreen() {
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
 
-  // function handleChildFlipStateChange(newState) {
-  //   setFlip(newState);
-  // }
+  function handleChildFlipStateChange(newState) {
+    setFlip(newState);
+  }
 
   const correctAnswerClick = () => {
     // setScore(score + 1);
@@ -239,7 +239,7 @@ function WordScreen() {
 
             <Row className='card-row'>
               <Col className='card-col'>
-                <Word word={ word } />
+                <Word word={ word } onStateChange={ handleChildFlipStateChange } />
                 {/* onStateChange={ handleChildFlipStateChange }  */}
                 {/* { word.word } */}
               </Col>

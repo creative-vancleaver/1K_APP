@@ -9,7 +9,7 @@ import { getMasteredWords, getNotMasteredWords, updateMasteredWords, updateNotMa
 import Spinner from '../spinner/Spinner';
 import WordListItem from './WordListItem';
 
-const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageChange, currentPage }) => {
+const UserWordsPaginate = ({ language, userInfo }) => {
 
     // console.log('language.id = ', language.id);
 
@@ -170,7 +170,7 @@ const UserWordsPaginate = ({ language, userInfo, langaugesLearning, handlePageCh
 
         <Col className='col-md-6'>
     
-            <h5>Words ({ notMasteredWords.count })</h5>
+            <h5>Not Mastered ({ notMasteredWords.count })</h5>
 
             { !notMasteredWords || notMasteredWordsLoading && notMasteredWords.results.length === 0 ? (
 
