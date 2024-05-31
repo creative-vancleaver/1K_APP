@@ -96,9 +96,9 @@ function Header() {
                   </Nav.Link>
                 {/* </LinkContainer> */}
 
-                  <Nav.Link as={ Link } to='/register/'>
+                  {/* <Nav.Link as={ Link } to='/register/'>
                     <i className='fa fa-user-plus me-1'></i>Sign Up
-                  </Nav.Link>
+                  </Nav.Link> */}
                 </>
               )}
 
@@ -108,9 +108,9 @@ function Header() {
                 id='offcanvasNavbarDropdown-expand-expand'
               >
 
-                { languages.map(l => (
+                { languages && languages.map(l => (
 
-                  <NavDropdown.Item key={ l.id } href={ `/languages/${ l.language }` }>
+                  <NavDropdown.Item key={ l.id } href={ `/languages/${ l.language }/` }>
                     { l.language.charAt(0).toUpperCase() + l.language.slice(1) }
                   </NavDropdown.Item>
 

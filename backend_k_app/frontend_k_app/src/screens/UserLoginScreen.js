@@ -75,7 +75,7 @@ const UserLoginScreen = () => {
 
         </Form>
 
-        <Row className='py-3'>
+        {/* <Row className='py-3'>
             <Col>
                 New User? 
                 <Link
@@ -86,7 +86,7 @@ const UserLoginScreen = () => {
                     Register
                 </Link>
             </Col>
-        </Row>
+        </Row> */}
 
     </FormContainer>
     </Container>

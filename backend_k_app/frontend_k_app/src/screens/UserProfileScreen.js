@@ -79,7 +79,7 @@ const UserProfileScreen = () => {
 
     useEffect(() => {
         if (!userInfo) {
-            navigate('/login');
+            navigate('/login/');
         } else {
 
             // dispatch({ type: USER_UPDATE_PROFILE_RESET });

@@ -44,7 +44,7 @@ function App() {
             <Route path='/languages/:language/random/' element={ <WordScreen /> } />
 
             <Route path='/login/' element={ <UserLoginScreen /> } />
-            <Route path='/register/' element={ <UserRegisterScreen /> } />
+            {/* <Route path='/register/' element={ <UserRegisterScreen /> } /> */}
             <Route path='/activate/:token' element={ <UserActivationScreen /> } />
             <Route path='/profile/' element={ <UserProfileScreen /> } />
 

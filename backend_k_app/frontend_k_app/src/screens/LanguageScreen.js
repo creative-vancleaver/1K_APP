@@ -63,7 +63,7 @@ function LanguageScreen() {
     dispatch(listLanguages());
     if (language !== 'english') {
       dispatch(listWordsLanguage(language))
-      dispatch(getAllAlphabetsLanguage(language))
+      // dispatch(getAllAlphabetsLanguage(language))
     }
 
     if (languageAddSuccess) {
@@ -86,6 +86,8 @@ function LanguageScreen() {
     //   // console.log(lang)
     //   return lang.language === language
     // })
+
+    
     const existingLang = checkLanguage(language)
     // console.log('existing language ', userInfo.languages, 'current language ', language,  existingLang);
 
@@ -130,6 +132,8 @@ function LanguageScreen() {
   const languageExists = checkLanguageExists(language);
   // console.log('langaugeExists ', languageExists);
 
+  console.log('userInfo? ', userInfo);
+
 
   return (
 
@@ -139,8 +143,9 @@ function LanguageScreen() {
 
       <Container className='d-flex flex-column' style={{ minHeight: '80vh' }}>
         {/* <Button>{languages}</Button> */}
-        <DebugForm show={ showDebugModal } handleClose={ () => setShowDebugModal(false) } />
-
+        { userInfo &&
+          <DebugForm show={ showDebugModal } handleClose={ () => setShowDebugModal(false) } />
+        }
         <div className="text-start">
           <Link to={`/`} className='backLink'>Go Back</Link>
         </div>
@@ -148,7 +153,7 @@ function LanguageScreen() {
         <h1 className='mb-5 mt-5 text-center' style={{ textTransform: 'capitalize' }}>{ language }</h1>
 
         { languageAddLoading && <Spinner /> }
-  {/* NOTE: I switched these loading ternaries for better loading experience. NOT sure why they were set up the way they were.. */}
+        {/* NOTE: I switched these loading ternaries for better loading experience. NOT sure why they were set up the way they were.. */}
         { loading ? (<Spinner />) :
 
         error ? ( <Message variant='danger'>{ error }</Message> )
@@ -228,7 +233,9 @@ function LanguageScreen() {
                   {/* <Button className='w-100'>Play</Button> */}
 
                   { !userInfo ? (
-                    <Button as={ Link } to={'/register/'} className='w-100'>Sign Up</Button>
+                    // <Button as={ Link } to={'/register/'} className='w-100'>Sign Up</Button>
+                    <Button as={ Link } to={'/login/'} className='w-100'>Sign Up</Button>
+
                   ) : !loading && languageExists ? (
                     <Button as={ Link } to={`/languages/${ language }/random/`} className='w-100'>
                       Start Learning
