@@ -180,7 +180,7 @@ def uploadCountryNames(request):
                pass
 
    else:
-      print(f'Failed to fetch the URL. Status COde: { response.status_code }')
+      print(f'Failed to fetch the URL. Status COde: { Response.status_code }')
 
    return Response({ 'message': 'success' })
 
@@ -442,17 +442,18 @@ def get_kanji_data(url):
 def getLanguages(request):
     languages = Language.objects.all().order_by('id')
     serializer = LanguageSerializer(languages, many=True)
+   #  , context={'request': request }
 
     return Response(serializer.data)
 
 @api_view(['GET'])
 def getLanguage(request, lang):
    language = Language.objects.get(language=lang)
-   serializer = LanguageSerializer(language, many=False)
+   serializer = LanguageSerializer(language, many=False, context={'request': request })
 
    return Response(serializer.data)
 
-@api_view(['POST'])
+@api_view(['POST', 'PUT'])
 @permission_classes([IsAdminUser])
 def update_language(request, language):
    
@@ -461,7 +462,7 @@ def update_language(request, language):
       return Response({ 'detail': 'You do not have permission to perform this action'}, status=403)
    
    data = request.data
-   # print(data)
+   print(data)
    
    language = Language.objects.get(language=language)
    
@@ -497,8 +498,9 @@ def update_language(request, language):
    #       language.countries.add(country)
          
    language.save()
+   print('language ', language, language.image)
    
-   serializer = LanguageSerializer(language, many=False)
+   serializer = LanguageSerializer(language, many=False, context={'request': request })
    
    return Response(serializer.data)
 

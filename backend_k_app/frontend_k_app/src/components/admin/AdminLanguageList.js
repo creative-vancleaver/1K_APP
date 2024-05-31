@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getAllAlphabets, getAllAlphabetsLanguage, getAllCharsLanguage } from '../../actions/alphabetActions';
 
 const AdminLanguageList = ({ languages, addLanguageForm, updateLanguage, deleteLanguage, addAlphabet }) => {
+    // console.log('admin language list ', languages, addLanguageForm, updateLanguage);
 
     const dispatch = useDispatch();
 
@@ -74,18 +75,21 @@ const AdminLanguageList = ({ languages, addLanguageForm, updateLanguage, deleteL
 
         <h4>Languages</h4>
         <Table striped bordered hover responsive className='table-sm'>
+        {/* striped */}
 
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Language</th>
+                    <th>Image</th>
                     <th>Countries</th>
                     <th>Words</th>
                     <th>Alphabet</th>
+                    <th>Update</th>
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                 { languages.map(language => (
                     <tr key={ language.id }>
                         <td>
@@ -93,6 +97,11 @@ const AdminLanguageList = ({ languages, addLanguageForm, updateLanguage, deleteL
                         </td>
                         <td>
                             { language.language.slice(0).charAt().toUpperCase() + language.language.slice(1) }
+                        </td>
+                        <td>
+                            { language.image && 
+                                <img src={ language.image } style={{ maxWidth: '100px' }} />
+                            }
                         </td>
                         <td>
                             { language.countries.map((country, index) => (
@@ -119,8 +128,8 @@ const AdminLanguageList = ({ languages, addLanguageForm, updateLanguage, deleteL
                             </Button> */}
                         </td>
 
-                        <td className="d-flex justify-content-center">
-
+                        <td className="justify-content-center">
+                            
                             <LinkContainer to={``}>
                                 <Button variant='light' className='btn-sm me-3' onClick={ () => updateLanguage(language) }>
                                     <i className="fas fa-edit"></i>

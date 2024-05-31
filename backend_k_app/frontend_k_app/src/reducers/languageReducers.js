@@ -27,14 +27,28 @@ import {
 } from '../constants/languageConstants'
 import { WORD_LIST_FAIL } from '../constants/wordConstants'
 
-export const languageListReducer = (state = { languages: [] }, action) => {
+const initialState = {
+  loading: false,
+  success: false,
+  error: null,
+  languages: []
+};
 
+export const languageListReducer = (state = { languages: [] }, action) => {
+  console.log('languagelistredcuer state ', state);
   switch(action.type) {
 
     case LANGUAGE_LIST_REQUEST:
+    // case UPDATE_LANGUAGE_REQUEST:
+    // case DELETE_LANGUAGE_REQUEST:
+      return { loading: true, languages: [] }
+
     case UPDATE_LANGUAGE_REQUEST:
     case DELETE_LANGUAGE_REQUEST:
-      return { loading: true, languages: [] }
+      return {
+        ...state,
+        loading: true
+      };
 
     case LANGUAGE_LIST_SUCCESS:
       return { loading: false, success: true, languages: action.payload }
@@ -45,16 +59,24 @@ export const languageListReducer = (state = { languages: [] }, action) => {
       return { loading: false, success: false, error: action.payload }
 
     case UPDATE_LANGUAGE_SUCCESS:
+      // console.log('update langauge success ', action.payload)
+      // console.log('update language succees languages: ', state.languages)
       return {
         ...state,
+        loading: false,
+        success: true,
         languages: state.languages.map(language => 
           language.id === action.payload.id ? action.payload : language)
       }
+      
 
     case UPDATE_LANGUAGE_DISPLAY:
       return {
         ...state,
-        languages: action.payload
+        // languages: action.payload
+        languages: state.languages.map(language => 
+          language.id === action.payload.id ? action.payload : language
+        )
       }
       // return {
       //   ...state,
@@ -156,7 +178,7 @@ export const addLanguageReducer = (state = { languages: [] }, action) => {
         success: true,
         // ...state,
         // languages: [...state.languages, action.payload]
-        langauges: action.payload
+        languages: action.payload
       }
 
       // }

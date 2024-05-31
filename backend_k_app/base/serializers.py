@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.conf import settings
 from django.contrib.auth.models import User
 from .models import Language, Translation, Word, Spanish, Country, Alphabet, Character
 
@@ -19,6 +20,15 @@ class LanguageSerializer(serializers.ModelSerializer):
         
     def get_word_count(self, obj):
         return obj.word_set.count()
+    
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
+    #     request = self.context.get('request')
+    #     if settings.DEBUG:
+    #         if instance.image and request:
+    #             representation['image'] = request.build_absolute_uri(instance.image.url)
+
+    #         return representation   
     
 
 class AlphabetSerializer(serializers.ModelSerializer):

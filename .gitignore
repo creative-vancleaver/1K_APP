@@ -42,8 +42,13 @@ misc_files/*
 
 OLD_db.sqlite3
 OLDrequirements.txt
+OLDsettings.py
 
 1k_words_assets/
 1k_words_assets/*
 1kwords_keys/
 1kwords_keys/*
+
+rds_dump.sql
+data.sql
+dump_file.dump

@@ -200,11 +200,13 @@ export const updateLanguage = (language, formData) => async(dispatch, getState) 
       }
     };
 
-    const { data } = await axios.post(
+    const { data } = await axios.put(
       `/api/languages/${ language }/update/`,
       formData,
       config
     );
+
+    console.log('update language action ', data);
 
     dispatch({
       type: UPDATE_LANGUAGE_SUCCESS,

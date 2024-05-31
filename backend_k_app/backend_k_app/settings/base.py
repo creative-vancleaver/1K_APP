@@ -22,7 +22,6 @@ colorama.init()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -30,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('DJANGO_SECRET_KEYA')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG')
+# DEBUG = config('DEBUG')
 
 ALLOWED_HOSTS = [
     'http://127.0.0.1',
@@ -129,23 +128,23 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'backend_k_app.urls'
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(BASE_DIR, 'frontend_k_app/build')
-        ],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
+# TEMPLATES = [
+#     {
+#         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+#         'DIRS': [
+#             os.path.join(BASE_DIR, 'frontend_k_app/build')
+#         ],
+#         'APP_DIRS': True,
+#         'OPTIONS': {
+#             'context_processors': [
+#                 'django.template.context_processors.debug',
+#                 'django.template.context_processors.request',
+#                 'django.contrib.auth.context_processors.auth',
+#                 'django.contrib.messages.context_processors.messages',
+#             ],
+#         },
+#     },
+# ]
 
 WSGI_APPLICATION = 'backend_k_app.wsgi.application'
 
@@ -153,22 +152,30 @@ WSGI_APPLICATION = 'backend_k_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
+# DATABASES = {
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
 
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('PGSQL_NAME'),
-        'USER': config('PGSQL_USER'),
-        'PASSWORD': config('PGSQL_PWD'),
-        'HOST': config('PGSQL_HOST'),
-        'PORT': '5432'
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': config('PGSQL_NAME'),
+    #     'USER': config('PGSQL_USER'),
+    #     'PASSWORD': config('PGSQL_PWD'),
+    #     'HOST': config('PGSQL_HOST'),
+    #     'PORT': '5432'
 
-    }
-}
+    # }
+
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'local_k_app',
+#         'USER': 'jacob',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
 
 
 # Password validation
@@ -215,10 +222,10 @@ USE_TZ = True
 # MEDIA_URL = '/media/'
 
 # AWS S3 CONFIG
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+# AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+# AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+# AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+# AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 #AWS_S3_CUSTOM_DOMAIN = config('AWS_CLOUD_FRONT')
 
 
@@ -226,17 +233,17 @@ AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 #     'CacheControl': 'max-age=86400',
 # }
 
-AWS_LOCATION = 'static/'
+# AWS_LOCATION = 'static/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'frontend_k_app/build/static'),
-    os.path.join(BASE_DIR, 'static')
-]
-STATIC_URL = 'https://%s/%s' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'frontend_k_app/build/static'),
+#     os.path.join(BASE_DIR, 'static')
+# ]
+# STATIC_URL = 'https://%s/%s' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # AWS S3 MEDIA FILES
-DEFAULT_FILE_STORAGE = 'backend_k_app.storage_backends.MediaStorage'
+# DEFAULT_FILE_STORAGE = 'backend_k_app.storage_backends.MediaStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -244,12 +251,12 @@ DEFAULT_FILE_STORAGE = 'backend_k_app.storage_backends.MediaStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # EMAIL BACKEND
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
 
 # CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ALLOW_ALL_ORIGINS = True

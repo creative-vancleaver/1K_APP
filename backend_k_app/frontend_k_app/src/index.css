@@ -11,12 +11,12 @@ main {
   box-shadow: none !important;
 }
 
-.container {
+/* .container { */
   /* margin-top: 30vh; */
   /* align-items: center; */
   /* d-flex justify-content-center */
   /* padding-left: 0 !important; */
-}
+/* } */
 
 .card-page {
   display: flex;
@@ -370,4 +370,10 @@ footer {
 ul.nested-tabs li:last-child {
   /* justify-content: left !important; */
   margin-left: 0 !important;
+}
+
+/* ADMIN LANGUAGE LIST */
+.update_lang_btn {
+  text-align: center !important;
+  vertical-align: middle !important;
 }

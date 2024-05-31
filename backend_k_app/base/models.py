@@ -21,7 +21,10 @@ class Country(models.Model):
         return self.name
 
 def language_path(instance, filename):
-    return '/'.join(['languages', str(instance.language), filename])
+    if settings.DEBUG:
+        return f'languages/{ instance.language }/{ filename }'
+    else:
+        return '/'.join(['languages', str(instance.language), filename])
 class Language(models.Model):
     language = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(null=True, blank=True, upload_to=language_path)

@@ -19,7 +19,7 @@ import Spinner from '../components/spinner/Spinner';
 import Message from '../components/Message';
 import ConfirmModal from '../components/ConfirmModal';
 
-import { defaultFormat } from 'moment';
+// import { defaultFormat } from 'moment';
 import { getMasteredCharacters, resetMasteredChars, getNotMasteredCharacters, resetNotMasteredChars } from '../actions/alphabetActions';
 
 const UserProfileScreen = () => {

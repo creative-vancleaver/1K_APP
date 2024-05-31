@@ -84,7 +84,7 @@ import {
     UPDATE_CONFIRM_RULES_FAIL,
 
 } from '../constants/userConstants';
-import jquery from 'jquery';
+// import jquery from 'jquery';
 
 function getCookie(name) {
     let cookieValue = null;

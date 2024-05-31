@@ -57,7 +57,8 @@ const AdminScreen = () => {
     // const { success: successDelete } = userDelete;
 
     const languageList = useSelector(state => state.languageList);
-    const { languages, loading: languageListLoading } = languageList;
+    const { languages, loading: languageListLoading, success: languageListSuccess } = languageList;
+    console.log('admin screen ', loading, languages);
 
     const countryList = useSelector(state => state.countryList);
     const { countries } = countryList;
@@ -83,6 +84,12 @@ const AdminScreen = () => {
         }
 
     }, [dispatch, userInfo, addLanguageSuccess]);
+
+    // useEffect(() => {
+
+    //     dispatch(listLanguages());
+
+    // }, [languageListSuccess])
 
     const handleShowAddUser = () => setShowAddUser(true);
     const handleCloseAddUser = () => setShowAddUser(false);
@@ -266,6 +273,7 @@ const AdminScreen = () => {
                 ) : (
                     <AdminLanguageList languages={ languages } addLanguageForm={ handleShowAddLanguageForm } updateLanguage={ handleShowUpdateLanguage } deleteLanguage={ deleteLanguageHandler } addAlphabet={ handleShowAddAlphabetForm } />
                 )}
+                {/* { console.log('languageListLoading ', languageListLoading)} */}
 
 
 
